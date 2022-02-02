@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "main": "bot.js",
-  "scripts": {},
+  "scripts": {
+  "start": "node bot.js"
+  }
   "author": "POPINxxCAPS",
   "license": "ISC",
   "dependencies": {
