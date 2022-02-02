@@ -37,6 +37,7 @@ module.exports = {
             { name: `Grid Name: ${sortedByBlockCount[6].displayName}`, value: `Block Count: ${sortedByBlockCount[6].blocksCount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} Owner: ${sortedByBlockCount[6].ownerDisplayName}` },
             { name: `Grid Name: ${sortedByBlockCount[7].displayName}`, value: `Block Count: ${sortedByBlockCount[7].blocksCount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} Owner: ${sortedByBlockCount[7].ownerDisplayName}` },
             { name: `Grid Name: ${sortedByBlockCount[8].displayName}`, value: `Block Count: ${sortedByBlockCount[8].blocksCount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} Owner: ${sortedByBlockCount[8].ownerDisplayName}` },
+            { name: `Grid Name: ${sortedByBlockCount[9].displayName}`, value: `Block Count: ${sortedByBlockCount[9].blocksCount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} Owner: ${sortedByBlockCount[9].ownerDisplayName}` },
             )
             .setFooter('Cosmofficial by POPINxxCAPS');
             return message.channel.send(embed)
