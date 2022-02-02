@@ -4,8 +4,8 @@
   "description": "",
   "main": "bot.js",
   "scripts": {
-  "start": "node ."
-  }
+    "start": "node ."
+  },
   "author": "POPINxxCAPS",
   "license": "ISC",
   "dependencies": {
