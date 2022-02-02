@@ -137,84 +137,6 @@ module.exports = async (guildID, config, settings) => {
                     timestamp: current_time
                 })
                 servInfoDoc.nextPopLog = popLogTimer;
-                /*
-                let firstDate;
-                let lastDate;
-                if (servInfoDoc.populationLog[0] !== undefined) {
-                    firstDate = new Date(parseInt(servInfoDoc.populationLog[0].timestamp))
-                }
-                let date = new Date();
-                let day = date.getDate();
-                if (firstDate === undefined) return;
-                // If the first data is the same day as today, do nothing.
-                if (firstDate.getDate() !== day) {
-                    // Chart Data Merging (one day per cycle, not hourly like the schema says)
-                    let targetDay = firstDate.getDate();
-                    let targetMonth = firstDate.getMonth();
-                    console.log(targetMonth)
-                    let dataToAvg = [];
-                    let avg = 0;
-                    console.log(new Date(parseInt(servInfoDoc.populationLog[0].timestamp)).getDate())
-                    for (let i = 0; i < servInfoDoc.populationLog.length; i++) {
-                        if (targetDay === new Date(parseInt(servInfoDoc.populationLog[i].timestamp)).getDate() && targetMonth === new Date(parseInt(servInfoDoc.populationLog[i].timestamp)).getMonth()) {
-                            if (servInfoDoc.populationLog[i] !== undefined) {
-                                // If day and month match targets, add data to array and remove entry
-                                dataToAvg.push(parseInt(servInfoDoc.populationLog[i].playerCount))
-                                lastDate = new Date(parseInt(servInfoDoc.populationLog[i].timestamp)).getTime();
-                                servInfoDoc.populationLog[i].remove();
-                                i - 1
-                            }
-                        }
-                    }
-
-                    let sum = 0;
-                    for (let i = 0; i < dataToAvg.length; i++) {
-                        sum += dataToAvg[i]
-                    }
-                    if (sum === 0) {
-                        avg = 0;
-                    } else {
-                        avg = Math.round(((sum / dataToAvg.length) * 100)) / 100
-                    }
-
-                    servInfoDoc.hourlyPopulation.push({
-                        avgPlayerCount: avg,
-                        timestamp: lastDate
-                    })
-                }
-                if (firstDate.getDate() !== day) {
-                    // Chart Data Merging (one day per cycle, not hourly like the schema says)
-                    let targetDay = firstDate.getDate();
-                    let targetMonth = firstDate.getMonth();
-                    let dataToAvg = [];
-                    let avg = 0;
-                    for (let i = 0; i < servInfoDoc.simSpeedLog.length; i++) {
-                        if (targetDay === new Date(parseInt(servInfoDoc.simSpeedLog[i].timestamp)).getDate() && targetMonth === new Date(parseInt(servInfoDoc.simSpeedLog[i].timestamp)).getMonth()) {
-                            if (servInfoDoc.simSpeedLog[i] !== undefined) {
-                                // If day and month match targets, add data to array and remove entry
-                                dataToAvg.push(parseFloat(servInfoDoc.simSpeedLog[i].simSpeed))
-                                lastDate = new Date(parseInt(servInfoDoc.simSpeedLog[i].timestamp)).getTime();
-                                console.log(lastDate)
-                                servInfoDoc.simSpeedLog[i].remove();
-                                i - 1
-                            }
-                        }
-                    }
-                    let sum = 0;
-                    for (let i = 0; i < dataToAvg.length; i++) {
-                        sum += dataToAvg[i]
-                    }
-                    if (sum === 0) {
-                        avg = 0;
-                    } else {
-                        avg = Math.round(((sum / dataToAvg.length) * 100)) / 100
-                    }
-
-                    servInfoDoc.hourlySimSpeed.push({
-                        avgSimSpeed: avg,
-                        timestamp: lastDate
-                    })
-                }*/
             }
 
             servInfoDoc.game = servInfo.Game;
@@ -231,27 +153,17 @@ module.exports = async (guildID, config, settings) => {
             servInfoDoc.lastUpdated = current_time;
 
 
-            // Fix data stuff
-            /*servInfoDoc.hourlyPopulation.forEach(entry => {
-                for (let i = 0; servInfoDoc.hourlyPopulation.length; i++) {
-                    if (servInfoDoc.hourlyPopulation[i] !== undefined) {
-                        console.log(parseInt(entry.timestamp) - parseInt(servInfoDoc.hourlyPopulation[i].timestamp) < (3600 * 2) &&  parseInt(entry.timestamp) - parseInt(servInfoDoc.hourlyPopulation[i].timestamp) > (3600 * -2000))
-                        console.log(parseInt(entry.timestamp) - parseInt(servInfoDoc.hourlyPopulation[i].timestamp))
-                        if (parseInt(entry.timestamp) - parseInt(servInfoDoc.hourlyPopulation[i].timestamp) < (3600 * 2) && entry !== servInfoDoc.hourlyPopulation[i]) {
-                            entry.remove();
-                        }
-                    }
+            let current_time = Date.now();
+            for(let i = 0; i < servInfoDoc.populationLog.length; i++) {
+                if(current_time - parseInt(servInfoDoc.populationLog[i].timestamp) < 1209600000) {
+                    servInfoDoc.populationLog[i].remove()
                 }
-            })
-            servInfoDoc.hourlySimSpeed.forEach(entry => {
-                for (let i = 0; servInfoDoc.hourlySimSpeed.length; i++) {
-                    if (servInfoDoc.hourlySimSpeed[i] !== undefined) {
-                        if (parseInt(entry.timestamp) - parseInt(servInfoDoc.hourlySimSpeed[i].timestamp) < (3600 * 2) && entry !== servInfoDoc.hourlySimSpeed[i]) {
-                            entry.remove();
-                        }
-                    }
+            }
+            for(let i = 0; i < servInfoDoc.simSpeedLog.length; i++) {
+                if(current_time - parseInt(servInfoDoc.simSpeedLog[i].timestamp) < 1209600000) {
+                    servInfoDoc.simSpeedLog[i].remove()
                 }
-            })*/
+            }
             servInfoDoc.save();
         }
 
