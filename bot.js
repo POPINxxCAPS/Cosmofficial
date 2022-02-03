@@ -62,9 +62,12 @@ const activePlayerCounter = require('./cosmicOnly/activePlayerCounter')
 const spaceTicketEnforcer = require('./cosmicOnly/spaceTicketEnforcer')
 const cosmicCharts = require('./cosmicOnly/charts')
 const totalPlayTime = require('./cosmicOnly/totalPlayTime');
+const statusDocCleanup = require('./functions_misc/statusDocCleanup');
 
 
 client.on('ready', () => {
+  statusDocCleanup();
+
   memberCounter(client);
   botGuildCounter(client);
 
