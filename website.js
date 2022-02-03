@@ -1,6 +1,6 @@
 const Express = require('express');
 const mongoose = require('mongoose')
-const { mongoDBLogin } = require('./env/env');
+const mongoDBLogin = process.env.mongoDBLogin || require('./env/env').mongoDBLogin
 mongoose
   .connect(mongoDBLogin, {
     useNewUrlParser: true,
@@ -18,7 +18,7 @@ const app = Express();
 const port = process.env.PORT || 3000;
 
 app.get("/", (req, res) => {
-    res.send("Hello World")
+    res.send("Hello World") // Just sends a stupid message to the web homepage
 }) // Sends information
 
 app.use(Express.json()) // Allows website to use JSON data

@@ -152,19 +152,10 @@ module.exports = async (guildID, config, settings) => {
             servInfoDoc.worldName = servInfo.WorldName;
             servInfoDoc.lastUpdated = current_time;
 
-
-            let current_time = Date.now();
-            for(let i = 0; i < servInfoDoc.populationLog.length; i++) {
-                if(current_time - parseInt(servInfoDoc.populationLog[i].timestamp) < 1209600000) {
-                    servInfoDoc.populationLog[i].remove()
-                }
-            }
-            for(let i = 0; i < servInfoDoc.simSpeedLog.length; i++) {
-                if(current_time - parseInt(servInfoDoc.simSpeedLog[i].timestamp) < 1209600000) {
-                    servInfoDoc.simSpeedLog[i].remove()
-                }
-            }
-            servInfoDoc.save();
+            try {
+                servInfoDoc.save();
+            } catch(err) {}
+            
         }
 
     } else {

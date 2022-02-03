@@ -12,7 +12,7 @@ client.events = new discord.Collection();
 });
  
 // Start MongoDB setup
-const { mongoDBLogin } = require('./env/env');
+const mongoDBLogin = process.env.mongoDBLogin || require('./env/env').mongoDBLogin
 mongoose
   .connect(mongoDBLogin, {
     useNewUrlParser: true,

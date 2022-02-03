@@ -6,7 +6,7 @@ const floatingObjectModel = require('../models/floatingObjectSchema');
 const characterModel = require('../models/characterSchema');
 
 let loginUsername = "MarkussH";
-let apiKey = "1WT16v3gSnkSA9mDoIRe";
+let apiKey = process.env.plotlyAPIKey || require('../env/env').plotlyAPIKey
 let plotly = require('plotly')(loginUsername, apiKey);
 
 
