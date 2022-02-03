@@ -29,7 +29,7 @@ mongoose
  
 // Finish MongoDB setup
 // Start bot login
-const token = proccess.env.token || require('./env/env').token
+const token = process.env.token || require('./env/env').token
 client.login(token);
 // Finish bot login
 
