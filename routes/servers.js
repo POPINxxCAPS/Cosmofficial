@@ -17,7 +17,7 @@ router.get('/', async (req, res) => {
 })
 // Get one server
 router.get('/:serverName', getServer, (req, res) => {
-    res.send(res.server.serverName)
+    res.render("singleServer.ejs")
 })
 
 async function getServer(req, res, next) {
