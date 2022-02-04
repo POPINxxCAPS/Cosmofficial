@@ -76,16 +76,16 @@ router.get('/', async (req, res) => {
 // Login Page Handling
 router.get('/login', async (req, res) => {
     if (req.query.state !== undefined && req.query.code !== undefined && req.cookies['user-state'] !== undefined) {
-        if (req.query.state === req.cookies['user-state']) {
+        /*if (req.query.state === req.cookies['user-state']) {*/
             const userKey = await client.getAccess(req.query.code).catch(console.error);
             res.cookie('user-state', 'deleted', {
                 maxAge: -1
             });
             res.cookie('doaKey', userKey);
             res.redirect('/');
-        } else {
+        /*} else {
             res.send('States do not match. Nice try hackerman!');
-        }
+        }*/
     } else {
         console.log(req.query.state)
         console.log(req.query.code)
