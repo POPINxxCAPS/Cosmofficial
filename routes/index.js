@@ -32,14 +32,14 @@ router.get('/', async (req, res) => {
                     res.render('index', {
                         servers: servers,
                         authURL: "https://cosmofficial.herokuapp.com/",
-                        buttonOneName: "Home Page"
+                        buttonOneName: "Home Page",
                     })
                 }
             } else {
                 res.render('index', {
                     servers: servers,
                     authURL: "https://cosmofficial.herokuapp.com/",
-                    buttonOneName: "Home Page"
+                    buttonOneName: "Home Page",
                 });
             }
         } catch (err) { // If there is an error refreshing their token, show the default page with login button.
