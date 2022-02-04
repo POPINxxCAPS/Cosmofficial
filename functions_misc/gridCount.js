@@ -20,7 +20,9 @@ module.exports = async (guildID) => {
     };
 
     for(let i = 0; i < gridDocs.length; i++) {
-        if(NPCNames.includes(gridDocs[i].ownerDisplayName) === true) NPCs += 1;
+        if(NPCNames.includes(gridDocs[i].ownerDisplayName) === true) {
+            NPCs += 1;
+        }
         if(gridDocs[i].mass === 0) {
             stations += 1;
         } else {
