@@ -7,7 +7,7 @@ let redirectURL;
 if (process.env.oauthClientSecret === undefined) {
     redirectURL = "http://localhost:3000/login"
 } else {
-    redirectURL = "http://cosmofficial.herokuapp.com/login/"
+    redirectURL = "http://cosmofficial-website.herokuapp.com/login/"
 }
 client.setRedirect(redirectURL)
 

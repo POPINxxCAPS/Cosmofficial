@@ -55,6 +55,7 @@ router.get('/', async (req, res) => {
             authURL: client.auth.link,
             button1name: "Log-In"
         })
+        console.log(client.auth.link)
     }
 })
 
