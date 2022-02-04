@@ -22,15 +22,19 @@ const port = process.env.PORT || 3000;
 
 app.set('view engine', 'ejs')
 
-app.get("/", async (req, res) => {
+// Home Page Render
+const homeRouter = require('./routes');
+app.use('/', homeRouter);
+/*app.get("/", async (req, res) => {
     const statusDocs = await statusModel.find({});
-
     //res.send("Hello World") // Just sends a stupid message to the web homepage
-    res.render('index', { servers: statusDocs}) // Renders an EJS webpage - requires app.set above
-}) // Sends information
+    //res.render('index', { servers: statusDocs}) // Renders an EJS webpage - requires app.set above
+}) // Sends information */
+// Home Page Render End
 
 app.use(Express.json()) // Allows website to use JSON data
-app.listen(port, () => console.log('Website Online'))
+app.listen(port, () => console.log('Website Online')) // Just a verification message
 
+// Server Page Router / Render
 const serverRouter = require('./routes/servers.js')
 app.use('/servers', serverRouter) // Tells express to use the server router if this route is requested
