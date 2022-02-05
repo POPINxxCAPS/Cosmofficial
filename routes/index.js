@@ -5,9 +5,8 @@ const client = require("../oAuth");
 const statusModel = require('../models/statusSchema');
 
 router.use(cookies())
-module.exports = async (disClient) => {
-
 router.get('/', async (req, res) => {
+    const disClient = req.app.get("disClient");
     const servers = await statusModel.find({}); // Get all status documents (to get server names)
     if (servers.length === 0) return res.status(500).json({ // Return error if server documents fail to download
         message: err.message
@@ -99,4 +98,3 @@ router.get('/login', async (req, res) => {
 
 
 module.exports = router
-}
