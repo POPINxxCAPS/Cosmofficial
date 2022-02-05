@@ -23,31 +23,31 @@ router.get('/', async (req, res) => {
                 const newKey = await client.refreshToken(req.cookies['doaKey']);
                 keyValidity = await client.checkValidity(`${req.cookies['doaKey']}`);
                 if(keyValidity.expired === true) { // If token refresh failed, send them back to home page
-                    res.render('index', {
+                    await res.render('index', {
                         client: disClient,
                         createInvite: createInvite,
                         servers: servers,
                         authURL: client.auth.link,
                         buttonOneName: "Log-In"
-                    })
+                    }, { async: true })
                 } else {
                     res.cookie('doaKey', newKey);
-                    res.render('index', {
+                    await res.render('index', {
                         client: disClient,
                         createInvite: createInvite,
                         servers: servers,
                         authURL: "https://cosmofficial.herokuapp.com/",
                         buttonOneName: "Home Page",
-                    })
+                    }, { async: true })
                 }
             } else {
-                res.render('index', {
+                await res.render('index', {
                     client: disClient,
                     createInvite: createInvite,
                     servers: servers,
                     authURL: "https://cosmofficial.herokuapp.com/",
                     buttonOneName: "Home Page",
-                });
+                }, { async: true });
             }
         } catch (err) { // If there is an error refreshing their token, show the default page with login button.
             console.error(err);
@@ -59,13 +59,13 @@ router.get('/', async (req, res) => {
                 maxAge: -1
             });
             res.cookie('user-state', state);
-            res.render('index', {
+            await res.render('index', {
                 client: disClient,
                 createInvite: createInvite,
                 servers: servers,
                 authURL: client.auth.link,
                 buttonOneName: "Log-In"
-            })
+            }, { async: true })
         }
     } else { // If no old key stored in the cookies, show basic home page with login button
         const {
@@ -73,13 +73,13 @@ router.get('/', async (req, res) => {
             state
         } = client.auth;
         res.cookie('user-state', state);
-        res.render('index', {
+        await res.render('index', {
             client: disClient,
             createInvite: createInvite,
             servers: servers,
             authURL: client.auth.link,
             buttonOneName: "Log-In"
-        })
+        }, { async: true })
     }
 })
 
