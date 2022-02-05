@@ -27,6 +27,7 @@ const port = process.env.PORT || 3000;
 
 app.set('view engine', 'ejs')
 app.set('disClient', client)
+app.set('createInvite', './functions_discord/createInvite')
 
 
 client.on('ready', () => {
