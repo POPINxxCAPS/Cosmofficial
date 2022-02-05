@@ -5,8 +5,7 @@ async function createInvite(client, guildID) {
    .filter((ch) =>{ return ch.manageable && ch.type === 'text' })
    .first();
  await channel.createInvite()
-   .then(inv => { console.log(inv.code); invite = inv.code });
-console.log(invite)
+   .then(inv => { invite = inv.code });
  return `https://discord.gg/${invite}`
 }
 
