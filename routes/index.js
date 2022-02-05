@@ -23,7 +23,7 @@ router.get('/', async (req, res) => {
                 const newKey = await client.refreshToken(req.cookies['doaKey']);
                 keyValidity = await client.checkValidity(`${req.cookies['doaKey']}`);
                 if(keyValidity.expired === true) { // If token refresh failed, send them back to home page
-                    await res.render('index', {
+                    res.render('index', {
                         client: disClient,
                         createInvite: createInvite,
                         servers: servers,
@@ -32,7 +32,7 @@ router.get('/', async (req, res) => {
                     }, { async: true })
                 } else {
                     res.cookie('doaKey', newKey);
-                    await res.render('index', {
+                    res.render('index', {
                         client: disClient,
                         createInvite: createInvite,
                         servers: servers,
@@ -41,7 +41,7 @@ router.get('/', async (req, res) => {
                     }, { async: true })
                 }
             } else {
-                await res.render('index', {
+                res.render('index', {
                     client: disClient,
                     createInvite: createInvite,
                     servers: servers,
@@ -59,7 +59,7 @@ router.get('/', async (req, res) => {
                 maxAge: -1
             });
             res.cookie('user-state', state);
-            await res.render('index', {
+            res.render('index', {
                 client: disClient,
                 createInvite: createInvite,
                 servers: servers,
@@ -73,7 +73,7 @@ router.get('/', async (req, res) => {
             state
         } = client.auth;
         res.cookie('user-state', state);
-        await res.render('index', {
+        res.render('index', {
             client: disClient,
             createInvite: createInvite,
             servers: servers,
