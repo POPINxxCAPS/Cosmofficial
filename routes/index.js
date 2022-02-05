@@ -99,5 +99,5 @@ router.get('/login', async (req, res) => {
 // User Page Router
 
 
-return router
+module.exports = router
 }
