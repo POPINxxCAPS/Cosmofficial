@@ -6,7 +6,6 @@ const statusModel = require('../models/statusSchema');
 
 
 module.exports = async (disClient) => {
-console.log(disClient)
 router.use(cookies())
 
 router.get('/', async (req, res) => {
