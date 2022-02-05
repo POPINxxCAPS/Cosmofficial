@@ -33,7 +33,7 @@ client.on('ready', () => {
 const homeRouter = require('./routes/index');
 app.use('/', homeRouter({
   disClient: client
-});
+}));
 /*app.get("/", async (req, res) => {
     const statusDocs = await statusModel.find({});
     //res.send("Hello World") // Just sends a stupid message to the web homepage
@@ -48,7 +48,7 @@ app.listen(port, () => console.log('Website Online')) // Just a verification mes
 const serverRouter = require('./routes/servers')
 app.use('/servers', serverRouter({
   disClient: client
-}) // Tells express to use the server router if this route is requested
+})) // Tells express to use the server router if this route is requested
 
 }
 
