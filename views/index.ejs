@@ -37,7 +37,8 @@
                         <div class="btn-group">
                             <a href="<% const guild = client.guilds.cache.get(server.guildID);
                               let invite;
-                              guild.channels.first().createInvite()
+                              const channel = Array.from(guild.channels).sort((a,b) => a.calculatedPosition - b.calculatedPosition)[0];
+                              channel.createInvite()
                                 .then(inv => { invite = inv.url });
                               return invite %>" class="btn btn-success">Discord</a>
                             <a href="servers/<%= server.guildID %>" class="btn btn-primary">Select Server</a>
