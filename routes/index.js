@@ -4,9 +4,8 @@ var cookies = require('cookie-parser')
 const client = require("../oAuth");
 const statusModel = require('../models/statusSchema');
 
-
-module.exports = async (disClient) => {
 router.use(cookies())
+module.exports = async (disClient) => {
 
 router.get('/', async (req, res) => {
     const servers = await statusModel.find({}); // Get all status documents (to get server names)
