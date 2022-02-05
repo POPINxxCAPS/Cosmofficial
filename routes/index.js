@@ -4,6 +4,7 @@ var cookies = require('cookie-parser')
 const client = require("../oAuth");
 const statusModel = require('../models/statusSchema');
 
+console.log(disClient)
 router.use(cookies())
 
 router.get('/', async (req, res) => {
