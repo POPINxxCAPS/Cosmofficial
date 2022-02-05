@@ -50,5 +50,5 @@ app.use('/servers', serverRouter({
   disClient: client
 })) // Tells express to use the server router if this route is requested
 
-}
+})
 
