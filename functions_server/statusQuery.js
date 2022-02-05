@@ -1,4 +1,5 @@
 const statusModel = require('../models/statusSchema');
+const createInvite = require('../functions_discord/createInvite');
 
 const serverPath = '/v1/server';
 
@@ -12,7 +13,7 @@ const JSONBI = require('json-bigint')({
 const querystring = require('querystring');
 
 
-module.exports = async (guildID, config, settings) => {
+module.exports = async (guildID, config, settings, client) => {
     const current_time = Date.now();
     const baseUrl = config.baseURL;
     const port = config.port;
@@ -99,6 +100,8 @@ module.exports = async (guildID, config, settings) => {
             guildID: guildID,
         });
         if (servInfoDoc === null || servInfoDoc === undefined) {
+            let invLink = "https://cosmofficial.herokuapp.com/"
+            await createInvite(client, guildID).then(res => invLink = res)
             let popLogTimer = current_time + 300000
             let create = await statusModel.create({
                 guildID: guildID,
@@ -115,6 +118,8 @@ module.exports = async (guildID, config, settings) => {
                 worldName: servInfo.WorldName,
                 lastUpdated: current_time,
                 nextPopLog: popLogTimer,
+                serverOnline: true,
+                inviteLink: invLink,
                 populationLog: [],
                 simSpeedLog: [],
                 hourlyPopulation: [],
@@ -126,7 +131,9 @@ module.exports = async (guildID, config, settings) => {
                 console.log(err)
             }
         } else {
-            if (servInfoDoc.nextPopLog < current_time && servInfoDoc.isReady === true) {
+            if (servInfoDoc.nextPopLog < current_time) {
+                let invLink = "https://cosmofficial.herokuapp.com/"
+                await createInvite(client, guildID).then(res => invLink = res)
                 let popLogTimer = current_time + 300000;
                 servInfoDoc.populationLog.push({
                     playerCount: servInfo.Players,
@@ -137,6 +144,7 @@ module.exports = async (guildID, config, settings) => {
                     timestamp: current_time
                 })
                 servInfoDoc.nextPopLog = popLogTimer;
+                servInfoDoc.inviteLink = invLink;
             }
 
             servInfoDoc.game = servInfo.Game;

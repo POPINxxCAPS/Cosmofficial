@@ -6,7 +6,7 @@ const statusModel = require('../models/statusSchema');
 
 router.use(cookies())
 router.get('/', async (req, res) => {
-    const disClient = req.app.get("disClient");
+    //const disClient = req.app.get("disClient"); Don't remember why I had this
     const createInvite = req.app.get("createInvite")
     const servers = await statusModel.find({}); // Get all status documents (to get server names)
     if (servers.length === 0) return res.status(500).json({ // Return error if server documents fail to download
@@ -23,34 +23,31 @@ router.get('/', async (req, res) => {
                 const newKey = await client.refreshToken(req.cookies['doaKey']);
                 keyValidity = await client.checkValidity(`${req.cookies['doaKey']}`);
                 if(keyValidity.expired === true) { // If token refresh failed, send them back to home page
-                    const html = await res.render('index', {
-                        client: disClient,
+                    res.render('index', {
                         createInvite: createInvite,
                         servers: servers,
                         authURL: client.auth.link,
                         buttonOneName: "Log-In"
-                    }, { async: true })
-                    res.send(html)
+                    })
+                    
                 } else {
                     res.cookie('doaKey', newKey);
-                    const html = await res.render('index', {
-                        client: disClient,
+                    res.render('index', {
                         createInvite: createInvite,
                         servers: servers,
                         authURL: "https://cosmofficial.herokuapp.com/",
                         buttonOneName: "Home Page",
-                    }, { async: true })
-                    res.send(html)
+                    })
+                    
                 }
             } else {
-                const html = await res.render('index', {
-                    client: disClient,
+                res.render('index', {
                     createInvite: createInvite,
                     servers: servers,
                     authURL: "https://cosmofficial.herokuapp.com/",
                     buttonOneName: "Home Page",
-                }, { async: true });
-                res.send(html)
+                });
+                
             }
         } catch (err) { // If there is an error refreshing their token, show the default page with login button.
             console.error(err);
@@ -62,14 +59,14 @@ router.get('/', async (req, res) => {
                 maxAge: -1
             });
             res.cookie('user-state', state);
-            const html = await res.render('index', {
+            res.render('index', {
                 client: disClient,
                 createInvite: createInvite,
                 servers: servers,
                 authURL: client.auth.link,
                 buttonOneName: "Log-In"
-            }, { async: true })
-            res.send(html)
+            })
+            
         }
     } else { // If no old key stored in the cookies, show basic home page with login button
         const {
@@ -77,14 +74,14 @@ router.get('/', async (req, res) => {
             state
         } = client.auth;
         res.cookie('user-state', state);
-        const html = await res.render('index', {
+        res.render('index', {
             client: disClient,
             createInvite: createInvite,
             servers: servers,
             authURL: client.auth.link,
             buttonOneName: "Log-In"
-        }, { async: true })
-        res.send(html)
+        })
+        
     }
 })
 

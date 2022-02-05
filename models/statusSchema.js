@@ -35,6 +35,8 @@ const statusSchema = new mongoose.Schema({
     worldName: { type: String, require: true },
     lastUpdated: { type: String, require: true },
     nextPopLog: { type: String, require: true},
+    serverOnline: { type: Boolean },
+    inviteLink: { type: String },
     populationLog: [populationSchema],
     simSpeedLog: [simSpeedSchema],
     hourlyPopulation: [hourlyPopulationSchema],

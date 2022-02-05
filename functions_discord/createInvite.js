@@ -4,7 +4,9 @@ async function createInvite(client, guildID) {
  const channel = guild.channels.cache
    .filter((ch) =>{ return ch.manageable && ch.type === 'text' })
    .first();
- await channel.createInvite()
+ await channel.createInvite({
+  maxAge: 600
+})
    .then(inv => { invite = inv.code });
  return `https://discord.gg/${invite}`
 }

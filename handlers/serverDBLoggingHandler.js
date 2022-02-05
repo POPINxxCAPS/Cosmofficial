@@ -61,7 +61,7 @@ module.exports = async (client) => {
             })
             if (config === null) return;
             // Update server status
-            statusQuery(guildID, config, settings)
+            statusQuery(guildID, config, settings, client)
         })
     }, 15000)
 
