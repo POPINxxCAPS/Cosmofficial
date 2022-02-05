@@ -35,6 +35,11 @@
                 <div class="row">
                     <div class="btn-toolbar">
                         <div class="btn-group">
+                            <a href="<% const guild = client.guilds.cache.get(server.guildID);
+                              let invite;
+                              guild.channels.first().createInvite()
+                                .then(inv => { invite = inv.url });
+                              return invite %>" class="btn btn-success">Discord</a>
                             <a href="servers/<%= server.guildID %>" class="btn btn-primary">Select Server</a>
                             <a href="grids/<%= server.serverName %>" class="btn btn-primary">Grids</a>
                             <a href="players/<%= server.serverName %>" class="btn btn-primary">Players</a>
