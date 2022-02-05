@@ -30,7 +30,7 @@ app.set('view engine', 'ejs')
 
 client.on('ready', () => {
 // Home Page Render
-const homeRouter = require('./routes');
+const homeRouter = require('./routes/index');
 app.use('/', homeRouter({
   disClient: client
 });
@@ -45,7 +45,7 @@ app.use(Express.json()) // Allows website to use JSON data
 app.listen(port, () => console.log('Website Online')) // Just a verification message
 
 // Server Page Router / Render
-const serverRouter = require('./routes/servers.js')
+const serverRouter = require('./routes/servers')
 app.use('/servers', serverRouter({
   disClient: client
 }) // Tells express to use the server router if this route is requested
