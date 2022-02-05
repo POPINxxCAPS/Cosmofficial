@@ -5,7 +5,8 @@
    .filter((ch) =>{ return ch.manageable && ch.type === 'text' })
    .first();
  channel.createInvite()
-   .then(inv => { invite = inv.code });
+   .then(inv => { console.log(inv); invite = inv.code });
+console.log(invite)
  return `https://discord.gg/${invite}`
 }
 
