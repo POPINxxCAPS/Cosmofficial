@@ -4,6 +4,11 @@ const mongoDBLogin = process.env.mongoDBLogin || require('./env/env').mongoDBLog
 const statusModel = require('./models/statusSchema');
 const ms = require('ms')
 
+const discord = require('discord.js');
+const client = new discord.Client()
+const token = process.env.token || require('./env/env').token
+client.login(token);
+
 mongoose
   .connect(mongoDBLogin, {
     useNewUrlParser: true,
@@ -22,6 +27,8 @@ const port = process.env.PORT || 3000;
 
 app.set('view engine', 'ejs')
 
+
+client.on('ready', () => {
 // Home Page Render
 const homeRouter = require('./routes');
 app.use('/', homeRouter);
@@ -37,4 +44,9 @@ app.listen(port, () => console.log('Website Online')) // Just a verification mes
 
 // Server Page Router / Render
 const serverRouter = require('./routes/servers.js')
-app.use('/servers', serverRouter) // Tells express to use the server router if this route is requested
+app.use('/servers', serverRouter({
+  client: client
+}) // Tells express to use the server router if this route is requested
+
+}
+
