@@ -31,9 +31,7 @@ app.set('view engine', 'ejs')
 client.on('ready', () => {
 // Home Page Render
 const homeRouter = require('./routes/index');
-app.use('/', homeRouter({
-  disClient: client
-}));
+app.use('/', homeRouter(client));
 /*app.get("/", async (req, res) => {
     const statusDocs = await statusModel.find({});
     //res.send("Hello World") // Just sends a stupid message to the web homepage
@@ -46,9 +44,7 @@ app.listen(port, () => console.log('Website Online')) // Just a verification mes
 
 // Server Page Router / Render
 const serverRouter = require('./routes/servers')
-app.use('/servers', serverRouter({
-  disClient: client
-})) // Tells express to use the server router if this route is requested
+app.use('/servers', serverRouter(client)) // Tells express to use the server router if this route is requested
 
 })
 
