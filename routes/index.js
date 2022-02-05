@@ -4,6 +4,8 @@ var cookies = require('cookie-parser')
 const client = require("../oAuth");
 const statusModel = require('../models/statusSchema');
 
+
+module.exports = async (disClient) => {
 console.log(disClient)
 router.use(cookies())
 
@@ -98,4 +100,5 @@ router.get('/login', async (req, res) => {
 // User Page Router
 
 
-module.exports = router
+return router
+}
