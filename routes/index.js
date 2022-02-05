@@ -23,6 +23,7 @@ router.get('/', async (req, res) => {
                 keyValidity = await client.checkValidity(`${req.cookies['doaKey']}`);
                 if(keyValidity.expired === true) { // If token refresh failed, send them back to home page
                     res.render('index', {
+                        client: disClient,
                         servers: servers,
                         authURL: client.auth.link,
                         buttonOneName: "Log-In"
@@ -30,6 +31,7 @@ router.get('/', async (req, res) => {
                 } else {
                     res.cookie('doaKey', newKey);
                     res.render('index', {
+                        client: disClient,
                         servers: servers,
                         authURL: "https://cosmofficial.herokuapp.com/",
                         buttonOneName: "Home Page",
@@ -37,6 +39,7 @@ router.get('/', async (req, res) => {
                 }
             } else {
                 res.render('index', {
+                    client: disClient,
                     servers: servers,
                     authURL: "https://cosmofficial.herokuapp.com/",
                     buttonOneName: "Home Page",
@@ -53,6 +56,7 @@ router.get('/', async (req, res) => {
             });
             res.cookie('user-state', state);
             res.render('index', {
+                client: disClient,
                 servers: servers,
                 authURL: client.auth.link,
                 buttonOneName: "Log-In"
@@ -65,6 +69,7 @@ router.get('/', async (req, res) => {
         } = client.auth;
         res.cookie('user-state', state);
         res.render('index', {
+            client: disClient,
             servers: servers,
             authURL: client.auth.link,
             buttonOneName: "Log-In"
