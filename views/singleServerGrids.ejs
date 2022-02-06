@@ -20,42 +20,8 @@
             </div>
         </div>
     </div>
-    <div class="container">
-        <div class="row">
-            <% for(let i = 0; i < grids.length; i+=2) { %>
-            <div class="col-sm-6 ml-0">
-                <div class="card mt-4 ml-0">
-                    <div class="card-body">
-                        <h4 class="card-title"><%= grids[i].displayName %></h4>
-                        <div class="card-subtitle text-muted mb-2">
-                            <% if (grids[i].mass === 0) { %>
-                            Type: Station
-                            <% } else { %>
-                            Type: Ship
-                            <% } %>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <% i += 1; %>
-            <div class="col-sm-6">
-                <div class="card mt-4">
-                    <div class="card-body">
-                        <h4 class="card-title"><%= grids[i].displayName %></h4>
-                        <div class="card-subtitle text-muted mb-2">
-                            <% if (grids[i].mass === 0) { %>
-                            Type: Station
-                            <% } else { %>
-                            Type: Ship
-                            <% } %>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="w-100"></div>
-            <% i -= 1; } %>
-        </div>
-    </div>
+    <%- include("./partials/grids/_fourColumnContainer", { grids: grids }) %>
+
 </body>
 
 <%- include("./partials/_footer") %>

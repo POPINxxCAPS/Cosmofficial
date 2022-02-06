@@ -20,60 +20,7 @@
             </div>
         </div>
     </div>
-    <div class="container">
-        <div class="row">
-            <% for(let i = 0; i < users.length; i+=4) { %>
-            <div class="col-sm-3">
-                <div class="card mt-4 ml-0">
-                    <div class="card-body">
-                        <h4 class="card-title"><%= users[i].displayName %></h4>
-                        <div class="card-subtitle text-muted mb-2">Online: <%= `${users[i].online}` %></div>
-                        <div class="card-subtitle text-muted mb-2">Faction: <%= `[${users[i].factionTag}]  -  ${users[i].factionName}` %></div>
-                        <div class="card-subtitle text-muted mb-2">SteamID: <%= `${users[i].steamID}` %></div>
-                        <div class="card-subtitle text-muted mb-2">* Level: <%= `${users[i].promoteLevel}` %></div>
-                    </div>
-                </div>
-            </div>
-            <% i += 1; if (i > users.length) break %>
-            <div class="col-sm-3">
-                <div class="card mt-4">
-                    <div class="card-body">
-                        <h4 class="card-title"><%= users[i].displayName %></h4>
-                        <div class="card-subtitle text-muted mb-2">Online: <%= `${users[i].online}` %></div>
-                        <div class="card-subtitle text-muted mb-2">Faction: <%= `[${users[i].factionTag}]  -  ${users[i].factionName}` %></div>
-                        <div class="card-subtitle text-muted mb-2">SteamID: <%= `${users[i].steamID}` %></div>
-                        <div class="card-subtitle text-muted mb-2">* Level: <%= `${users[i].promoteLevel}` %></div>
-                    </div>
-                </div>
-            </div>
-            <% i += 1; if (i > users.length) break %>
-            <div class="col-sm-3">
-                <div class="card mt-4">
-                    <div class="card-body">
-                        <h4 class="card-title"><%= users[i].displayName %></h4>
-                        <div class="card-subtitle text-muted mb-2">Online: <%= `${users[i].online}` %></div>
-                        <div class="card-subtitle text-muted mb-2">Faction: <%= `[${users[i].factionTag}]  -  ${users[i].factionName}` %></div>
-                        <div class="card-subtitle text-muted mb-2">SteamID: <%= `${users[i].steamID}` %></div>
-                        <div class="card-subtitle text-muted mb-2">* Level: <%= `${users[i].promoteLevel}` %></div>
-                    </div>
-                </div>
-            </div>
-            <% i += 1; if (i > users.length) break %>
-            <div class="col-sm-3">
-                <div class="card mt-4">
-                    <div class="card-body">
-                        <h4 class="card-title"><%= users[i].displayName %></h4>
-                        <div class="card-subtitle text-muted mb-2">Online: <%= `${users[i].online}` %></div>
-                        <div class="card-subtitle text-muted mb-2">Faction: <%= `[${users[i].factionTag}]  -  ${users[i].factionName}` %></div>
-                        <div class="card-subtitle text-muted mb-2">SteamID: <%= `${users[i].steamID}` %></div>
-                        <div class="card-subtitle text-muted mb-2">* Level: <%= `${users[i].promoteLevel}` %></div>
-                    </div>
-                </div>
-            </div>
-            <div class="w-100"></div>
-            <% i -= 3; } %>
-        </div>
-    </div>
+    <%- include("./partials/users/_fourColumnContainer", { users: users }) %>
 </body>
 
 <%- include("./partials/_footer") %>
