@@ -4,11 +4,6 @@ var cookies = require('cookie-parser')
 const client = require("../oAuth");
 const statusModel = require('../models/statusSchema');
 
-function signOut(res) {
-    res.cookie('doaKey', 'deleted')
-    res.redirect('/')
-}
-
 router.use(cookies())
 router.get('/', async (req, res) => {
     //const disClient = req.app.get("disClient"); Don't remember why I had this
@@ -27,14 +22,12 @@ router.get('/', async (req, res) => {
                 keyValidity = await client.checkValidity(`${req.cookies['doaKey']}`);
                 if(keyValidity.expired === true) { // If token refresh failed, send them back to home page
                     res.render('index', {
-                        signOut: signOut(res),
                         servers: servers,
                         authURL: client.auth.link,
                     })
                 } else { // If token refresh succeeded
                     res.cookie('doaKey', newKey);
                     res.render('index', {
-                        signOut: signOut(res),
                         servers: servers,
                         authURL: "Logged-In",
                     })
@@ -42,7 +35,6 @@ router.get('/', async (req, res) => {
                 }
             } else { // If current key (in cookies) is valid
                 res.render('index', {
-                    signOut: signOut(res),
                     servers: servers,
                     authURL: "Logged-In",
                 });
@@ -59,7 +51,6 @@ router.get('/', async (req, res) => {
             });
             res.cookie('user-state', state);
             res.render('index', {
-                signOut: signOut(res),
                 servers: servers,
                 authURL: client.auth.link,
             })
@@ -72,7 +63,6 @@ router.get('/', async (req, res) => {
         } = client.auth;
         res.cookie('user-state', state);
         res.render('index', {
-            signOut: signOut(res),
             servers: servers,
             authURL: client.auth.link,
         })
@@ -99,6 +89,16 @@ router.get('/login', async (req, res) => {
         console.log(req.query.code)
         console.log(req.cookies['user-state'])
         res.send('Error: 502. Invalid login request.');
+    }
+});
+
+// Sign-Out Page Handling
+router.get('/signOut', async (req, res) => {
+    if (req.cookies['doaKey'] !== undefined && req.cookies['doaKey'] !== 'deleted') {
+            res.cookie('doaKey', 'deleted');
+            res.redirect('/');
+    } else {
+        res.send('Error: 502. Invalid sign-out request.');
     }
 });
 

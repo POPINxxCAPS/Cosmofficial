@@ -15,7 +15,7 @@
                             class="btn btn-primary">Bot Invite Link</a>
                         <a href="https://www.patreon.com/Cosmofficial" class="btn btn-secondary">Patreon</a>
                         <% if(authURL === "Logged-In") { %>
-                        <a class="btn btn-danger">Sign-Out</a>
+                        <a href="/signOut" class="btn btn-danger">Sign-Out</a>
                         <% } else { %>
                             <a href="<%= authURL %>" class="btn btn-success">Log-In</a>
                         <% } %>
@@ -38,7 +38,7 @@
                             <a href="<%= server.inviteLink %>" class="btn btn-success">Discord</a>
                             <a href="servers/<%= server.guildID %>" class="btn btn-primary">Select Server</a>
                             <a href="grids/<%= server.guildID %>" class="btn btn-primary">Grids</a>
-                            <a class="btn btn-primary">Players</a>
+                            <a href="grids/<%= server.guildID %>" class="btn btn-primary">Players</a>
                             <!-- <a href="factions/<%= server.serverName %>" class="btn btn-danger">Admin Area</a> -->
                         </div>
                     </div>
