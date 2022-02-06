@@ -2,25 +2,10 @@ const express = require('express');
 const router = express.Router();
 const statusModel = require('../models/statusSchema');
 const gridCount = require('../functions_misc/gridCount');
-
-// Get all servers - No longer needed, index.js now handles main route
-/*
-router.get('/', async (req, res) => {
-    try {
-        const servers = await statusModel.find({}); // Get all status documents (to get server names)
-        const serverNames = []
-        for(let i = 0; i < servers.length; i++) {
-            serverNames.push(servers[i].serverName)
-        }
-        res.json(serverNames)
-    } catch (err) {
-        res.status(500).json({ message: err.message })
-    }
-})*/
-
+const verifyKey = require('../functions_oAuth/verifyKey');
 
 // Get one server
-router.get('/:guildID', getGuildID, async (req, res) => {
+router.get('/:guildID', getGuildID, verifyKey, async (req, res) => {
     let count;
     await gridCount(req.params.guildID).then(result => { count = result });
 

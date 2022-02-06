@@ -25,7 +25,6 @@ router.get('/', async (req, res) => {
                         servers: servers,
                         authURL: client.auth.link,
                     })
-                    
                 } else { // If token refresh succeeded
                     res.cookie('doaKey', newKey);
                     res.render('index', {
