@@ -4,6 +4,11 @@ var cookies = require('cookie-parser')
 const client = require("../oAuth");
 const statusModel = require('../models/statusSchema');
 
+function signOut(res) {
+    res.cookie('doaKey', 'deleted')
+    res.redirect('/')
+}
+
 router.use(cookies())
 router.get('/', async (req, res) => {
     //const disClient = req.app.get("disClient"); Don't remember why I had this
@@ -14,7 +19,7 @@ router.get('/', async (req, res) => {
 
 
     // Check if user was previously logged in and attempt to refresh their oauth key
-    if (req.cookies['doaKey'] !== undefined) { // If there is already an old key in the cookies
+    if (req.cookies['doaKey'] !== undefined && req.cookies['doaKey'] !== 'deleted') { // If there is already an old key in the cookies
         try {
             let keyValidity = await client.checkValidity(`${req.cookies['doaKey']}`);
             if (keyValidity.expired === true) { // If token expired === true, refresh and change the login button to home-page button
@@ -22,12 +27,14 @@ router.get('/', async (req, res) => {
                 keyValidity = await client.checkValidity(`${req.cookies['doaKey']}`);
                 if(keyValidity.expired === true) { // If token refresh failed, send them back to home page
                     res.render('index', {
+                        signOut: signOut(res),
                         servers: servers,
                         authURL: client.auth.link,
                     })
                 } else { // If token refresh succeeded
                     res.cookie('doaKey', newKey);
                     res.render('index', {
+                        signOut: signOut(res),
                         servers: servers,
                         authURL: "Logged-In",
                     })
@@ -35,6 +42,7 @@ router.get('/', async (req, res) => {
                 }
             } else { // If current key (in cookies) is valid
                 res.render('index', {
+                    signOut: signOut(res),
                     servers: servers,
                     authURL: "Logged-In",
                 });
@@ -51,18 +59,20 @@ router.get('/', async (req, res) => {
             });
             res.cookie('user-state', state);
             res.render('index', {
+                signOut: signOut(res),
                 servers: servers,
                 authURL: client.auth.link,
             })
             
         }
-    } else { // If no old key stored in the cookies, show basic home page
+    } else { // If no old key (or there's a deleted "state") stored in the cookies, show basic home page
         const {
             link,
             state
         } = client.auth;
         res.cookie('user-state', state);
         res.render('index', {
+            signOut: signOut(res),
             servers: servers,
             authURL: client.auth.link,
         })

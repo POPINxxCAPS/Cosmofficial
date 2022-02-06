@@ -1,7 +1,7 @@
 const client = require('../oAuth');
 
 const verify = async (req, res, next) => {
-    if (req.cookies['doaKey'] !== undefined) {
+    if (req.cookies['doaKey'] !== undefined && req.cookies['doaKey'] !== 'deleted') {
         try {
             const validity = client.checkValidity(req.cookies['doaKey']);
             if (validity.expired) {

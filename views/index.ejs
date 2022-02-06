@@ -24,7 +24,6 @@
             </div>
         </div>
     </div>
-
     <div class="container">
         <% servers.forEach(server => { %>
         <div class="card mt-4">
@@ -39,7 +38,7 @@
                             <a href="<%= server.inviteLink %>" class="btn btn-success">Discord</a>
                             <a href="servers/<%= server.guildID %>" class="btn btn-primary">Select Server</a>
                             <a href="grids/<%= server.guildID %>" class="btn btn-primary">Grids</a>
-                            <a href="users/<%= server.guildID %>" class="btn btn-primary">Players</a>
+                            <a class="btn btn-primary">Players</a>
                             <!-- <a href="factions/<%= server.serverName %>" class="btn btn-danger">Admin Area</a> -->
                         </div>
                     </div>
@@ -49,7 +48,6 @@
         <% }) %>
     </div>
 </body>
-
 <%- include("./partials/_footer") %>
 
 </html>
