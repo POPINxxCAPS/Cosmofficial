@@ -1,4 +1,4 @@
-const client = require('../oauth');
+const client = require('../oAuth');
 
 const verify = async (req, res, next) => {
     if (req.cookies['doaKey'] !== undefined) {
