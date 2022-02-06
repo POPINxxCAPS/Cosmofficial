@@ -14,10 +14,9 @@ router.get('/', async (req, res) => {
 
 
     // Check if user was previously logged in and attempt to refresh their oauth key
-    if (req.cookies['doaKey'] !== undefined) {
+    if (req.cookies['doaKey'] !== undefined) { // If there is already an old key in the cookies
         try {
             let keyValidity = await client.checkValidity(`${req.cookies['doaKey']}`);
-            console.log(keyValidity)
             if (keyValidity.expired === true) { // If token expired === true, refresh and change the login button to home-page button
                 const newKey = await client.refreshToken(req.cookies['doaKey']);
                 keyValidity = await client.checkValidity(`${req.cookies['doaKey']}`);
@@ -25,27 +24,24 @@ router.get('/', async (req, res) => {
                     res.render('index', {
                         servers: servers,
                         authURL: client.auth.link,
-                        buttonOneName: "Log-In"
                     })
                     
-                } else {
+                } else { // If token refresh succeeded
                     res.cookie('doaKey', newKey);
                     res.render('index', {
                         servers: servers,
-                        authURL: "https://cosmofficial.herokuapp.com/",
-                        buttonOneName: "Home Page",
+                        authURL: "Logged-In",
                     })
                     
                 }
-            } else {
+            } else { // If current key (in cookies) is valid
                 res.render('index', {
                     servers: servers,
-                    authURL: "https://cosmofficial.herokuapp.com/",
-                    buttonOneName: "Home Page",
+                    authURL: "Logged-In",
                 });
                 
             }
-        } catch (err) { // If there is an error refreshing their token, show the default page with login button.
+        } catch (err) { // If there is an error refreshing their token, show the home page
             console.error(err);
             const {
                 link,
@@ -56,27 +52,23 @@ router.get('/', async (req, res) => {
             });
             res.cookie('user-state', state);
             res.render('index', {
-                client: disClient,
                 servers: servers,
                 authURL: client.auth.link,
-                buttonOneName: "Log-In"
             })
             
         }
-    } else { // If no old key stored in the cookies, show basic home page with login button
+    } else { // If no old key stored in the cookies, show basic home page
         const {
             link,
             state
         } = client.auth;
         res.cookie('user-state', state);
         res.render('index', {
-            client: disClient,
             servers: servers,
             authURL: client.auth.link,
-            buttonOneName: "Log-In"
         })
-        
     }
+    // Login Redirecting Complete
 })
 
 
@@ -100,8 +92,5 @@ router.get('/login', async (req, res) => {
         res.send('Error: 502. Invalid login request.');
     }
 });
-
-// User Page Router
-
 
 module.exports = router

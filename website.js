@@ -48,5 +48,8 @@ app.listen(port, () => console.log('Website Online')) // Just a verification mes
 const serverRouter = require('./routes/servers')
 app.use('/servers', serverRouter) // Tells express to use the server router if this route is requested
 
+const gridRouter = require('./routes/grids');
+app.use('/grids', gridRouter)
+
 })
 
