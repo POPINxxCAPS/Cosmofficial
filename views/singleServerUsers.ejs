@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<%- include("./partials/_header") %>
+
+
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col offset-md-1">
+                <div class="btn-toolbar">
+                    <div class="btn-group">
+                        <a href="https://cosmofficial.herokuapp.com/" class="btn btn-success">Home</a>
+                        <a href="https://discord.gg/BfFc8cfp3n" class="btn btn-info">Discord</a>
+                        <a href="https://discord.com/api/oauth2/authorize?client_id=845784381025157131&permissions=8&scope=bot"
+                            class="btn btn-primary">Invite Cosmofficial</a>
+                        <a href="https://www.patreon.com/Cosmofficial" class="btn btn-secondary">Patreon</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <% for(let i = 0; i < users.length; i+=4) { %>
+            <div class="col-sm-3">
+                <div class="card mt-4 ml-0">
+                    <div class="card-body">
+                        <h4 class="card-title"><%= users[i].displayName %></h4>
+                        <div class="card-subtitle text-muted mb-2">Online: <%= `${users[i].online}` %></div>
+                        <div class="card-subtitle text-muted mb-2">Faction: <%= `[${users[i].factionTag}]  -  ${users[i].factionName}` %></div>
+                        <div class="card-subtitle text-muted mb-2">SteamID: <%= `${users[i].steamID}` %></div>
+                        <div class="card-subtitle text-muted mb-2">* Level: <%= `${users[i].promoteLevel}` %></div>
+                    </div>
+                </div>
+            </div>
+            <% i += 1; if (i > users.length) break %>
+            <div class="col-sm-3">
+                <div class="card mt-4">
+                    <div class="card-body">
+                        <h4 class="card-title"><%= users[i].displayName %></h4>
+                        <div class="card-subtitle text-muted mb-2">Online: <%= `${users[i].online}` %></div>
+                        <div class="card-subtitle text-muted mb-2">Faction: <%= `[${users[i].factionTag}]  -  ${users[i].factionName}` %></div>
+                        <div class="card-subtitle text-muted mb-2">SteamID: <%= `${users[i].steamID}` %></div>
+                        <div class="card-subtitle text-muted mb-2">* Level: <%= `${users[i].promoteLevel}` %></div>
+                    </div>
+                </div>
+            </div>
+            <% i += 1; if (i > users.length) break %>
+            <div class="col-sm-3">
+                <div class="card mt-4">
+                    <div class="card-body">
+                        <h4 class="card-title"><%= users[i].displayName %></h4>
+                        <div class="card-subtitle text-muted mb-2">Online: <%= `${users[i].online}` %></div>
+                        <div class="card-subtitle text-muted mb-2">Faction: <%= `[${users[i].factionTag}]  -  ${users[i].factionName}` %></div>
+                        <div class="card-subtitle text-muted mb-2">SteamID: <%= `${users[i].steamID}` %></div>
+                        <div class="card-subtitle text-muted mb-2">* Level: <%= `${users[i].promoteLevel}` %></div>
+                    </div>
+                </div>
+            </div>
+            <% i += 1; if (i > users.length) break %>
+            <div class="col-sm-3">
+                <div class="card mt-4">
+                    <div class="card-body">
+                        <h4 class="card-title"><%= users[i].displayName %></h4>
+                        <div class="card-subtitle text-muted mb-2">Online: <%= `${users[i].online}` %></div>
+                        <div class="card-subtitle text-muted mb-2">Faction: <%= `[${users[i].factionTag}]  -  ${users[i].factionName}` %></div>
+                        <div class="card-subtitle text-muted mb-2">SteamID: <%= `${users[i].steamID}` %></div>
+                        <div class="card-subtitle text-muted mb-2">* Level: <%= `${users[i].promoteLevel}` %></div>
+                    </div>
+                </div>
+            </div>
+            <div class="w-100"></div>
+            <% i -= 3; } %>
+        </div>
+    </div>
+</body>
+
+<%- include("./partials/_footer") %>
+
+</html>
