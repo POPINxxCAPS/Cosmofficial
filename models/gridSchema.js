@@ -1,4 +1,41 @@
 const mongoose = require("mongoose");
+
+// Nearby Schema
+const npcSchema = new mongoose.Schema({
+    displayName: { type: String, require: true },
+    ownerDisplayName: { type: String, require: true }, 
+    entityID: { type: String, require: true }, 
+})
+const friendlyGridSchema = new mongoose.Schema({
+    displayName: { type: String, require: true },
+    ownerDisplayName: { type: String, require: true }, 
+    entityID: { type: String, require: true },
+    factionTag: { type: String } 
+})
+const enemyGridSchema = new mongoose.Schema({
+    displayName: { type: String, require: true },
+    ownerDisplayName: { type: String, require: true }, 
+    entityID: { type: String, require: true },
+    factionTag: { type: String } 
+})
+const friendlyCharacterSchema = new mongoose.Schema({
+    displayName: { type: String, require: true },
+    entityID: { type: String, require: true },
+    factionTag: { type: String } 
+})
+const enemyCharacterSchema = new mongoose.Schema({
+    displayName: { type: String, require: true },
+    entityID: { type: String, require: true },
+    factionTag: { type: String } 
+})
+
+const nearbySchema = new mongoose.Schema({
+    npcs: [npcSchema],
+    friendlyGrids: [friendlyGridSchema],
+    enemyGrids: [enemyGridSchema],
+    friendlyCharacters: [friendlyCharacterSchema],
+    enemyCharacters: [enemyCharacterSchema]
+})
 // Main Schema
 const gridsSchema = new mongoose.Schema({
     guildID: { type: String, require: true, index: true },
@@ -20,7 +57,9 @@ const gridsSchema = new mongoose.Schema({
     factionTag: { type: String, index: true },
     queuedForDeletion: { type: Boolean },
     deletionTime: { type: String },
-    deletionReason: { type: String}
+    deletionReason: { type: String },
+    isNPC: { type: Boolean },
+    nearby: [nearbySchema]
 });
 // End Main Schema
 
