@@ -100,6 +100,7 @@ router.get('/signOut', async (req, res) => {
     } else {
         res.send('Error: 502. Invalid sign-out request.');
     }
+    
 });
 
 module.exports = router
