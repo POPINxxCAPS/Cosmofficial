@@ -1,0 +1,26 @@
+<div class="card mt-2">
+    <div class="card-body">
+        <h4 class="card-title"><%= grid.displayName %></h4>
+        <div class="row justify-content-center">
+            <div class="col-sm-8">
+                <div class="card-subtitle text-muted mb-2"><%= `Owner: ${grid.ownerDisplayName}` %></div>
+                <div class="card-subtitle text-muted mb-2"><%= `Faction: ${grid.factionTag}` %></div>
+                <% if (grid.mass === 0) { %>
+                <div class="card-subtitle text-muted mb-2">Type: Station</div>
+                <% } else { %>
+                <div class="card-subtitle text-muted mb-2">Type: Ship</div>
+                <div class="card-subtitle text-muted mb-2"><%= `Mass: ${grid.mass}` %></div>
+                <% } %>
+                <div class="card-subtitle text-muted mb-2"><%= `Grid Size: ${grid.gridSize}` %></div>
+                <div class="card-subtitle text-muted mb-2"><%= `PCU: ${grid.PCU}` %></div>
+                <div class="card-subtitle text-muted mb-2"><%= `Block Count: ${grid.blocksCount}` %></div>
+                <div class="card-subtitle text-muted mb-2"><%= `Is Powered: ${grid.isPowered}` %></div>
+                <div class="card-subtitle text-muted mb-2"><%= `Velocity: ${grid.linearSpeed}` %></div>
+                <div class="card-subtitle text-muted mb-2"><%= `Entity ID: ${grid.entityID}` %></div>
+            </div>
+            <div class="col-sm-4"> <!-- For buttons later -->
+
+            </div>
+        </div>
+    </div>
+</div>

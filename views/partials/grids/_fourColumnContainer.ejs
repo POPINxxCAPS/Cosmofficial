@@ -1,0 +1,22 @@
+<div class="container">
+    <div class="row">
+        <% for(let i = 0; i < grids.length; i+=4) { %>
+        <div class="col-sm-3">
+            <%- include("./_singleGrid", { grid: grids[i] }) %>
+        </div>
+        <% i += 1; if (grids[i] === undefined) break %>
+        <div class="col-sm-3">
+            <%- include("./_singleGrid", { grid: grids[i] }) %>
+        </div>
+        <% i += 1; if (grids[i] === undefined) break %>
+        <div class="col-sm-3">
+            <%- include("./_singleGrid", { grid: grids[i] }) %>
+        </div>
+        <% i += 1; if (grids[i] === undefined) break %>
+        <div class="col-sm-3">
+            <%- include("./_singleGrid", { grid: grids[i] }) %>
+        </div>
+        <div class="w-100"></div>
+        <% i -= 3; } %>
+    </div>
+</div>
