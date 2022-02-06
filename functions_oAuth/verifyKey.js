@@ -15,7 +15,7 @@ const verify = async (req, res, next) => {
             });
             res.redirect('/');
         }
-    };
+    } else next();
 }
 
 module.exports = verify;
