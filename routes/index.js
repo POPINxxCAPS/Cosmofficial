@@ -7,7 +7,6 @@ const statusModel = require('../models/statusSchema');
 router.use(cookies())
 router.get('/', async (req, res) => {
     //const disClient = req.app.get("disClient"); Don't remember why I had this
-    const createInvite = req.app.get("createInvite")
     const servers = await statusModel.find({}); // Get all status documents (to get server names)
     if (servers.length === 0) return res.status(500).json({ // Return error if server documents fail to download
         message: err.message
@@ -24,7 +23,6 @@ router.get('/', async (req, res) => {
                 keyValidity = await client.checkValidity(`${req.cookies['doaKey']}`);
                 if(keyValidity.expired === true) { // If token refresh failed, send them back to home page
                     res.render('index', {
-                        createInvite: createInvite,
                         servers: servers,
                         authURL: client.auth.link,
                         buttonOneName: "Log-In"
@@ -33,7 +31,6 @@ router.get('/', async (req, res) => {
                 } else {
                     res.cookie('doaKey', newKey);
                     res.render('index', {
-                        createInvite: createInvite,
                         servers: servers,
                         authURL: "https://cosmofficial.herokuapp.com/",
                         buttonOneName: "Home Page",
@@ -42,7 +39,6 @@ router.get('/', async (req, res) => {
                 }
             } else {
                 res.render('index', {
-                    createInvite: createInvite,
                     servers: servers,
                     authURL: "https://cosmofficial.herokuapp.com/",
                     buttonOneName: "Home Page",
@@ -61,7 +57,6 @@ router.get('/', async (req, res) => {
             res.cookie('user-state', state);
             res.render('index', {
                 client: disClient,
-                createInvite: createInvite,
                 servers: servers,
                 authURL: client.auth.link,
                 buttonOneName: "Log-In"
@@ -76,7 +71,6 @@ router.get('/', async (req, res) => {
         res.cookie('user-state', state);
         res.render('index', {
             client: disClient,
-            createInvite: createInvite,
             servers: servers,
             authURL: client.auth.link,
             buttonOneName: "Log-In"

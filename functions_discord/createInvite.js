@@ -5,7 +5,8 @@ async function createInvite(client, guildID) {
    .filter((ch) =>{ return ch.manageable && ch.type === 'text' })
    .first();
  await channel.createInvite({
-  maxAge: 600
+  maxAge: 600,
+  maxUses: 5
 })
    .then(inv => { invite = inv.code });
  return `https://discord.gg/${invite}`
