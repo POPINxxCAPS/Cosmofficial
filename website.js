@@ -52,8 +52,13 @@ app.use('/servers', serverRouter) // Tells express to use the server router if t
 const gridRouter = require('./routes/grids');
 app.use('/grids', gridRouter)
 
-// Grid Page Router / Render
+// User Page Router / Render
 const userRouter = require('./routes/users');
 app.use('/users', userRouter)
+
+
+// Profile Page Router / Render
+const profileRouter = require('./routes/profile');
+app.use('/profile', profileRouter)
 })
 

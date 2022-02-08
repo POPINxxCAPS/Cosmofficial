@@ -24,13 +24,9 @@ router.get('/', async (req, res) => {
 router.get('/:guildID', getGuildID, async (req, res) => {
     let count;
     await gridCount(req.params.guildID).then(result => { count = result });
-
-    const server = await statusModel.findOne({
-        guildID: req.params.guildID
-    })
     const grids = await getGrids(req.params.guildID)
     const data = {
-        server: server,
+        server: res.server,
         count: count,
         grids: grids,
     }
