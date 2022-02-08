@@ -4,7 +4,6 @@ const verify = async (req, res, next) => {
     if (req.cookies['doaKey'] !== undefined && req.cookies['doaKey'] !== 'deleted') {
         try {
             const validity = await client.checkValidity(req.cookies['doaKey']);
-            console.log(validity)
             if (validity.expired === true) {
                 const newKey = await client.refreshToken(req.cookies['doaKey']);
                 res.cookie('doaKey', newKey);

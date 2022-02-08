@@ -9,18 +9,23 @@ const getUser = require('../functions_oAuth/getUser');
 router.get('/:username', verifyKey, async (req, res) => {
     const disClient = req.app.get("disClient");
     // If not logged in, return invalid request
-    if(req.cookies['doaKey'] === undefined || req.cookies['doaKey'] === 'deleted') {
-        return res.status(401).json({ message: 'You must log in to view this page'})
+    if (req.cookies['doaKey'] === undefined || req.cookies['doaKey'] === 'deleted') {
+        return res.status(401).json({
+            message: 'You must log in to view this page'
+        })
     }
 
     try {
-        let user = getUser(req.cookies['doaKey'])
-        console.log(user)
-    } catch(err) {
+        let user = await getUser(req.cookies['doaKey'])
+        const getBotGuilds = require('../functions_oAuth/getBotGuilds');
+        let guilds = await getBotGuilds(req.cookies['doaKey'])
+    } catch (err) {
         console.log(err)
-        return res.status(400).json({ message: err })
+        return res.status(400).json({
+            message: err
+        })
     }
-    
+
     const data = {}
 
     res.render("profilePage.ejs", data)

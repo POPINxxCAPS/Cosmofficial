@@ -29,7 +29,10 @@ app.set('view engine', 'ejs')
 app.set('disClient', client)
 
 
-client.on('ready', () => {
+client.on('ready', async () => {
+// Testing area
+
+
 // Home Page Render
 const homeRouter = require('./routes/index');
 app.use('/', homeRouter);
