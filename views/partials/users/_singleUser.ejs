@@ -9,7 +9,7 @@
                 <div class="card-subtitle text-muted mb-2">* Level: <%= `${user.promoteLevel}` %></div>
         </div>
         <div class="col-sm-4">
-            <!-- For buttons later -->
+            <a href="/users/<%= server.guildID %>?username=<%= user.displayName %>" class="btn btn-primary">More Info</a>
         </div>
     </div>
 </div>
