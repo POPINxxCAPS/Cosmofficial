@@ -1,7 +1,8 @@
 const oauth = require("../oAuth")
 
-function getGuilds(access_token) {
-    oauth.getGuilds(access_token).then(console.log);
+async function getGuilds(access_token) {
+    const guilds = await oauth.getGuilds(access_token).then(console.log);
+    return guilds
 }
 
 module.exports = getGuilds

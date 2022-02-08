@@ -15,9 +15,10 @@
                             class="btn btn-primary">Bot Invite Link</a>
                         <a href="https://www.patreon.com/Cosmofficial" class="btn btn-secondary">Patreon</a>
                         <% if(authURL === "Logged-In") { %>
+                        <a href="/profile/<%= user._username %>" class="btn btn-success">Your Servers</a>
                         <a href="/signOut" class="btn btn-danger">Sign-Out</a>
                         <% } else { %>
-                            <a href="<%= authURL %>" class="btn btn-success">Log-In</a>
+                        <a href="<%= authURL %>" class="btn btn-success">Log-In</a>
                         <% } %>
                     </div>
                 </div>

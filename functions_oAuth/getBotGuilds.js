@@ -10,10 +10,11 @@ async function getGuilds(access_token) {
     let userGuilds = await oauth.getGuilds(access_token);
     client.guilds.cache.forEach(botGuild => {
         userGuilds.forEach((userGuild) => {
-            console.log(userGuild._id)
-            console.log(botGuild.id)
             if (userGuild._id === botGuild.id && userGuild !== undefined) {
-                mutualGuilds.push(botGuild)
+                mutualGuilds.push({
+                    botGuild: botGuild,
+                    userGuild: userGuild
+                })
             }
         })
     })

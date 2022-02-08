@@ -3,6 +3,7 @@ const router = express.Router();
 var cookies = require('cookie-parser')
 const client = require("../oAuth");
 const statusModel = require('../models/statusSchema');
+const getUser = require('../functions_oAuth/getUser');
 
 router.use(cookies())
 router.get('/', async (req, res) => { // Not using verifyKey middleware because this is the main login page
@@ -25,18 +26,23 @@ router.get('/', async (req, res) => { // Not using verifyKey middleware because 
                         authURL: client.auth.link,
                     })
                 } else { // If token refresh succeeded
+                    const user = await getUser(req.cookies['doaKey'])
                     res.cookie('doaKey', newKey);
                     res.render('index', {
                         servers: servers,
                         authURL: "Logged-In",
+                        user: user
                     })
                     
                 }
             } else { // If current key (in cookies) is valid
+                const user = await getUser(req.cookies['doaKey'])
                 res.render('index', {
                     servers: servers,
                     authURL: "Logged-In",
+                    user: user
                 });
+                console.log(user)
                 
             }
         } catch (err) { // If there is an error refreshing their token, show the home page

@@ -1,7 +1,8 @@
 const oauth = require("../oAuth")
 
-function getUser(access_token) {
-    oauth.getUser(access_token).then(console.log);
+async function getUser(access_token) {
+    const user = await oauth.getUser(access_token);
+    return user;
 }
 
 module.exports = getUser
