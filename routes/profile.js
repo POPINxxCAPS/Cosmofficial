@@ -20,7 +20,6 @@ router.get('/:username', verifyKey, async (req, res) => {
     try {
         let user = await getUser(req.cookies['doaKey'])
         let guilds = await getBotGuilds(req.cookies['doaKey'])
-        console.log(guilds)
         const data = {
             guilds: guilds,
             user: user
