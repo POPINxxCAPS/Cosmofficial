@@ -1,0 +1,15 @@
+<div class="card mt-4">
+    <div class="card-body">
+        <h4 class="card-title"><%= user.displayName %></h4>
+        <div class="col-sm-8">
+            <div class="card-subtitle text-muted mb-2">Online: <%= `${user.online}` %></div>
+            <div class="card-subtitle text-muted mb-2">Faction:<%= `${user.factionName}` %></div>
+                <div class="card-subtitle text-muted mb-2">Faction Tag: <%= `${user.factionTag}` %></div>
+                <div class="card-subtitle text-muted mb-2">SteamID: <%= `${user.steamID}` %></div>
+                <div class="card-subtitle text-muted mb-2">* Level: <%= `${user.promoteLevel}` %></div>
+        </div>
+        <div class="col-sm-4">
+            <!-- For buttons later -->
+        </div>
+    </div>
+</div>
