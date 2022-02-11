@@ -60,9 +60,12 @@ app.use('/grids', gridRouter)
 const userRouter = require('./routes/users');
 app.use('/users', userRouter)
 
-
 // Profile Page Router / Render
 const profileRouter = require('./routes/profile');
 app.use('/profile', profileRouter)
+
+// Admin Page Router / Render
+const adminRouter = require('./routes/admin');
+app.use('/admin', adminRouter)
 })
 
