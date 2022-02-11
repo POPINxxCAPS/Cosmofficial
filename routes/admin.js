@@ -13,6 +13,7 @@ router.get('/:guildID', getGuildID, verifyKey, async (req, res) => {
     const user = await getUser(req.cookies['doaKey'])
     res.render("adminConfig.ejs", {
         user: user,
+        server: server,
     })
 })
 
