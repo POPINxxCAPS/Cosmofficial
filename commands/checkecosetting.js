@@ -69,7 +69,7 @@ let settingArray = [{
 
 
 
-
+// Trash noob code
 
 module.exports = {
     name: 'checkeconomysettings',
