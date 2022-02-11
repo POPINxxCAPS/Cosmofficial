@@ -5,7 +5,7 @@ module.exports = {
     name: 'checksettings',
     aliases: ['cs'],
     description: "View this discord's settings file",
-    permissions: ["ADMINISTRATOR"],
+    permissions: ["SEND_MESSAGES"],
     async execute(message, args, cmd, client, discord, mainGuild, guild) {
 
 
