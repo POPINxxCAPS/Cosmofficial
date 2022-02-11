@@ -1,6 +1,6 @@
 const playerEcoModel = require('../models/playerEcoSchema');
 const lockedEmbed = require('../functions_discord/lockedEmbed');
-const errorEmbed = require('../functions_discord/cooldownEmbed');
+const cooldownEmbed = require('../functions_discord/cooldownEmbed');
 const cooldownFunction = require('../functions_db/cooldownFunction');
 const economyModel = require('../models/economySettingSchema');
 const errorEmbed = require('../functions_discord/errorEmbed');
