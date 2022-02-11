@@ -92,16 +92,15 @@ client.on('ready', () => {
 
   // Bot activity messages
   const statusModel = require('./models/statusSchema');
+  let placeholder = 0;
   setInterval(async () => {
-    let placeholder = 0;
     if (placeholder === 0) {
-      placeholder = 1;
       let grids = await gridModel.find();
       client.user.setActivity(`${grids.length} Grids`, ({
         type: "WATCHING"
       }))
+      placeholder = 1;
     } else if (placeholder === 1) {
-      placeholder = 0;
       const statusDocs = await statusModel.find({})
       let servers = 0;
       statusDocs.forEach(doc => {
@@ -112,8 +111,9 @@ client.on('ready', () => {
       client.user.setActivity(`${servers} Servers`, ({
         type: "WATCHING"
       }))
+      placeholder = 0;
     }
-  }, 300000)
+  }, 180000)
 
 
 
