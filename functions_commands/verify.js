@@ -3,8 +3,12 @@ const verificationModel = require('../models/verificationSchema');
 const errorEmbed = require('../functions_discord/errorEmbed');
 const cooldownFunction = require('../functions_db/cooldownFunction');
 const cooldownEmbed = require('../functions_discord/cooldownEmbed');
+const client = new discord.Client();
+const token = process.env.token || require('../env/env').token
 
 module.exports = async (username, userID, guildID, channelID) => {
+    await client.login(token);
+    
     let cancel = false;
     let messageString = '';
     let channel;
