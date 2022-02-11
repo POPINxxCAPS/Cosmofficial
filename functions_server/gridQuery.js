@@ -20,6 +20,8 @@ const sessionPath = '/v1/session';
 const gridPath = `${sessionPath}/grids`;
 const serverPath = '/v1/server';
 
+// Pyramid of HELL noob code lmfao
+
 
 const axios = require('axios');
 const crypto = require('crypto');

@@ -23,7 +23,7 @@ module.exports = async (client, discord) => {
             if (guildOwner.roles.cache.has('883534965650882570') || guildOwner.roles.cache.has('883535930630213653')) {
                 patron = true;
             }
-            if (patron !== true) return;
+            // if (patron !== true) return; // Disabled, server log feature is meant to be free
             let settings = await serverLogSettingModel.findOne({
                 guildID: guildID
             });

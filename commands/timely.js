@@ -82,7 +82,7 @@ module.exports = {
 
         const cooldown = await cooldownFunction.cd('timely', cooldownAmount, message);
         if (cooldown !== undefined) {
-            return cooldownEmbed(message.channel, discord, cooldown, 'Timely', message.author.id)
+            return cooldownEmbed(message.channel, cooldown, 'Timely', message.author.id)
         }
         playerEco.currency = parseInt(playerEco.currency) + rewardAmount;
         playerEco.save();

@@ -1,6 +1,6 @@
 const playerEcoModel = require('../models/playerEcoSchema');
 const lockedEmbed = require('../functions_discord/lockedEmbed');
-const cooldownEmbed = require('../functions_discord/cooldownEmbed');
+const errorEmbed = require('../functions_discord/cooldownEmbed');
 const cooldownFunction = require('../functions_db/cooldownFunction');
 const economyModel = require('../models/economySettingSchema');
 const errorEmbed = require('../functions_discord/errorEmbed');
@@ -74,7 +74,7 @@ module.exports = {
         
         cdInSec = cdInSec * cooldownModifier;
         const cooldown = await cooldownFunction.cd('rob', cdInSec, message)
-        if(cooldown !== undefined) return cooldownEmbed(message.channel, discord, cooldown, 'Rob', message.author.id);
+        if(cooldown !== undefined) return cooldownEmbed(message.channel, cooldown, 'Rob', message.author.id);
         // Set reward Amount
         let robPerc = 0.1 + bonusRobPercent;
 

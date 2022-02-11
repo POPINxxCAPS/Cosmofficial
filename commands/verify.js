@@ -2,8 +2,6 @@ const remoteConfigModel = require('../models/remoteConfigSchema');
 const verificationModel = require('../models/verificationSchema');
 const playerModel = require('../models/playerSchema');
 const errorEmbed = require('../functions_discord/errorEmbed');
-const cooldownEmbed = require('../functions_discord/cooldownEmbed');
-const cooldownFunction = require('../functions_db/cooldownFunction');
 const verify = require('../functions_commands/verify');
 
 // Noob code redo time
