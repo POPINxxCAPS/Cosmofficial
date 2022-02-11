@@ -1,6 +1,7 @@
 const serverLogModel = require('../models/serverLogSchema');
 const serverLogSettingModel = require('../models/serverLogSettingSchema');
 const discordServerSettingsModel = require('../models/discordServerSettngsSchema');
+// More noob pyramid code
 
 module.exports = async (client, discord) => {
     let guildIDs = await client.guilds.cache.map(guild => guild.id);

@@ -7,6 +7,8 @@ const cooldownEmbed = require('../functions_discord/cooldownEmbed');
 module.exports = async (username, userID, guildID, channelID) => {
     let cancel = false;
     let messageString = '';
+    let channel;
+    if(channelID !== undefined) channel = await client.channels.cache.get(channelID);
 
     const playerDoc = await playerModel.findOne({
         username: username,
