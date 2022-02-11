@@ -18,6 +18,6 @@ module.exports = {
             search = search + ' ' + args[v];
         }
 
-        await verify(search, message.author.id, message.guild.id, message.channel.id);
+        await verify(search, message.author.id, message.channel);
     }
 }

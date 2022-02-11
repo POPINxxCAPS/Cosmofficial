@@ -3,23 +3,20 @@ const verificationModel = require('../models/verificationSchema');
 const errorEmbed = require('../functions_discord/errorEmbed');
 const cooldownFunction = require('../functions_db/cooldownFunction');
 const cooldownEmbed = require('../functions_discord/cooldownEmbed');
-const client = new discord.Client();
-const token = process.env.token || require('../env/env').token
+const discord = require('discord.js')
 
-module.exports = async (username, userID, guildID, channelID) => {
-    await client.login(token);
-    
+module.exports = async (username, userID, channel) => {
     let cancel = false;
     let messageString = '';
-    let channel;
-    if(channelID !== undefined) channel = await client.channels.cache.get(channelID);
+
+    console.log(`Attempting to link ${userID} with ${username} using verify`)
 
     const playerDoc = await playerModel.findOne({
-        username: username,
+        displayName: username,
     })
     if (playerDoc === null) {
-        if(channelID !== undefined) {
-             errorEmbed(channelID, 'Username was not found in the database.\nHave you logged into a server running Cosmofficial?\nIf you are having trouble, use c!players while logged in to see the username reported by Space Engineers.');
+        if(channel !== undefined) {
+             errorEmbed(channel, 'Username was not found in the database.\nHave you logged into a server running Cosmofficial?\nIf you are having trouble, use c!players while logged in to see the username reported by Space Engineers.');
         }
         return null;
     }
@@ -29,8 +26,8 @@ module.exports = async (username, userID, guildID, channelID) => {
         username: username
     })
     if (verDoc !== null) {
-        if(channelID !== undefined) {
-            errorEmbed(channelID, `${username} is already registered to a user!`)
+        if(channel !== undefined) {
+            errorEmbed(channel, `${username} is already registered to a user!`)
         }
         return null;
     }
@@ -42,8 +39,8 @@ module.exports = async (username, userID, guildID, channelID) => {
     if (verDoc !== null) { // If user was already verified previously, set a cooldown and change their verified username
         const cooldown = await cooldownFunction.cd('development', 259200);
         if (cooldown !== undefined) {
-            if(channelID !== undefined) {
-                cooldownEmbed(channelID, cooldown, 'Timely', message.author.id)
+            if(channel !== undefined) {
+                cooldownEmbed(channel, cooldown, 'Timely', message.author.id)
             }
             return null;
         }
@@ -63,8 +60,8 @@ module.exports = async (username, userID, guildID, channelID) => {
 
 
 
-    if (channelID !== undefined && messageString !== '') {
+    if (channel !== undefined && messageString !== '') {
         const basicEmbed = require('../functions_discord/basicEmbed');
-        basicEmbed(channelID, 'Verification Manager', messageString);
+        basicEmbed(channel, 'Verification Manager', messageString);
     }
 }
