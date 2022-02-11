@@ -121,23 +121,26 @@ module.exports = async (guildID, config, settings) => {
             guildID: guildID,
             entityID: char.EntityId
         })
-        if (doc === null || doc === undefined && char.DisplayName !== '') {
-            await characterModel.create({
-                guildID: guildID,
-                name: char.DisplayName,
-                mass: char.Mass,
-                entityID: char.EntityId,
-                expirationTime: expiration_time,
-                x: char.Position.X,
-                y: char.Position.Y,
-                z: char.Position.Z
-            })
-            console.log(`${char.DisplayName} Spawned`)
-            await serverLogModel.create({
-                guildID: guildID,
-                category: 'character',
-                string: `${char.DisplayName} Spawned`
-            })
+        if (doc === null || doc === undefined) {
+            if (char.DisplayName !== '') {
+                console.log(`t${char.DisplayName}t`)
+                await characterModel.create({
+                    guildID: guildID,
+                    name: char.DisplayName,
+                    mass: char.Mass,
+                    entityID: char.EntityId,
+                    expirationTime: expiration_time,
+                    x: char.Position.X,
+                    y: char.Position.Y,
+                    z: char.Position.Z
+                })
+                console.log(`${char.DisplayName} Spawned`)
+                await serverLogModel.create({
+                    guildID: guildID,
+                    category: 'character',
+                    string: `${char.DisplayName} Spawned`
+                })
+            }
         } else {
             doc.mass = char.Mass,
                 doc.entityID = char.EntityId,
