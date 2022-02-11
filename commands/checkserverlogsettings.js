@@ -25,7 +25,7 @@ module.exports = {
         if (guildOwner.roles.cache.has('883535682553929779') || guildOwner.roles.cache.has('883535930630213653') || guildOwner.roles.cache.has('883534965650882570')) {
             patron = true;
         }
-        if(patron === false) return lockedEmbed(message.channel, discord);
+        // if(patron === false) return lockedEmbed(message.channel, discord); // Disabled, is meant to be free
 
         let settings = await serverLogSettingModel.findOne({
             guildID: guild.id
