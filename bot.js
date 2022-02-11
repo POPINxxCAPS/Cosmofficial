@@ -95,11 +95,13 @@ client.on('ready', () => {
   setInterval(async () => {
     let placeholder = 0;
     if (placeholder === 0) {
+      placeholder = 1;
       let grids = await gridModel.find();
       client.user.setActivity(`${grids.length} Grids`, ({
         type: "WATCHING"
       }))
     } else if (placeholder === 1) {
+      placeholder = 0;
       const statusDocs = await statusModel.find({})
       let servers = 0;
       statusDocs.forEach(doc => {

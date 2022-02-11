@@ -1,5 +1,6 @@
 const ms = require('ms');
-module.exports = async (channel, discord, cooldown, command, userID) => {
+const discord = require('discord.js')
+module.exports = async (channel, cooldown, command, userID) => {
     const embed = new discord.MessageEmbed()
         .setColor('#E02A6B')
         .setTitle('Cooldown Manager')
