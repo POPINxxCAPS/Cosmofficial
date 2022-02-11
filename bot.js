@@ -3,14 +3,14 @@ const mongoose = require('mongoose')
 const discord = require('discord.js');
 const client = new discord.Client();
 const prefix = 'a!';
- 
+
 client.commands = new discord.Collection();
 client.events = new discord.Collection();
- 
+
 ['command_handler', 'event_handler'].forEach(handler => {
   require(`./handlers/${handler}`)(client, discord);
 });
- 
+
 // Start MongoDB setup
 const mongoDBLogin = process.env.mongoDBLogin || require('./env/env').mongoDBLogin
 mongoose
@@ -25,8 +25,8 @@ mongoose
   .catch((err) => {
     console.log(err)
   })
- 
- 
+
+
 // Finish MongoDB setup
 // Start bot login
 const token = process.env.token || require('./env/env').token
@@ -89,11 +89,29 @@ client.on('ready', () => {
 
   setInterval(cooldownHandler, 15000);
 
-  
+
+  // Bot activity messages
+  const statusModel = require('./models/statusSchema');
   setInterval(async () => {
-    let grids = await gridModel.find();
-    client.user.setActivity(`${grids.length} Grids`, ({type: "WATCHING"}))
-  }, 180000)
+    let placeholder = 0;
+    if (placeholder === 0) {
+      let grids = await gridModel.find();
+      client.user.setActivity(`${grids.length} Grids`, ({
+        type: "WATCHING"
+      }))
+    } else if (placeholder === 1) {
+      const statusDocs = await statusModel.find({})
+      let servers = 0;
+      statusDocs.forEach(doc => {
+        if (doc.serverOnline === true) {
+          servers += 1;
+        }
+      })
+      client.user.setActivity(`${servers} Servers`, ({
+        type: "WATCHING"
+      }))
+    }
+  }, 300000)
 
 
 
