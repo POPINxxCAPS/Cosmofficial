@@ -21,7 +21,7 @@ module.exports = {
             guildID: message.guild.id,
         })
         if (ecoSettings === null) {
-            return errorEmbed(message.channel, discord, 'An admin must first setup economy with c!ces')
+            return errorEmbed(message.channel, 'An admin must first setup economy with c!ces')
         }
         let ticketString = '';
         let ticketDocs = await lotteryTicketModel.find({
@@ -44,7 +44,7 @@ module.exports = {
             }
             ticketString = `Unique Tickets: ${uniqueTickets.length}\nDuplicate Tickets: ${duplicateTickets}\nWin Chance: ${uniqueTickets.length * 0.1}%`
         }
-        if (ticketString.length > 1023) return errorEmbed(message.channel, discord, 'Too many tickets to display!\nMust be doing something right.')
+        if (ticketString.length > 1023) return errorEmbed(message.channel, 'Too many tickets to display!\nMust be doing something right.')
         const embed = new discord.MessageEmbed()
             .setColor('#E02A6B')
             .setTitle('Lottery Manager')

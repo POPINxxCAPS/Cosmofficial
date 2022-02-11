@@ -53,10 +53,10 @@ module.exports = {
         validArgs.forEach(arg => {
             validArgString += `${arg}\n`
         })
-        if (validArgs.includes(args[0]) === false) return errorEmbed(message.channel, discord, `**Invalid Argument *one***\nValid arguments:\n${validArgString}`)
+        if (validArgs.includes(args[0]) === false) return errorEmbed(message.channel, `**Invalid Argument *one***\nValid arguments:\n${validArgString}`)
 
         if (args[0] === validArgs[0]) {
-            if (Boolean(args[1]) === false) return errorEmbed(message.channel, discord, `**Invalid Argument *two***\nValid arguments: true or false`)
+            if (Boolean(args[1]) === false) return errorEmbed(message.channel, `**Invalid Argument *two***\nValid arguments: true or false`)
             settings.hooverEnabled = args[1]
             settings.save()
             embed.setDescription(`Hoover Enabled set to ${args[1]}`)
@@ -66,7 +66,7 @@ module.exports = {
             try {
                 timeValue = ms(args[1]);
             } catch (err) {
-                return errorEmbed(message.channel, discord, `**Invalid Argument *two***\nValid arguments: 1d, 4hr, 36m, etc.`)
+                return errorEmbed(message.channel, `**Invalid Argument *two***\nValid arguments: 1d, 4hr, 36m, etc.`)
             }
             if(timeValue < 599000) return errorEmbed(message.channel,discord, `For bot performance, the clean-up scan interval may not be less than 10 minutes.`)
             settings.cleanupInterval = timeValue;
@@ -76,33 +76,33 @@ module.exports = {
             embed.setDescription(`Cleanup Interval set to ${args[1]}. Next cleanup: ${nextCleanup}`)
         }
         if (args[0] === validArgs[2]) { // Unpowered grid removal
-            if (Boolean(args[1]) === false) return errorEmbed(message.channel, discord, `**Invalid Argument *two***\nValid arguments: true or false`)
+            if (Boolean(args[1]) === false) return errorEmbed(message.channel, `**Invalid Argument *two***\nValid arguments: true or false`)
             settings.unpoweredGridRemoval = args[1]
             settings.save()
             embed.setDescription(`Unpowered Grid Removal set to ${args[1]}`)
         }
         if (args[0] === validArgs[3]) { // Large grid allowed
-            if (Boolean(args[1]) === false) return errorEmbed(message.channel, discord, `**Invalid Argument *two***\nValid arguments: true or false`)
+            if (Boolean(args[1]) === false) return errorEmbed(message.channel, `**Invalid Argument *two***\nValid arguments: true or false`)
             settings.largeGridAllowed = args[1]
             settings.save()
             embed.setDescription(`Large Grid Allowed set to ${args[1]}`)
         }
         if (args[0] === validArgs[4]) { // Small grid allowed
-            if (Boolean(args[1]) === false) return errorEmbed(message.channel, discord, `**Invalid Argument *two***\nValid arguments: true or false`)
+            if (Boolean(args[1]) === false) return errorEmbed(message.channel, `**Invalid Argument *two***\nValid arguments: true or false`)
             settings.smallGridAllowed = args[1]
             settings.save()
             embed.setDescription(`Small Grid Allowed set to ${args[1]}`)
         }
         if (args[0] === validArgs[5]) { // Block threshold
             let argument = parseInt(args[1]);
-            if (argument === NaN) return errorEmbed(message.channel, discord, `**Invalid Argument *two***\nValid arguments: Any Whole number`)
+            if (argument === NaN) return errorEmbed(message.channel, `**Invalid Argument *two***\nValid arguments: Any Whole number`)
             settings.blockThreshold = argument;
             settings.save();
             embed.setDescription(`Block Threshold set to ${args[1]}`)
         }
         if (args[0] === validArgs[6]) { // Un-verified grid cleanup
             if (patron === false) return lockedEmbed(message.channel, discord);
-            if (Boolean(args[1]) === false) return errorEmbed(message.channel, discord, `**Invalid Argument *two***\nValid arguments: true or false`)
+            if (Boolean(args[1]) === false) return errorEmbed(message.channel, `**Invalid Argument *two***\nValid arguments: true or false`)
             settings.cleanUnverifiedPlayerGrids = args[1]
             settings.save()
             embed.setDescription(`Unverified Grid Cleanup set to ${args[1]}`);

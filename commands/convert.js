@@ -30,7 +30,7 @@ module.exports = {
         let chatDoc = await chatModel.findOne({
             guildID: message.guild.id
         })
-        if (chatDoc === null) return errorEmbed(message.channel, discord, 'An unknown error occurred.\nPlease try again in 5 minutes.')
+        if (chatDoc === null) return errorEmbed(message.channel, 'An unknown error occurred.\nPlease try again in 5 minutes.')
         const current_time = Date.now();
         for (let i = 0; i < chatDoc.chatHistory.length; i++) {
             let chat = chatDoc.chatHistory[i];
@@ -38,7 +38,7 @@ module.exports = {
                 cancel = true;
             }
         }
-        if (cancel === true) return errorEmbed(message.channel, discord, 'Please wait 5m after the server restart before activating.')
+        if (cancel === true) return errorEmbed(message.channel, 'Please wait 5m after the server restart before activating.')
 
         let gridName = 'Space Credit Converter';
         // Get all converter grids
@@ -47,18 +47,18 @@ module.exports = {
             displayName: gridName,
             ownerDisplayName: 'Space Pirates'
         })
-        if (gridDocs.length === 0) return errorEmbed(message.channel, discord, 'Grid was not found in database.\nPlease try again in 5 minutes.\nOr have an admin ensure set-up is complete.')
+        if (gridDocs.length === 0) return errorEmbed(message.channel, 'Grid was not found in database.\nPlease try again in 5 minutes.\nOr have an admin ensure set-up is complete.')
 
         // Find the one nearest to the player's character
         let verDoc = await verificationModel.findOne({
             userID: message.author.id
         })
-        if (verDoc === null) return errorEmbed(message.channel, discord, 'You must be verified to convert currency!');
+        if (verDoc === null) return errorEmbed(message.channel, 'You must be verified to convert currency!');
         let characterDoc = await characterModel.findOne({
             guildID: message.guild.id,
             name: verDoc.username
         })
-        if (characterDoc === null) return errorEmbed(message.channel, discord, 'You must be spawned in the server to convert currency!')
+        if (characterDoc === null) return errorEmbed(message.channel, 'You must be spawned in the server to convert currency!')
 
         let distanceData = [];
         for (let i = 0; i < gridDocs.length; i++) {
@@ -104,7 +104,7 @@ module.exports = {
             amount = parseInt(args[0]);
         }
 
-        if (amount % 1 != 0 || amount < 0) return errorEmbed(message.channel, discord, 'Conversion amount must be a whole number!\nOr you can use c!convert all')
+        if (amount % 1 != 0 || amount < 0) return errorEmbed(message.channel, 'Conversion amount must be a whole number!\nOr you can use c!convert all')
         // Expiration Timer Setting
         let seconds = Math.round(parseInt(amount) / 10000);
         let spawnerDoc = await spawnerModel.findOne({
@@ -118,7 +118,7 @@ module.exports = {
                 expirationTime: '0'
             })
         }
-        if (parseInt(spawnerDoc.expirationTime) > current_time) return errorEmbed(message.channel, discord, 'A Credit Converter is already activated!\nPlease wait.')
+        if (parseInt(spawnerDoc.expirationTime) > current_time) return errorEmbed(message.channel, 'A Credit Converter is already activated!\nPlease wait.')
         spawnerDoc.expirationTime = current_time + (seconds * 1000);
 
 
@@ -131,7 +131,7 @@ module.exports = {
             guildID: message.guild.id,
         })
         if (ecoSettings === null) {
-            return errorEmbed(message.channel, discord, 'An admin must first setup economy with c!ces')
+            return errorEmbed(message.channel, 'An admin must first setup economy with c!ces')
         }
         let currencyName;
         await ecoSettings.settings.forEach(setting => {
@@ -142,13 +142,13 @@ module.exports = {
 
         // Grid name and price setting
         let price = seconds * 10000;
-        if (price < 100000) return errorEmbed(message.channel, discord, `Minimum Conversion Amount: 100,000 ${currencyName}`)
+        if (price < 100000) return errorEmbed(message.channel, `Minimum Conversion Amount: 100,000 ${currencyName}`)
         //
         if (playerEco.currency < price) {
             if (playerEco.vault > price) {
-                return errorEmbed(message.channel, discord, `Cannot activate **${gridName}**\nYou must withraw your ${currencyName} from the Vault.\nPrice: ${price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`);
+                return errorEmbed(message.channel, `Cannot activate **${gridName}**\nYou must withraw your ${currencyName} from the Vault.\nPrice: ${price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`);
             } else {
-                return errorEmbed(message.channel, discord, `Cannot activate **${gridName}**\nYou do not have enough ${currencyName}.\nPrice: ${price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`);
+                return errorEmbed(message.channel, `Cannot activate **${gridName}**\nYou do not have enough ${currencyName}.\nPrice: ${price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`);
             }
         }
 

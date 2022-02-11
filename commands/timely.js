@@ -20,7 +20,7 @@ module.exports = {
             guildID: message.guild.id,
         })
         if (ecoSettings === null) {
-            return errorEmbed(message.channel, discord, 'An admin must first setup economy with c!ces')
+            return errorEmbed(message.channel, 'An admin must first setup economy with c!ces')
         }
         let currencyName;
         let maxTimelyReward;

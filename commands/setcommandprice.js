@@ -17,18 +17,18 @@ module.exports = {
         }
         if (patron === false) return lockedEmbed(message.channel, discord);
 
-        if(args[0] === undefined) return errorEmbed(message.channel, discord, 'Invalid argument *one*\nPlease enter a command name to set the price.')
+        if(args[0] === undefined) return errorEmbed(message.channel, 'Invalid argument *one*\nPlease enter a command name to set the price.')
         if(validCommandNames.includes(args[0]) === false) {
             let validString = '';
             for(let i = 0; i < validCommandNames.length; i++) {
                 validString += `${validCommandNames[i]}\n`
             }
-            return errorEmbed(message.channel, discord, `Command name not valid to set a price.\nValid: ${validString}`)
+            return errorEmbed(message.channel, `Command name not valid to set a price.\nValid: ${validString}`)
         } 
         let commandName = args[0];
         let price = parseInt(args[1])
     
-        if (price % 1 != 0 || price <= 0) return errorEmbed(message.channel, discord, 'Invalid argument *two*\nPlease enter a whole number as a price for the command.')
+        if (price % 1 != 0 || price <= 0) return errorEmbed(message.channel, 'Invalid argument *two*\nPlease enter a whole number as a price for the command.')
 
         let priceDoc = await commandPriceModel.findOne({
             guildID: message.guild.id,

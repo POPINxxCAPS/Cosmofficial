@@ -14,7 +14,7 @@ module.exports = {
     description: "Create an alliance",
     permissions: ["SEND_MESSAGES"],
     async execute(message, args, cmd, client, discord, mainGuild, guild, playerEco) {
-        if (args[0] === undefined) return errorEmbed(message.channel, discord, '**Invalid Argument**\nPlease enter an alliance name!');
+        if (args[0] === undefined) return errorEmbed(message.channel, '**Invalid Argument**\nPlease enter an alliance name!');
         let name = args[0];
         for (let i = 1; i < args.length; i++) {
             name = name + ' ' + `${args[i]}`;
@@ -23,19 +23,19 @@ module.exports = {
         const test = await allianceModel.findOne({
             allianceName: name
         })
-        if (test !== null) return errorEmbed(message.channel, discord, 'An alliance already exists with this name!')
+        if (test !== null) return errorEmbed(message.channel, 'An alliance already exists with this name!')
 
         const verDoc = await verificationModel.findOne({
             userID: message.author.id
         })
-        if (verDoc === null) return errorEmbed(message.channel, discord, 'You must be verified to use this command!')
+        if (verDoc === null) return errorEmbed(message.channel, 'You must be verified to use this command!')
 
         const playerDoc = await playerModel.findOne({
             guildID: message.guild.id,
             displayName: verDoc.username
         })
-        if (playerDoc === null) return errorEmbed(message.channel, discord, 'Player document not found, have you joined the server?')
-        if (playerDoc.factionTag === '') return errorEmbed(message.channel, discord, 'You must be in a faction to use this command!')
+        if (playerDoc === null) return errorEmbed(message.channel, 'Player document not found, have you joined the server?')
+        if (playerDoc.factionTag === '') return errorEmbed(message.channel, 'You must be in a faction to use this command!')
 
         const alliances = await allianceModel.find({
             guildID: message.guild.id
@@ -50,7 +50,7 @@ module.exports = {
                 }
             }
         }
-        if (alliance !== undefined) return errorEmbed(message.channel, discord, 'Your faction is already in an alliance!');
+        if (alliance !== undefined) return errorEmbed(message.channel, 'Your faction is already in an alliance!');
 
 
 

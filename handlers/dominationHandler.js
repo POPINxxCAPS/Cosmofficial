@@ -54,7 +54,7 @@ module.exports = async (client, discord) => {
                 guildID: guildID,
             })
             if (ecoSettings === null) {
-                return errorEmbed(message.channel, discord, 'An admin must first setup economy with c!ces')
+                return errorEmbed(message.channel, 'An admin must first setup economy with c!ces')
             }
             let currencyName;
             await ecoSettings.settings.forEach(setting => {

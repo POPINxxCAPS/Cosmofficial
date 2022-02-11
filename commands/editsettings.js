@@ -36,13 +36,13 @@ module.exports = {
         }
 
         let validArgs = ['hotzone', 'chatrelay', 'serverlog', 'commands']
-        if(validArgs.includes(args[0]) === false) return errorEmbed(message.channel, discord, 'Invalid argument. Check c!cs for valid channel edit commands.')
+        if(validArgs.includes(args[0]) === false) return errorEmbed(message.channel, 'Invalid argument. Check c!cs for valid channel edit commands.')
 
 
         if (args[0] === 'hotzone') {
             if(patron === false) return lockedEmbed(message.channel, discord)
             const channel = client.channels.cache.get(args[1]);
-            if (channel === null || channel === undefined) return errorEmbed(message.channel, discord, 'Channel not found. Ensure you are using a valid channel ID in Argument Two.')
+            if (channel === null || channel === undefined) return errorEmbed(message.channel, 'Channel not found. Ensure you are using a valid channel ID in Argument Two.')
             settings.hotzoneChannel = args[1];
             settings.save();
             message.channel.send(`Hotzone channel set to <#${args[1]}> successfully.`)
@@ -51,7 +51,7 @@ module.exports = {
 
         if (args[0] === 'chatrelay') {
             const channel = client.channels.cache.get(args[1]);
-            if (channel === null || channel === undefined) return errorEmbed(message.channel, discord, 'Channel not found. Ensure you are using a valid channel ID in Argument Two.');
+            if (channel === null || channel === undefined) return errorEmbed(message.channel, 'Channel not found. Ensure you are using a valid channel ID in Argument Two.');
             settings.chatRelayChannel = args[1];
             settings.save();
             message.channel.send(`Chat Relay channel set to <#${args[1]}> successfully.`)
@@ -60,7 +60,7 @@ module.exports = {
 
         if (args[0] === 'serverlog') {
             const channel = client.channels.cache.get(args[1]);
-            if (channel === null || channel === undefined) return errorEmbed(message.channel, discord, 'Channel not found. Ensure you are using a valid channel ID in Argument Two.')
+            if (channel === null || channel === undefined) return errorEmbed(message.channel, 'Channel not found. Ensure you are using a valid channel ID in Argument Two.')
             settings.serverLogChannel = args[1];
             settings.save();
             message.channel.send(`Server Log channel set to <#${args[1]}> successfully.`)
@@ -69,7 +69,7 @@ module.exports = {
 
         if (args[0] === 'commands') {
             const channel = client.channels.cache.get(args[1]);
-            if (channel === null || channel === undefined) return errorEmbed(message.channel, discord, 'Channel not found. Ensure you are using a valid channel ID in Argument Two.')
+            if (channel === null || channel === undefined) return errorEmbed(message.channel, 'Channel not found. Ensure you are using a valid channel ID in Argument Two.')
             settings.botCommandChannel = args[1];
             settings.save();
             message.channel.send(`Bot command channel set to <#${args[1]}> successfully.`)

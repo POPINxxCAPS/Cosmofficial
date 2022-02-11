@@ -24,7 +24,7 @@ module.exports = async (username, userID, guildID, channelID) => {
     })
     if (verDoc !== null) {
         if(channelID !== undefined) {
-            errorEmbed(channelID, '')
+            errorEmbed(channelID, `${username} is already registered to a user!`)
         }
         return null;
     }
@@ -34,7 +34,7 @@ module.exports = async (username, userID, guildID, channelID) => {
         userID: userID
     })
     if (verDoc !== null) { // If user was already verified previously, set a cooldown and change their verified username
-        const cooldown = await cooldownFunction.cd('verify', 259200);
+        const cooldown = await cooldownFunction.cd('development', 259200);
         if (cooldown !== undefined) {
             if(channelID !== undefined) {
                 cooldownEmbed(channelID, cooldown, 'Timely', message.author.id)

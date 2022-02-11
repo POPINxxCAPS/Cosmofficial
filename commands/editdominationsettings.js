@@ -51,10 +51,10 @@ module.exports = {
         validArgs.forEach(arg => {
             validArgString += `${arg}\n`
         })
-        if (validArgs.includes(args[0]) === false) return errorEmbed(message.channel, discord, `**Invalid Argument *one***\nValid arguments:\n${validArgString}`)
+        if (validArgs.includes(args[0]) === false) return errorEmbed(message.channel, `**Invalid Argument *one***\nValid arguments:\n${validArgString}`)
 
         if (args[0] === validArgs[0]) {
-            if (Boolean(args[1]) === false) return errorEmbed(message.channel, discord, `**Invalid Argument *two***\nValid: true or false`)
+            if (Boolean(args[1]) === false) return errorEmbed(message.channel, `**Invalid Argument *two***\nValid: true or false`)
             settings.enabled = args[1]
             settings.save()
             embed.setDescription(`Domination Enabled set to ${args[1]}`)
@@ -64,7 +64,7 @@ module.exports = {
             try {
                 time = ms(args[1])
             } catch (err) {
-                return errorEmbed(message.channel, discord, '**Invalid Argument *two***\nValid: 1d, 6h, 16m, etc.');
+                return errorEmbed(message.channel, '**Invalid Argument *two***\nValid: 1d, 6h, 16m, etc.');
             }
             settings.newGameDelay = time;
             settings.save()
@@ -76,7 +76,7 @@ module.exports = {
                 settings.save()
                 embed.setDescription(`Domination reward per point set to ${args[1]}`)
             } else {
-                return errorEmbed(message.channel, discord, '**Invalid Argument *two***\nValid: Any whole number.')
+                return errorEmbed(message.channel, '**Invalid Argument *two***\nValid: Any whole number.')
             }
         }
         if (args[0] === validArgs[3]) {
@@ -85,7 +85,7 @@ module.exports = {
                 settings.save()
                 embed.setDescription(`Domination win reward set to ${args[1]}`)
             } else {
-                return errorEmbed(message.channel, discord, '**Invalid Argument *two***\nValid: Any whole number.')
+                return errorEmbed(message.channel, '**Invalid Argument *two***\nValid: Any whole number.')
             }
         }
         if (args[0] === validArgs[4]) {
@@ -93,7 +93,7 @@ module.exports = {
             try {
                 time = ms(args[1])
             } catch (err) {
-                return errorEmbed(message.channel, discord, '**Invalid Argument *two***\nValid: 1d, 6h, 16m, etc.');
+                return errorEmbed(message.channel, '**Invalid Argument *two***\nValid: 1d, 6h, 16m, etc.');
             }
             settings.matchTime = time;
             settings.save()
@@ -105,7 +105,7 @@ module.exports = {
                 settings.save()
                 embed.setDescription(`Domination game point score limit set to ${args[1]}`)
             } else {
-                return errorEmbed(message.channel, discord, '**Invalid Argument *two***\nValid: Any whole number.')
+                return errorEmbed(message.channel, '**Invalid Argument *two***\nValid: Any whole number.')
             }
         }
         if (args[0] === validArgs[6]) {
@@ -114,7 +114,7 @@ module.exports = {
                 settings.save()
                 embed.setDescription(`Domination game channel set to #<${args[1]}>`)
             } else {
-                return errorEmbed(message.channel, discord, '**Invalid Argument *two***\nValid: Any whole number.')
+                return errorEmbed(message.channel, '**Invalid Argument *two***\nValid: Any whole number.')
             }
         }
 

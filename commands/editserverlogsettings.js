@@ -55,7 +55,7 @@ module.exports = {
         validArgs.forEach(arg => {
             validArgString += `${arg}\n`
         })
-        if(args[0] === undefined) return errorEmbed(message.channel, discord, `Invalid Argument *one*\nValid: ${validArgs}`);
+        if(args[0] === undefined) return errorEmbed(message.channel, `Invalid Argument *one*\nValid: ${validArgs}`);
         if(args[0] === 'enabled') {
             if(Boolean(args[1])) {
                 settings.settings.forEach(setting => {
@@ -66,7 +66,7 @@ module.exports = {
                 settings.save(); 
                 embed.setDescription(`Server log enabled set to **${args[1]}**`)
             } else {
-                return errorEmbed(message.channel, discord, `Invalid argument *two*\nValid: True or False`)
+                return errorEmbed(message.channel, `Invalid argument *two*\nValid: True or False`)
             }
         }
         return message.channel.send(embed);

@@ -49,7 +49,7 @@ module.exports = {
 
         let validArgs = ['enabled', 'pointradius', 'x', 'y', 'z'];
 
-        if (args[0] === undefined) return errorEmbed(message.channel, discord, '**Invalid Argument *one***\nPlease enter a point name. (One-Word)')
+        if (args[0] === undefined) return errorEmbed(message.channel, '**Invalid Argument *one***\nPlease enter a point name. (One-Word)')
 
         let objFound = false;
         let error = false;
@@ -62,7 +62,7 @@ module.exports = {
                             obj.enabled = args[2]
                             embed.setDescription(`Point **${args[0]}** enabled set to **${args[2]}**.\nUse c!cdp to view all current points.`)
                         } else {
-                            errorEmbed(message.channel, discord, '**Invalid Argument *three***\nValid: true or false')
+                            errorEmbed(message.channel, '**Invalid Argument *three***\nValid: true or false')
                             error = true
                         }
                     }
@@ -71,7 +71,7 @@ module.exports = {
                             embed.setDescription(`Point **${args[0]}** radius set to **${args[2]}**.\nUse c!cdp to view all current points.`)
                             obj.pointRadius = args[2]
                         } else {
-                            errorEmbed(message.channel, discord, '**Invalid Argument *three***\nValid: true or false')
+                            errorEmbed(message.channel, '**Invalid Argument *three***\nValid: true or false')
                             error = true
                         }
                     }
@@ -80,7 +80,7 @@ module.exports = {
                             embed.setDescription(`Point **${args[0]}** X position set to **${args[2]}**.\nUse c!cdp to view all current points.`)
                             obj.x = args[2]
                         } else {
-                            errorEmbed(message.channel, discord, '**Invalid Argument *three***\nValid: true or false')
+                            errorEmbed(message.channel, '**Invalid Argument *three***\nValid: true or false')
                             error = true
                         }
                     }
@@ -89,7 +89,7 @@ module.exports = {
                             embed.setDescription(`Point **${args[0]}** Y position set to **${args[2]}**.\nUse c!cdp to view all current points.`)
                             obj.y = args[2]
                         } else {
-                            errorEmbed(message.channel, discord, '**Invalid Argument *three***\nValid: true or false')
+                            errorEmbed(message.channel, '**Invalid Argument *three***\nValid: true or false')
                             error = true
                         }
                     }
@@ -98,18 +98,18 @@ module.exports = {
                             embed.setDescription(`Point **${args[0]}** Z position set to **${args[2]}**.\nUse c!cdp to view all current points.`)
                             obj.z = args[2]
                         } else {
-                            errorEmbed(message.channel, discord, '**Invalid Argument *three***\nValid: true or false')
+                            errorEmbed(message.channel, '**Invalid Argument *three***\nValid: true or false')
                             error = true
                         }
                     }
 
                 } else {
-                    errorEmbed(message.channel, discord, '**Invalid Argument *two***\nValid: enabled, pointradius')
+                    errorEmbed(message.channel, '**Invalid Argument *two***\nValid: enabled, pointradius')
                     error = true
                 }
             }
         })
-        if (objFound === false) return errorEmbed(message.channel, discord, '**Error**: Point name does not exist.')
+        if (objFound === false) return errorEmbed(message.channel, '**Error**: Point name does not exist.')
         if (error === true) return;
         settings.save()
         return message.channel.send(embed);

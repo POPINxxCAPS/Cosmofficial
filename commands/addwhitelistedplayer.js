@@ -26,7 +26,7 @@ module.exports = {
             })
         }
 
-        if (args[0] === undefined) return errorEmbed(message.channel, discord, 'Invalid format.\nValid: c!awp {username}');
+        if (args[0] === undefined) return errorEmbed(message.channel, 'Invalid format.\nValid: c!awp {username}');
         let searchTerm = args[0];
         for (let i = 1; i < args.length; i++) {
             searchTerm = searchTerm + ' ' + `${args[i]}`;
@@ -35,7 +35,7 @@ module.exports = {
             guildID: guild.id,
             username: searchTerm
         })
-        if (whitelistDoc !== null) return errorEmbed(message.channel, discord, 'Username is already whitelisted.');
+        if (whitelistDoc !== null) return errorEmbed(message.channel, 'Username is already whitelisted.');
 
         await whitelistModel.create({
             guildID: guild.id,

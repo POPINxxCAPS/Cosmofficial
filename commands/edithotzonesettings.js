@@ -51,10 +51,10 @@ module.exports = {
         validArgs.forEach(arg => {
             validArgString += `${arg}\n`
         })
-        if(validArgs.includes(args[0]) === false) return errorEmbed(message.channel, discord, `**Invalid Argument *one***\nValid arguments:\n${validArgString}`)
+        if(validArgs.includes(args[0]) === false) return errorEmbed(message.channel, `**Invalid Argument *one***\nValid arguments:\n${validArgString}`)
 
         if(args[0] === validArgs[0]) {
-            if(Boolean(args[1]) === false) return errorEmbed(message.channel, discord, `**Invalid Argument *two***\nValid arguments: true or false`)
+            if(Boolean(args[1]) === false) return errorEmbed(message.channel, `**Invalid Argument *two***\nValid arguments: true or false`)
             settings.hotzoneEnabled = args[1]
             settings.save()
             embed.setDescription(`Hotzone Enabled set to ${args[1]}`)
@@ -65,7 +65,7 @@ module.exports = {
         if(args[0] === validArgs[4]) {}
         if(args[0] === validArgs[5]) {}
         if(args[0] === validArgs[6]) { 
-            if(parseInt(args[1]) === NaN) return errorEmbed(message.channel, discord, '**Invalid Argument *two**\nValid: Whole Number');
+            if(parseInt(args[1]) === NaN) return errorEmbed(message.channel, '**Invalid Argument *two**\nValid: Whole Number');
             settings.spawnRange = args[1];
             settings.save();
             embed.setDescription(`Hotzone Spawn Range set to ${args[1]}`)

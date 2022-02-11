@@ -20,7 +20,7 @@ module.exports = {
         let verDoc = await verificationModel.findOne({
             userID: message.author.id
         })
-        if (verDoc === null) return errorEmbed(message.channel, discord, 'You must be verified to purchase this!')
+        if (verDoc === null) return errorEmbed(message.channel, 'You must be verified to purchase this!')
 
 
 
@@ -28,7 +28,7 @@ module.exports = {
             guildID: message.guild.id,
         })
         if (ecoSettings === null) {
-            return errorEmbed(message.channel, discord, 'An admin must first setup economy with c!ces')
+            return errorEmbed(message.channel, 'An admin must first setup economy with c!ces')
         }
         let currencyName;
         ecoSettings.settings.forEach(setting => {
@@ -40,9 +40,9 @@ module.exports = {
         let totalPlayerBal = parseInt(playerEco.currency) + parseInt(playerEco.vault);
         if (parseInt(playerEco.currency) < price) {
             if (totalPlayerBal < price) {
-                return errorEmbed(message.channel, discord, `You do not enough ${currencyName} to purchase this!`)
+                return errorEmbed(message.channel, `You do not enough ${currencyName} to purchase this!`)
             } else {
-                return errorEmbed(message.channel, discord, `You must withdraw ${price - parseInt(playerEco.currency)} ${currencyName} to purchase this!`)
+                return errorEmbed(message.channel, `You must withdraw ${price - parseInt(playerEco.currency)} ${currencyName} to purchase this!`)
             }
         }
 
@@ -54,8 +54,8 @@ module.exports = {
         })
 
 
-        if (playerDoc === null) return errorEmbed(message.channel, discord, `An unknown error occurred. Please try again`)
-        if (playerDoc.factionTag === '') return errorEmbed(message.channel, discord, `You must create a faction first!`)
+        if (playerDoc === null) return errorEmbed(message.channel, `An unknown error occurred. Please try again`)
+        if (playerDoc.factionTag === '') return errorEmbed(message.channel, `You must create a faction first!`)
 
         // Check for an existing space ticket
         const current_time = Date.now()

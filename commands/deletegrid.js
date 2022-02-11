@@ -28,7 +28,7 @@ module.exports = {
         if (guildOwner.roles.cache.has('883535682553929779') || guildOwner.roles.cache.has('883535930630213653') || guildOwner.roles.cache.has('883534965650882570')) {
             administrationPackage = true;
         }
-        if (administrationPackage !== true) return errorEmbed(message.channel, discord, 'This feature is locked.\nc!patreon');
+        if (administrationPackage !== true) return errorEmbed(message.channel, 'This feature is locked.\nc!patreon');
 
         let config = await remoteConfigModel.findOne({
             guildID: message.guild.id
@@ -116,7 +116,7 @@ module.exports = {
                 searchTerm = searchTerm + ' ' + `${args[i]}`;
             }
 
-            if (searchTerm === '') return errorEmbed(message.channel, discord, `**Invalid Argument *one***\nPlease enter a grid name.`);
+            if (searchTerm === '') return errorEmbed(message.channel, `**Invalid Argument *one***\nPlease enter a grid name.`);
 
             grid = await gridModel.findOne({
                 guildID: message.guild.id,
@@ -125,7 +125,7 @@ module.exports = {
         }
 
 
-        if (grid === null) return errorEmbed(message.channel, discord, `Grid does not exist, ${searchTerm} queued for deletion by the Hoover.\nIf it appears again in the database, it will be deleted.`);
+        if (grid === null) return errorEmbed(message.channel, `Grid does not exist, ${searchTerm} queued for deletion by the Hoover.\nIf it appears again in the database, it will be deleted.`);
 
         await send('DELETE', `${gridPath}/${grid.entityID}`);
         const embed = new discord.MessageEmbed()

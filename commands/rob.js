@@ -19,18 +19,18 @@ module.exports = {
 
 
         const target = message.mentions.users.first();
-        if(!target) return errorEmbed(message.channel, discord, 'You must mention a player to rob.')
+        if(!target) return errorEmbed(message.channel, 'You must mention a player to rob.')
         let targetDoc = await playerEcoModel.findOne({
             userID: target.id,
             guildID: message.guild.id
         })
-        if(targetDoc === null) return errorEmbed(message.channel, discord, 'That user does not exist in the database.')
+        if(targetDoc === null) return errorEmbed(message.channel, 'That user does not exist in the database.')
 
         let ecoSettings = await economyModel.findOne({
             guildID: message.guild.id,
         })
         if (ecoSettings === null) {
-            return errorEmbed(message.channel, discord, 'An admin must first setup economy with c!ces')
+            return errorEmbed(message.channel, 'An admin must first setup economy with c!ces')
         }
         let currencyName;
         let cdInSec = 3600;

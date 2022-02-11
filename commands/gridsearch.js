@@ -13,7 +13,7 @@ module.exports = {
             searchTerm = searchTerm + ' ' + `${args[i]}`;
         }
 
-        if (searchTerm === '') return errorEmbed(message.channel, discord, `**Invalid Argument *one***\nPlease enter a grid name.`);
+        if (searchTerm === '') return errorEmbed(message.channel, `**Invalid Argument *one***\nPlease enter a grid name.`);
 
         let grid = await gridModel.findOne({
             guildID: message.guild.id,
@@ -22,7 +22,7 @@ module.exports = {
 
 
 
-        if (grid === null) return errorEmbed(message.channel, discord, `Grid does not exist, or it is attached to another grid.`);
+        if (grid === null) return errorEmbed(message.channel, `Grid does not exist, or it is attached to another grid.`);
         const embed = new discord.MessageEmbed()
             .setColor('#E02A6B')
             .setTitle(`Grid Manager`)

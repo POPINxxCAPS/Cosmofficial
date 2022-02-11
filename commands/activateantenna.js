@@ -37,13 +37,13 @@ module.exports = {
     permissions: ["SEND_MESSAGES"],
     async execute(message, args, cmd, client, discord, mainGuild, guild, playerEco) {
         //return message.channel.send('Awaiting recode. :(')
-        if (message.guild.id !== '799685703910686720') return errorEmbed(message.channel, discord, 'This command only works on the Cosmic PvPvAI server!')
+        if (message.guild.id !== '799685703910686720') return errorEmbed(message.channel, 'This command only works on the Cosmic PvPvAI server!')
         if (antennaNames.includes(args[0]) === false) {
             let validString = '';
             antennaNames.forEach(name => {
                 validString += `${name}\n`
             })
-            return errorEmbed(message.channel, discord, `Invalid Antenna. Valid:\n${validString}`)
+            return errorEmbed(message.channel, `Invalid Antenna. Valid:\n${validString}`)
         }
 
         // Confirm that there isn't a restart in the next 15 minutes
@@ -51,7 +51,7 @@ module.exports = {
         let chatDoc = await chatModel.findOne({
             guildID: message.guild.id
         })
-        if (chatDoc === null) return errorEmbed(message.channel, discord, 'An unknown error occurred.\nPlease try again in 5 minutes.')
+        if (chatDoc === null) return errorEmbed(message.channel, 'An unknown error occurred.\nPlease try again in 5 minutes.')
         const current_time = Date.now();
         for (let i = 0; i < chatDoc.chatHistory.length; i++) {
             let chat = chatDoc.chatHistory[i];
@@ -125,10 +125,10 @@ module.exports = {
             })
         }
         console.log(parseInt(spawnerDoc.expirationTime))
-        if(parseInt(spawnerDoc.expirationTime) > current_time) return errorEmbed(message.channel, discord, 'Spawner is already activated!')
+        if(parseInt(spawnerDoc.expirationTime) > current_time) return errorEmbed(message.channel, 'Spawner is already activated!')
         spawnerDoc.expirationTime = current_time + (seconds * 1000);
 
-        if (cancel === true) return errorEmbed(message.channel, discord, 'Please wait 5m after the server restart before activating.')
+        if (cancel === true) return errorEmbed(message.channel, 'Please wait 5m after the server restart before activating.')
 
         let config = await remoteConfigModel.findOne({
             guildID: guild.id
@@ -139,7 +139,7 @@ module.exports = {
             guildID: message.guild.id,
         })
         if (ecoSettings === null) {
-            return errorEmbed(message.channel, discord, 'An admin must first setup economy with c!ces')
+            return errorEmbed(message.channel, 'An admin must first setup economy with c!ces')
         }
         let currencyName;
         await ecoSettings.settings.forEach(setting => {
@@ -227,9 +227,9 @@ module.exports = {
 
         if(playerEco.currency < price) {
             if(playerEco.vault > price) {
-                return errorEmbed(message.channel, discord, `Cannot activate **${gridName}**\nYou must withraw your ${currencyName} from the Vault.\nPrice: ${price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`);
+                return errorEmbed(message.channel, `Cannot activate **${gridName}**\nYou must withraw your ${currencyName} from the Vault.\nPrice: ${price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`);
             } else {
-                return errorEmbed(message.channel, discord, `Cannot activate **${gridName}**\nYou do not have enough ${currencyName}.\nPrice: ${price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`);
+                return errorEmbed(message.channel, `Cannot activate **${gridName}**\nYou do not have enough ${currencyName}.\nPrice: ${price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`);
             }
         }
 
@@ -238,7 +238,7 @@ module.exports = {
             displayName: gridName,
             ownerDisplayName: 'Space Pirates'
         })
-        if (grid === null) return errorEmbed(message.channel, discord, 'An unknown error occurred.\nPlease try again in 5 minutes.')
+        if (grid === null) return errorEmbed(message.channel, 'An unknown error occurred.\nPlease try again in 5 minutes.')
 
 
         playerEco.currency = parseInt(playerEco.currency) - price;

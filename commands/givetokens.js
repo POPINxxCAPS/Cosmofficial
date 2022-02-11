@@ -18,7 +18,7 @@ module.exports = {
             guildID: message.guild.id,
         })
         if (ecoSettings === null) {
-            return errorEmbed(message.channel, discord, 'An admin must first setup economy with c!ces')
+            return errorEmbed(message.channel, 'An admin must first setup economy with c!ces')
         }
         let currencyName;
         await ecoSettings.settings.forEach(setting => {
@@ -30,19 +30,19 @@ module.exports = {
 
 
 
-        if (!args.length) return errorEmbed(message.channel, discord, 'You must mention a player to give them tokens.')
+        if (!args.length) return errorEmbed(message.channel, 'You must mention a player to give them tokens.')
         const amount = args[1];
         const target = message.mentions.users.first();
-        if (!target) return errorEmbed(message.channel, discord, 'User does not exist.');
+        if (!target) return errorEmbed(message.channel, 'User does not exist.');
 
-        if (amount % 1 != 0 || amount <= 0) return errorEmbed(message.channel, discord, 'Amount must be a whole number')
+        if (amount % 1 != 0 || amount <= 0) return errorEmbed(message.channel, 'Amount must be a whole number')
 
         try {
             const targetData = await playerEcoModel.findOne({
                 guildID: guild.id,
                 userID: target.id
             });
-            if (!targetData) return errorEmbed(message.channel, discord, 'User does not exist in database.');
+            if (!targetData) return errorEmbed(message.channel, 'User does not exist in database.');
             targetData.currency = parseFloat(targetData.currency) + parseFloat(args[1]);
             targetData.save();
             const embed = new discord.MessageEmbed()

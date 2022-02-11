@@ -20,7 +20,7 @@ module.exports = {
             guildID: message.guild.id,
         })
         if(ecoSettings === null) {
-            return errorEmbed(message.channel, discord, 'An admin must first setup economy with c!ces')
+            return errorEmbed(message.channel, 'An admin must first setup economy with c!ces')
         }
         let currencyName;
         ecoSettings.settings.forEach(setting => {
@@ -31,9 +31,9 @@ module.exports = {
 
         if(args.length) {
             const target = message.mentions.users.first();
-            if(!target) return errorEmbed(message.channel, discord, 'Invalid argument. Valid: @username')
+            if(!target) return errorEmbed(message.channel, 'Invalid argument. Valid: @username')
             const targetData = await playerEcoModel.findOne({ userID: target.id });
-            if (!targetData) return errorEmbed(message.channel, discord, 'User not found in the database.')
+            if (!targetData) return errorEmbed(message.channel, 'User not found in the database.')
             const balEmbed =  new discord.MessageEmbed()
             .setColor('#E02A6B')
             .setTitle(`Economy Manager`)

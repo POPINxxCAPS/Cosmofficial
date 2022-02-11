@@ -46,7 +46,7 @@ module.exports = {
             })
         }
 
-        if (args[0] === undefined) return errorEmbed(message.channel, discord, '**Invalid Argument *one***\nPlease enter a point name. (One-Word)')
+        if (args[0] === undefined) return errorEmbed(message.channel, '**Invalid Argument *one***\nPlease enter a point name. (One-Word)')
 
         let objFound = false;
         settings.objectives.forEach(obj => {
@@ -56,7 +56,7 @@ module.exports = {
             }
         })
 
-        if (objFound === false) return errorEmbed(message.channel, discord, '**Error**: Name was not found.')
+        if (objFound === false) return errorEmbed(message.channel, '**Error**: Name was not found.')
         settings.save();
         embed.setDescription(`Point with the name **${args[0]}** removed.\nUse c!cdp to view all current points.`)
         return message.channel.send(embed);

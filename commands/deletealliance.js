@@ -14,7 +14,7 @@ module.exports = {
     description: "Create an alliance",
     permissions: ["SEND_MESSAGES"],
     async execute(message, args, cmd, client, discord, mainGuild, guild, playerEco) {
-        if (args[0] === undefined) return errorEmbed(message.channel, discord, '**Invalid Argument**\nPlease enter your alliance name to confirm!')
+        if (args[0] === undefined) return errorEmbed(message.channel, '**Invalid Argument**\nPlease enter your alliance name to confirm!')
         let name = args[0];
         for (let i = 1; i < args.length; i++) {
             name = name + ' ' + `${args[i]}`;
@@ -23,8 +23,8 @@ module.exports = {
         const test = await allianceModel.findOne({
             allianceName: name
         })
-        if (test === null) return errorEmbed(message.channel, discord, 'Invalid alliance name!');
-        if (test.allianceLeaderID !== message.author.id) return errorEmbed(message.channel, discord, 'Only the alliance leader can use this command!');
+        if (test === null) return errorEmbed(message.channel, 'Invalid alliance name!');
+        if (test.allianceLeaderID !== message.author.id) return errorEmbed(message.channel, 'Only the alliance leader can use this command!');
         // Delete the alliance
         test.remove();
         const embed = new discord.MessageEmbed()

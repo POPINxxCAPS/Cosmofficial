@@ -14,8 +14,8 @@ module.exports = {
     description: "Invite faction tag to alliance",
     permissions: ["SEND_MESSAGES"],
     async execute(message, args, cmd, client, discord, mainGuild, guild, playerEco) {
-        if (args[0] === undefined) return errorEmbed(message.channel, discord, '**Invalid Argument**\nPlease enter an faction tag!');
-        if (args[0].length >= 5) return errorEmbed(message.channel, discord, '**Invalid Argument**\nFaction tag is too long.')
+        if (args[0] === undefined) return errorEmbed(message.channel, '**Invalid Argument**\nPlease enter an faction tag!');
+        if (args[0].length >= 5) return errorEmbed(message.channel, '**Invalid Argument**\nFaction tag is too long.')
 
 
 
@@ -26,20 +26,20 @@ module.exports = {
         const verDoc = await verificationModel.findOne({
             userID: message.author.id
         })
-        if (verDoc === null) return errorEmbed(message.channel, discord, 'You must be verified to use this command!')
+        if (verDoc === null) return errorEmbed(message.channel, 'You must be verified to use this command!')
 
         const playerDoc = await playerModel.findOne({
             guildID: message.guild.id,
             displayName: verDoc.username
         })
-        if (playerDoc === null) return errorEmbed(message.channel, discord, 'Player document not found, have you joined the server?')
-        if (playerDoc.factionTag === '') return errorEmbed(message.channel, discord, 'You must be in a faction to use this command!')
+        if (playerDoc === null) return errorEmbed(message.channel, 'Player document not found, have you joined the server?')
+        if (playerDoc.factionTag === '') return errorEmbed(message.channel, 'You must be in a faction to use this command!')
 
         const playerFactionDocs = await playerModel.findOne({
             guildID: message.guild.id,
             factionTag: args[0]
         })
-        if(playerFactionDocs.length === 0) return errorEmbed(message.channel, discord, 'There is nobody in this faction!')
+        if(playerFactionDocs.length === 0) return errorEmbed(message.channel, 'There is nobody in this faction!')
 
         const alliances = await allianceModel.find({
             guildID: message.guild.id
@@ -54,13 +54,13 @@ module.exports = {
                 }
             }
         }
-        if (alliance === undefined) return errorEmbed(message.channel, discord, 'Your faction not in an alliance!');
+        if (alliance === undefined) return errorEmbed(message.channel, 'Your faction not in an alliance!');
 
         let allowed = false;
         if (alliance.allianceLeaderID === message.author.id || alliance.allianceAdminIDs.includes(message.author.id)) {
             allowed = true
         }
-        if (allowed === false) return errorEmbed(message.channel, discord, 'You are not permitted to do this. You must be the alliance leader, or admin of the alliance to use this command.')
+        if (allowed === false) return errorEmbed(message.channel, 'You are not permitted to do this. You must be the alliance leader, or admin of the alliance to use this command.')
 
         allowed = true;
         for(let i = 0; i < alliance.factionTags.length; i++) {
@@ -68,7 +68,7 @@ module.exports = {
                 allowed = false
             }
         }
-        if(allowed === false) return errorEmbed(message.channel, discord, 'This faction is already in your alliance.')
+        if(allowed === false) return errorEmbed(message.channel, 'This faction is already in your alliance.')
 
         allowed = true;
         for(let i = 0; i < alliance.invitedFactionTags.length; i++) {
@@ -76,7 +76,7 @@ module.exports = {
                 allowed = false
             }
         }
-        if(allowed === false) return errorEmbed(message.channel, discord, 'This faction is already invited to your alliance.')
+        if(allowed === false) return errorEmbed(message.channel, 'This faction is already invited to your alliance.')
 
         alliance.invitedFactionTags.push({
             factionTag: args[0]
