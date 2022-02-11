@@ -39,7 +39,9 @@ const planetLocations = [{
 
 module.exports = (client) => {
     setInterval(async () => {
-        let gridDocs = await gridModel.find({});
+        let gridDocs = await gridModel.find({
+            guildID: '799685703910686720'
+        });
         if (gridDocs.length === 0) return;
 
         let allowedFactionTags = [];
