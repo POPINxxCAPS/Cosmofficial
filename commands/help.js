@@ -1,5 +1,6 @@
 const chatModel = require('../models/chatSchema');
 const lockedEmbed = require('../functions_discord/lockedEmbed');
+// More crap that needs recoding
 
 let commands = [{
     aliases: ['general'],
@@ -30,7 +31,8 @@ let commands = [{
     }, {
         name: 'Space Ticket',
         description: 'Purchase a Space Ticket for your faction! Lasts 24 hours.',
-        format: 'c!buyspaceticket **||** c!bst'
+        format: 'c!buyspaceticket **||** c!bst',
+        cosmicOnly: true
     }, {
         name: 'Chat',
         description: 'Displays chat messages from the Space Engineers server',
@@ -111,6 +113,14 @@ let commands = [{
     }, {
         name: 'Edit Hoover Settings',
         description: 'Edit current Hoover settings. (Trash Cleanup)',
+        format: 'c!ehs {setting} {value}'
+    }, {
+        name: 'Check Server-Log Settings',
+        description: 'View current server-log settings.',
+        format: 'c!chs'
+    }, {
+        name: 'Edit Server-Log Settings',
+        description: 'Edit current server-log settings.',
         format: 'c!ehs {setting} {value}'
     }, {
         name: 'Save Server',
@@ -225,15 +235,15 @@ let commands = [{
         If you have a grid that is queued for deletion, you will be DM'ed and given that 24hrs to fix the issue. (Must be verified)`,
         format: '',
     }, {
-        name: 'Mod pages are being skipped, why?',
+        name: 'Mod pages are being skipped in the radial menu, why?',
         description: `Most mod authors don't properly set up the radial wheel for their mod, so to access their items you must have a keyboard and access the "G" menu. Alternatively, it may show up in progression.`,
         format: '',
     }, {
-        name: 'How do I make Cosmic Tokens?',
-        description: 'There are many many ways to make tokens. They are received for just being online+verified, particpating in events/games/lottery, and eventually blowing enemy stuff up ;)',
+        name: 'How do I make discord currency?',
+        description: 'There are many many ways to make currency. It is received for being online + verified, particpating in events/games/lottery, and eventually blowing stuff up ;)',
         format: '',
     }, {
-        name: 'What do I use Cosmic Tokens for?',
+        name: 'What do I use discord currency for?',
         description: 'EMPs, Map Purchases/Scans, and much more if the server uses Cosmofficial compatability mods.',
         format: '',
     }, {
