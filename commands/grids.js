@@ -12,12 +12,6 @@ module.exports = {
         let configCheck = await remoteConfigModel.findOne({guildID: guild.id}) // Check if config already created, if true, return message to channel
         if(configCheck === null) return message.channel.send('This discord does not have a server registered.\nUse c!setup to add your remote configuration.');
         
-        if(args[0] !== undefined) {
-            let guildOwner = mainGuild.members.cache.get(message.guild.owner.user.id);
-            if(!guildOwner) return message.channel.send("The owner of this discord must be in the Cosmofficial discord to enable usage of this command's special features.");
-            if(guildOwner.roles.cache.has('883535682553929779') || guildOwner.roles.cache.has('883535930630213653') || guildOwner.roles.cache.has('883534965650882570')) {} else return lockedEmbed(message.channel, discord)
-        }
-        
         if(args[0] === undefined) { // If no arguments
             let grids = await gridModel.find({guildID: guild.id})
             if(grids.length <= 8) return message.channel.send('Not enough grids to display.\nMust be at least 10 grids.')
