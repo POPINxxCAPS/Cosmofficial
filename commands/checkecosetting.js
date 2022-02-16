@@ -126,7 +126,7 @@ module.exports = {
         const embed = new discord.MessageEmbed()
             .setColor('#E02A6B')
             .setTitle('Economy Setup')
-            .setURL('https://www.patreon.com/Cosmofficial')
+            .setURL('https://cosmofficial.herokuapp.com/')
             .setDescription('Format: c!ees {setting} {value}\n{} = Required Argument')
             .setFooter('Cosmofficial by POPINxxCAPS');
 

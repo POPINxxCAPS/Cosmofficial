@@ -47,7 +47,7 @@ module.exports = {
         const embed = new discord.MessageEmbed()
             .setColor('#E02A6B')
             .setTitle('Server Log Setup')
-            .setURL('https://www.patreon.com/Cosmofficial')
+            .setURL('https://cosmofficial.herokuapp.com/')
             .setFooter('Cosmofficial by POPINxxCAPS');
 
 

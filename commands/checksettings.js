@@ -47,7 +47,7 @@ module.exports = {
         const embed = new discord.MessageEmbed()
             .setColor('#E02A6B')
             .setTitle('Bot Configuration Info')
-            .setURL('https://www.patreon.com/Cosmofficial')
+            .setURL('https://cosmofficial.herokuapp.com/')
             .setDescription('Showing current setting configuration')
             .addFields({
                 name: 'Chat Relay Channel',

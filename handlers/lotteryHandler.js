@@ -83,7 +83,7 @@ module.exports = async (client, discord) => {
                     const embed = new discord.MessageEmbed()
                         .setColor('#E02A6B')
                         .setTitle('Lottery Manager')
-                        .setURL('https://www.patreon.com/Cosmofficial')
+                        .setURL('https://cosmofficial.herokuapp.com/')
                         .addFields({
                             name: `No Tickets!`,
                             value: `There are no tickets for this round. Cancelling draw.`
@@ -123,7 +123,7 @@ module.exports = async (client, discord) => {
                     const embed = new discord.MessageEmbed()
                         .setColor('#E02A6B')
                         .setTitle('Lottery Manager')
-                        .setURL('https://www.patreon.com/Cosmofficial')
+                        .setURL('https://cosmofficial.herokuapp.com/')
                         .addFields({
                             name: `No Winning Tickets!`,
                             value: `Better luck next time.`
@@ -183,7 +183,7 @@ module.exports = async (client, discord) => {
                 const embed = new discord.MessageEmbed()
                     .setColor('#E02A6B')
                     .setTitle('Cosmic Lottery')
-                    .setURL('https://www.patreon.com/Cosmofficial')
+                    .setURL('https://cosmofficial.herokuapp.com/')
                     .setDescription('Showing lottery info')
                     .addFields({
                         name: `Winners`,
@@ -234,7 +234,7 @@ module.exports = async (client, discord) => {
                 const embed = new discord.MessageEmbed()
                     .setColor('#E02A6B')
                     .setTitle('Lottery Manager')
-                    .setURL('https://www.patreon.com/Cosmofficial')
+                    .setURL('https://cosmofficial.herokuapp.com/')
                     .setDescription('Showing lottery info')
                     .addFields({
                         name: `Next Draw Time`,

@@ -307,7 +307,7 @@ module.exports = {
         const embed = new discord.MessageEmbed()
             .setColor('#E02A6B')
             .setTitle(`Cosmofficial Help`)
-            .setURL('https://www.patreon.com/Cosmofficial')
+            .setURL('https://cosmofficial.herokuapp.com/')
             .setDescription(`Command format: c!help {category/command} [page]\n{} = Required\n[] = Optional`)
         // Main embed set-up
 

@@ -8,8 +8,8 @@ module.exports = {
         const embed =  new discord.MessageEmbed()
         .setColor('#E02A6B')
         .setTitle(`Cosmofficial Patreon Link`)
-        .setURL('https://www.patreon.com/Cosmofficial')
-        .setDescription(`https://www.patreon.com/Cosmofficial`)
+        .setURL('https://cosmofficial.herokuapp.com/')
+        .setDescription(`https://cosmofficial.herokuapp.com/`)
         .setFooter('Cosmofficial by POPINxxCAPS');
         message.channel.send(embed)
     }

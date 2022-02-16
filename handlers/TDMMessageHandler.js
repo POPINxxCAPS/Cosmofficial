@@ -23,7 +23,7 @@ const updateQueue = async (client) => {
   const embed = new discord.MessageEmbed()
     .setColor('#E02A6B')
     .setTitle('Cosmic TDM')
-    .setURL('https://www.patreon.com/Cosmofficial')
+    .setURL('https://cosmofficial.herokuapp.com/')
     .setDescription('Showing currently queued players')
     .addFields({
       name: `Queued Players:`,
@@ -55,7 +55,7 @@ const updateMatch = async (client) => {
     const embed = new discord.MessageEmbed()
       .setColor('#E02A6B')
       .setTitle('Cosmic TDM Pre-Match')
-      .setURL('https://www.patreon.com/Cosmofficial')
+      .setURL('https://cosmofficial.herokuapp.com/')
       .setDescription('Preparing Next Match')
       .addFields({
         name: `Red Team:`,
@@ -96,7 +96,7 @@ const updateMatch = async (client) => {
         const embed = new discord.MessageEmbed()
           .setColor('#E02A6B')
           .setTitle('Cosmic TDM Pre-Match')
-          .setURL('https://www.patreon.com/Cosmofficial')
+          .setURL('https://cosmofficial.herokuapp.com/')
           .setDescription('Preparing Next Match')
           .addFields({
             name: `Red Team:`,
@@ -120,7 +120,7 @@ const updateMatch = async (client) => {
       const embed = new discord.MessageEmbed()
         .setColor('#E02A6B')
         .setTitle('Cosmic TDM')
-        .setURL('https://www.patreon.com/Cosmofficial')
+        .setURL('https://cosmofficial.herokuapp.com/')
         .setDescription('Showing current match information')
         .addFields({
             name: `Red Team:`,
@@ -158,7 +158,7 @@ async function updateErrors(client, string) {
   const embed = new discord.MessageEmbed()
     .setColor('#E02A6B')
     .setTitle('Cosmic TDM Errors')
-    .setURL('https://www.patreon.com/Cosmofficial')
+    .setURL('https://cosmofficial.herokuapp.com/')
     .setDescription('Showing current match errors')
     .addFields({
       name: `All Errors:`,
@@ -183,7 +183,7 @@ async function playerStatus(client, teamOneString, teamTwoString) {
   const embed = new discord.MessageEmbed()
     .setColor('#E02A6B')
     .setTitle('Cosmic TDM')
-    .setURL('https://www.patreon.com/Cosmofficial')
+    .setURL('https://cosmofficial.herokuapp.com/')
     .setDescription('')
     .addFields({
       name: `Red Team:`,

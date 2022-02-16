@@ -2,7 +2,7 @@ module.exports = async (channel, discord) => {
     const embed = new discord.MessageEmbed()
         .setColor('#E02A6B')
         .setTitle('Feature Locked')
-        .setURL('https://www.patreon.com/Cosmofficial')
+        .setURL('https://cosmofficial.herokuapp.com/')
         .setDescription('The discord owner must be subscribed to the Patreon.\nFeature is currently locked.')
         .addFields({
             name: 'Patreon Link',

@@ -47,7 +47,7 @@ module.exports = {
     const embed = new discord.MessageEmbed()
       .setColor('#E02A6B')
       .setTitle('In-Game Chat')
-      .setURL('https://www.patreon.com/Cosmofficial')
+      .setURL('https://cosmofficial.herokuapp.com/')
       .setDescription('Showing recent in-game chats')
       .addFields({
         name: 'Chat History',

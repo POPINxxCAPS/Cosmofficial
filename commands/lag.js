@@ -26,7 +26,7 @@ module.exports = {
       const embed = new discord.MessageEmbed()
         .setColor('#E02A6B')
         .setTitle('Server Status')
-        .setURL('https://www.patreon.com/Cosmofficial')
+        .setURL('https://cosmofficial.herokuapp.com/')
         .addFields({
           name: `Server is Offline`,
           value: `Can't reach the server!\nIt could be down or information queries may have broken.`
@@ -39,7 +39,7 @@ module.exports = {
       const embed = new discord.MessageEmbed()
         .setColor('#E02A6B')
         .setTitle('Server Status')
-        .setURL('https://www.patreon.com/Cosmofficial')
+        .setURL('https://cosmofficial.herokuapp.com/')
         .addFields({
           name: `Server Starting`,
           value: `The server is currently starting up.\nPlease wait a moment.`
@@ -53,7 +53,7 @@ module.exports = {
     const embed = new discord.MessageEmbed()
       .setColor('#E02A6B')
       .setTitle('Server Manager')
-      .setURL('https://www.patreon.com/Cosmofficial')
+      .setURL('https://cosmofficial.herokuapp.com/')
       .setDescription(`${infoData.serverName}\nLast Updated: ${ms((current_time - infoData.lastUpdated))} ago`)
       .addFields({
         name: 'Status',

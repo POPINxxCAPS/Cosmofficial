@@ -47,7 +47,7 @@ module.exports = {
         const embed = new discord.MessageEmbed()
             .setColor('#E02A6B')
             .setTitle('Command Price')
-            .setURL('https://www.patreon.com/Cosmofficial')
+            .setURL('https://cosmofficial.herokuapp.com/')
             .setDescription(`The price for the ${commandName} command has been set to ${price} successfully.`)
             .setFooter('Cosmobot by POPINxxCAPS');
         

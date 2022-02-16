@@ -72,7 +72,7 @@ module.exports = {
             const embed = new discord.MessageEmbed()
                 .setColor('#E02A6B')
                 .setTitle('Space Ticket Manager')
-                .setURL('https://www.patreon.com/Cosmofficial')
+                .setURL('https://cosmofficial.herokuapp.com/')
                 .setDescription(`You have purchased a Space Ticket for ${playerDoc.factionName}.\nIt will expire in: ${ms(parseInt(ticket.expirationTime) - current_time)}`)
                 .setFooter('Cosmofficial by POPINxxCAPS');
             try {
@@ -86,7 +86,7 @@ module.exports = {
             const embed = new discord.MessageEmbed()
                 .setColor('#E02A6B')
                 .setTitle('Space Ticket Manager')
-                .setURL('https://www.patreon.com/Cosmofficial')
+                .setURL('https://cosmofficial.herokuapp.com/')
                 .setDescription(`You have extended the Space Ticket timer for ${playerDoc.factionName} by 24hrs.\nIt will now expire in: ${ms(parseInt(ticket.expirationTime) - current_time)}`)
                 .setFooter('Cosmofficial by POPINxxCAPS');
             try {

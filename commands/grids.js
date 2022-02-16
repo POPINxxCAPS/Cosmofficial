@@ -41,7 +41,7 @@ async function embed(discord, channel, description, fields) {
     const embed = new discord.MessageEmbed()
         .setColor('#E02A6B')
         .setTitle('Grids Manager')
-        .setURL('https://www.patreon.com/Cosmofficial')
+        .setURL('https://cosmofficial.herokuapp.com/')
         .setDescription(description)
         .setFooter('Cosmofficial by POPINxxCAPS');
 
@@ -92,6 +92,7 @@ module.exports = {
             return await embed(discord, message.channel, description, embedFields)
         }
 
+        // If args are not undefined, but do not match anything above, attempt to check for an @'ed player
         const target = message.mentions.users.first();
         if (!target) return message.channel.send('Invalid command format.');
         let targetVerification = await verificationModel.findOne({
@@ -117,7 +118,7 @@ module.exports = {
         const embed = new discord.MessageEmbed()
             .setColor('#E02A6B')
             .setTitle('Grids Manager')
-            .setURL('https://www.patreon.com/Cosmofficial')
+            .setURL('https://cosmofficial.herokuapp.com/')
             .setDescription(`Showing ${targetGT}'s Grids`)
             .addFields({
                 name: `Grids sorted by Block Count`,
