@@ -25,7 +25,7 @@ module.exports = {
     const embed = new discord.MessageEmbed()
       .setColor('#E02A6B')
       .setTitle('Server Info')
-      .setURL('https://mod.io/members/popinuwu')
+      .setURL('https://cosmofficial.herokuapp.com/')
       .addFields({
         name: 'Floating Objects',
         value: `${floatingObjectsString}`

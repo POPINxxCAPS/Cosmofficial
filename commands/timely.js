@@ -90,7 +90,7 @@ module.exports = {
         const embed = new discord.MessageEmbed()
             .setColor('#E02A6B')
             .setTitle(`Economy Manager`)
-            .setURL('https://mod.io/members/popinuwu')
+            .setURL('https://cosmofficial.herokuapp.com/')
             .setDescription(`<@${message.author.id}> received **${rewardAmount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} ${currencyName}**!`)
             .setFooter('Cosmofficial by POPINxxCAPS');
 

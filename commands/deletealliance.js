@@ -30,7 +30,7 @@ module.exports = {
         const embed = new discord.MessageEmbed()
             .setColor('#E02A6B')
             .setTitle('Alliance Manager')
-            .setURL('https://mod.io/members/popinuwu')
+            .setURL('https://cosmofficial.herokuapp.com/')
             .setFooter('Cosmofficial by POPINxxCAPS')
             .setDescription(`Alliance **${name}** successfully deleted.`)
         try {

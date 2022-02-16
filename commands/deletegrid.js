@@ -131,7 +131,7 @@ module.exports = {
         const embed = new discord.MessageEmbed()
             .setColor('#E02A6B')
             .setTitle(`Grid Manager`)
-            .setURL('https://mod.io/members/popinuwu')
+            .setURL('https://cosmofficial.herokuapp.com/')
             .setFooter('Cosmofficial by POPINxxCAPS')
             .setDescription(`Grid ${grid.displayName} Successfully Deleted.`)
         message.channel.send(embed);

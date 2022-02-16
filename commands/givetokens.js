@@ -48,7 +48,7 @@ module.exports = {
             const embed = new discord.MessageEmbed()
                 .setColor('#E02A6B')
                 .setTitle(`Economy Manager`)
-                .setURL('https://mod.io/members/popinuwu')
+                .setURL('https://cosmofficial.herokuapp.com/')
                 .setDescription(`Successfully issued **${amount} ${currencyName}**!`)
                 .setFooter('Cosmofficial by POPINxxCAPS');
 

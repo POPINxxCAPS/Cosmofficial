@@ -27,7 +27,7 @@ module.exports = async (client, discord) => {
             const embed = new discord.MessageEmbed()
                 .setColor('#E02A6B')
                 .setTitle(`Domination Alerts`)
-                .setURL('https://mod.io/members/popinuwu')
+                .setURL('https://cosmofficial.herokuapp.com/')
                 .setFooter('Cosmofficial by POPINxxCAPS')
             const guild = client.guilds.cache.get(guildID);
             if (guild === undefined || guild === null) return; // If bot is no longer in guild

@@ -37,7 +37,7 @@ module.exports = {
             const balEmbed =  new discord.MessageEmbed()
             .setColor('#E02A6B')
             .setTitle(`Economy Manager`)
-            .setURL('https://mod.io/members/popinuwu')
+            .setURL('https://cosmofficial.herokuapp.com/')
             .setDescription(`**Balance of User:** <@${target.id}>`)
             .addFields(
                 {name: `${currencyName}`, value: `${targetData.currency}`},
@@ -59,7 +59,7 @@ module.exports = {
         const balEmbed =  new discord.MessageEmbed()
         .setColor('#E02A6B')
         .setTitle(`Economy Manager`)
-        .setURL('https://mod.io/members/popinuwu')
+        .setURL('https://cosmofficial.herokuapp.com/')
         .setDescription(`**Balance of User:** <@${message.author.id}>`)
         .addFields(
             {name: `${currencyName}`, value: `${playerEco.currency}`},

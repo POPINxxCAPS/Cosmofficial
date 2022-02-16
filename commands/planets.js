@@ -147,7 +147,7 @@ module.exports = {
       const embed = new discord.MessageEmbed()
         .setColor('#E02A6B')
         .setTitle('Planet Info')
-        .setURL('https://mod.io/members/popinuwu')
+        .setURL('https://cosmofficial.herokuapp.com/')
         .setDescription(`Showing planet ${i + 1}`)
         .addFields({
           name: 'Planet Name',

@@ -82,7 +82,7 @@ module.exports = {
             const embed = new discord.MessageEmbed()
                 .setColor('#E02A6B')
                 .setTitle(`Antenna Activation`)
-                .setURL('https://mod.io/members/popinuwu')
+                .setURL('https://cosmofficial.herokuapp.com/')
                 .setFooter('Cosmofficial by POPINxxCAPS')
                 .setDescription(`You are currently ${Math.round(sorted[0].distance).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} meters away from a converter.
                 **Closest Converter Location**
@@ -160,7 +160,7 @@ module.exports = {
         const embed = new discord.MessageEmbed()
             .setColor('#E02A6B')
             .setTitle(`Antenna Activation`)
-            .setURL('https://mod.io/members/popinuwu')
+            .setURL('https://cosmofficial.herokuapp.com/')
             .setFooter('Cosmofficial by POPINxxCAPS')
             .setDescription(`Successfully activated ${gridName} for ${seconds} seconds!`)
         message.channel.send(embed);

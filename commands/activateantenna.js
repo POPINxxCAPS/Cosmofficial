@@ -248,7 +248,7 @@ module.exports = {
         const embed = new discord.MessageEmbed()
             .setColor('#E02A6B')
             .setTitle(`Antenna Activation`)
-            .setURL('https://mod.io/members/popinuwu')
+            .setURL('https://cosmofficial.herokuapp.com/')
             .setFooter('Cosmofficial by POPINxxCAPS')
             .setDescription(`Successfully activated ${gridName} for 60 seconds!`)
         message.channel.send(embed);

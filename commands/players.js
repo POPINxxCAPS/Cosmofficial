@@ -31,7 +31,7 @@ module.exports = {
       const embed = new discord.MessageEmbed()
         .setColor('#E02A6B')
         .setTitle('Player Info')
-        .setURL('https://mod.io/members/popinuwu')
+        .setURL('https://cosmofficial.herokuapp.com/')
         .setFooter('Cosmofficial by POPINxxCAPS');
       if (playerDocs === [] || playerDocs === undefined || playerDocs === null) {
         embed.setDescription(`Can't reach the server. It may be offline.`)
@@ -87,7 +87,7 @@ module.exports = {
       const embed = new discord.MessageEmbed()
         .setColor('#E02A6B')
         .setTitle('Player Info')
-        .setURL('https://mod.io/members/popinuwu')
+        .setURL('https://cosmofficial.herokuapp.com/')
         .addFields({
           name: 'Online Players',
           value: `${playersString}`
