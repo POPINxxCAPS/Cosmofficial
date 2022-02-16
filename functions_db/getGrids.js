@@ -4,6 +4,6 @@ module.exports = async (guildID) => {
     const gridDocs = await gridModel.find({
         guildID: guildID
     });
-    const sorted = gridDocs.sort((a, b) => ((a.displayName) > (b.displayName)) ? 1 : -1)
+    const sorted = await gridDocs.sort((a, b) => ((a.displayName) > (b.displayName)) ? 1 : -1)
     return sorted
 }
