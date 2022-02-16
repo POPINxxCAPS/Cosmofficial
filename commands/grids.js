@@ -22,7 +22,7 @@ async function fields(modifier, gridData) {
         for (let i = 0; i < 9; i++) {
             fields.push({
                 name: `Grid Name: ${gridData[i].displayName}`,
-                value: `Block Count: ${gridData[i].PCU.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} Owner: ${gridData[i].ownerDisplayName}`
+                value: `PCU: ${gridData[i].PCU.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} Owner: ${gridData[i].ownerDisplayName}`
             })
         }
     }
