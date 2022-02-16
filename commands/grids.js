@@ -98,33 +98,13 @@ module.exports = {
         let targetVerification = await verificationModel.findOne({
             userID: target.id
         })
-        if (targetVerification === null) return message.channel.send('User is not verified. Cannot display information.')
+        if (targetVerification === null) return errorEmbed(message.channel, 'User is not verified. Cannot display information.')
         const targetGT = targetVerification.username;
-        let playerGrids = await gridModel.find({
-            ownerDisplayName: targetGT,
-            guildID: guild.id
-        }); // Get target players grids from db
-        if (!playerGrids[0]) {
-            return message.channel.send('Target has no grids to display.')
-        }
-        const sortedByBlockCount = playerGrids.sort((a, b) => ((a.blocksCount) > (b.blocksCount)) ? -1 : 1); // Sort grids by pcu
-        let gridsString = ''; // Declare empty embed string
-        for (y = 1; y < 10; y++) {
-            if (!sortedByBlockCount[y]) { // If doesn't exist, do nothing
-            } else {
-                gridsString += `\nGrid Name: ${sortedByBlockCount[y].displayName} Block Count: ${sortedByBlockCount[y].blocksCount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`
-            } // Else, add to string list
-        }
-        const embed = new discord.MessageEmbed()
-            .setColor('#E02A6B')
-            .setTitle('Grids Manager')
-            .setURL('https://cosmofficial.herokuapp.com/')
-            .setDescription(`Showing ${targetGT}'s Grids`)
-            .addFields({
-                name: `Grids sorted by Block Count`,
-                value: `Grid Name: ${sortedByBlockCount[0].displayName} Block Count: ${sortedByBlockCount[0].blocksCount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}${gridsString}`
-            }, )
-            .setFooter('Cosmofficial by POPINxxCAPS');
-        return message.channel.send(embed)
+        description = `${targetGT}'s Top 10 Grids (Block Count)`
+        gridData = await getGridsByBlockCount(guild.id, targetGT)
+
+        if (gridData.length < 10) return errorEmbed(message.channel, `${targetGT} doesn't own at least 10 grids! Cannot display.\nTry the website instead! (Click-able link above)`)
+        embedFields = await fields('blockcount', gridData)
+        return await embed(discord, message.channel, description, embedFields)
     }
 }
