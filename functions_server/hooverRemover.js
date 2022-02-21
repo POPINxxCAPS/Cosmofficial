@@ -34,7 +34,7 @@ module.exports = async (guildID, settings, client) => {
     }
 
     let hooverSettings;
-    if (patron === true || patron === false /* added to make it free */) {
+    if (patron === true || patron === false ) { // added to make it free 
         hooverSettings = await hooverSettingModel.findOne({
             guildID: guildID
         })

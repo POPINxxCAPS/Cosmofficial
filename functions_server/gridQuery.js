@@ -383,7 +383,7 @@ module.exports = async (guildID, config, settings, client) => {
                             if (verDoc !== null) {
                                 let memberTarget = guild.members.cache.find(member => member.id === verDoc.userID)
                                 try {
-                                    memberTarget.send(`**__Warning__**\n>>> ${check.displayName} has been deleted.\nLarge grids are not allowed.`)
+                                    //memberTarget.send(`**__Warning__**\n>>> ${check.displayName} has been deleted.\nLarge grids are not allowed.`)
                                 } catch(err) {}
                             }
                         }
@@ -395,7 +395,7 @@ module.exports = async (guildID, config, settings, client) => {
                             if (verDoc !== null) {
                                 let memberTarget = guild.members.cache.find(member => member.id === verDoc.userID)
                                 try {
-                                    memberTarget.send(`**__Warning__**\n>>> ${check.displayName} has been deleted.\nSmall grids are not allowed.`)
+                                    //memberTarget.send(`**__Warning__**\n>>> ${check.displayName} has been deleted.\nSmall grids are not allowed.`)
                                 } catch(err) {}
                             }
                         }
@@ -407,7 +407,7 @@ module.exports = async (guildID, config, settings, client) => {
                             if (verDoc !== null) {
                                 let memberTarget = guild.members.cache.find(member => member.id === verDoc.userID)
                                 try {
-                                    memberTarget.send(`**__Warning__**\n>>> ${check.displayName} is less than ${hooverSettings.blockThreshold} blocks.\nIncrease the build size within 24hrs or the grid will be removed!`)
+                                    //memberTarget.send(`**__Warning__**\n>>> ${check.displayName} is less than ${hooverSettings.blockThreshold} blocks.\nIncrease the build size within 24hrs or the grid will be removed!`)
                                 } catch(err) {}
                             }
                         }
@@ -419,7 +419,7 @@ module.exports = async (guildID, config, settings, client) => {
                             if (verDoc !== null) {
                                 let memberTarget = guild.members.cache.find(member => member.id === verDoc.userID)
                                 try {
-                                    memberTarget.send(`**__Warning__**\n>>> ${check.displayName} has run out of power.\nRestore power within 24hrs or the grid will be removed!`)
+                                    //memberTarget.send(`**__Warning__**\n>>> ${check.displayName} has run out of power.\nRestore power within 24hrs or the grid will be removed!`)
                                 } catch(err) {}
                             }
                         }
