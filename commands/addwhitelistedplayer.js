@@ -8,14 +8,6 @@ module.exports = {
     description: "Add a player to the whitelist",
     permissions: ["ADMINISTRATOR"],
     async execute(message, args, cmd, client, discord, mainGuild, guild) {
-        let guildOwner = mainGuild.members.cache.get(message.guild.owner.user.id);
-        if (!guildOwner || guildOwner === null || guildOwner === undefined) return message.channel.send('The owner of this discord must be in the Cosmofficial discord to enable usage of this command.');
-        let administrationPackage;
-        if (guildOwner.roles.cache.has('883535682553929779') || guildOwner.roles.cache.has('883535930630213653') || guildOwner.roles.cache.has('883534965650882570')) {
-            administrationPackage = true;
-        }
-        if (administrationPackage === undefined) return lockedEmbed(message.channel, discord);
-
         let whitelistSettings = await whitelistSettingsModel.findOne({
             guildID: guild.id
         })

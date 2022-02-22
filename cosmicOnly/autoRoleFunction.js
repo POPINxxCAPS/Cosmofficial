@@ -8,6 +8,7 @@ module.exports = async (client) => {
         let ownerRole = await guild.roles.cache.find(r => r.name === 'Server Owner');
         let mainRole = await guild.roles.cache.find(r => r.name === 'Engineer');
         let muteRole = await guild.roles.cache.find(r => r.name === 'Cosmic Mute');
+        let sneakPeakRole = await guild.roles.cache.find(r => r.id === '945566999956836382')
         let moderatorRole = await guild.roles.cache.find(r => r.name === 'Discord Moderator');
         let teamOneTDMRole = await guild.roles.cache.find(r => r.name === 'TDM Red Team');
         let teamTwoTDMRole = await guild.roles.cache.find(r => r.name === 'TDM Blue Team');
@@ -98,6 +99,9 @@ module.exports = async (client) => {
                 // Check for other odd roles the user may have, if they have them, add to array
                 if (memberTarget.roles.cache.has('827741099740233728')) { // If member is moderator
                     roleArray.push(moderatorRole)
+                }
+                if (memberTarget.roles.cache.has('945566999956836382')) { // If member has sneak peak role
+                    roleArray.push(sneakPeakRole)
                 }
 
                 // Assign role array to member
