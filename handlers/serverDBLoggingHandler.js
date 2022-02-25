@@ -2,11 +2,11 @@ const remoteConfigModel = require('../models/remoteConfigSchema');
 const discordServerSettingsModel = require('../models/discordServerSettngsSchema');
 
 // Query Functions
-const statusQuery = require('../functions_server/statusQuery');
+const logStatus = require('../functions_server/logStatus');
 const gridQuery = require('../functions_server/gridQuery');
-const playerQuery = require('../functions_server/playerQuery');
+const logPlayers = require('../functions_server/logPlayers');
 const characterQuery = require('../functions_server/characterQuery');
-const chatQuery = require('../functions_server/chatQuery');
+const logChat = require('../functions_server/logChat');
 const floatingObjQuery = require('../functions_server/floatingObjectQuery');
 const logVoxels = require('../functions_server/logVoxels');
 
@@ -17,31 +17,6 @@ module.exports = async (client) => {
     setInterval(async () => {
         guildIDs = await client.guilds.cache.map(guild => guild.id);
     }, 300000)
-    // Status Query
-    setInterval(async () => {
-        guildIDs.forEach(async guildID => {
-            if (guildID === '853247020567101440') return;
-            let settings = await discordServerSettingsModel.findOne({
-                guildID: guildID
-            });
-            if (settings === null) {
-                settings = await discordServerSettingsModel.create({
-                    guildID: guildID,
-                    serverLogChannel: 'None',
-                    hotzoneChannel: 'None',
-                    chatRelayChannel: 'None',
-                    botCommandChannel: 'None'
-                })
-            }
-
-            let config = await remoteConfigModel.findOne({
-                guildID: guildID
-            })
-            if (config === null) return;
-            // Update server status
-            statusQuery(guildID, config, settings, client)
-        })
-    }, 15000)
 
     // Grid Query
     setInterval(async () => {
@@ -71,64 +46,6 @@ module.exports = async (client) => {
             gridQuery(guildID, config, settings, client);
         })
     }, 90000)
-
-    // Chat Query
-    setInterval(async () => {
-        guildIDs.forEach(async guildID => {
-            if (guildID === '853247020567101440') return;
-            let settings = await discordServerSettingsModel.findOne({
-                guildID: guildID
-            });
-            if (settings === null) {
-                try {
-                settings = await discordServerSettingsModel.create({
-                    guildID: guildID,
-                    serverLogChannel: 'None',
-                    hotzoneChannel: 'None',
-                    chatRelayChannel: 'None',
-                    botCommandChannel: 'None'
-                })
-                } catch(err) {}
-            }
-
-            let config = await remoteConfigModel.findOne({
-                guildID: guildID
-            })
-            if (config === null || settings === null) return;
-
-            // Log Chat
-            chatQuery(guildID, config, settings, client);
-        })
-    }, 90000)
-
-    // Player Query
-    setInterval(async () => {
-        guildIDs.forEach(async guildID => {
-            if (guildID === '853247020567101440') return;
-            let settings = await discordServerSettingsModel.findOne({
-                guildID: guildID
-            });
-            if (settings === null) {
-                try {
-                settings = await discordServerSettingsModel.create({
-                    guildID: guildID,
-                    serverLogChannel: 'None',
-                    hotzoneChannel: 'None',
-                    chatRelayChannel: 'None',
-                    botCommandChannel: 'None'
-                })
-                } catch(err) {}
-            }
-
-            let config = await remoteConfigModel.findOne({
-                guildID: guildID
-            })
-            if (config === null || settings === null) return;
-
-            // Log Players
-            playerQuery(guildID, config, settings, client);
-        })
-    }, 60000)
 
     // Character Query
     setInterval(async () => {
@@ -188,7 +105,7 @@ module.exports = async (client) => {
         })
     }, 45000)
 
-    // Asteroid Query (Modified Voxels)
+    // Query Interval
     setInterval(async () => {
         guildIDs.forEach(async guildID => {
             if (guildID === '853247020567101440') return;
@@ -211,14 +128,16 @@ module.exports = async (client) => {
                 guildID: guildID
             })
             if (config === null || settings === null) return;
-
-            // Log Floating Objects
             let req = {
                 guildID: guildID,
                 config: config,
-                settings: settings
+                settings: settings,
+                client: client
             }
-            await logVoxels(req); // Just using await to ensure it's only ran once (weird bug)
+            await logStatus(req); // Do this first so the rest know if they even need to do anything.
+            logPlayers(req);
+            logChat(req);
+            logVoxels(req); // Just using await to ensure it's only ran once (weird bug)
         })
-    }, 600000) // Only runs every 10 minutes because it crashes queries if done too often.
+    }, 15500) // Timers are now handled in each query seperately, so this is no issue.
 }

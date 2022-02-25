@@ -5,27 +5,19 @@ const verificationModel = require('../models/verificationSchema');
 const whitelistModel = require('../models/whitelistSchema');
 const whitelistSettingModel = require('../models/whitelistSettingSchema');
 const serverLogModel = require('../models/serverLogSchema');
+const queryPlayers = require('../functions_execution/queryPlayers');
+const timerFunction = require('../functions_db/timerFunction')
 
-const {
-    filterBySearch
-} = require('../lib/modifiers');
-const sessionPath = '/v1/session';
-const serverPath = '/v1/server';
-const adminPath = '/v1/admin';
-
-
-
-const axios = require('axios');
-const crypto = require('crypto');
-const JSONBI = require('json-bigint')({
-    storeAsString: true,
-    useNativeBigInt: true
-});
-const querystring = require('querystring');
-
-
-module.exports = async (guildID, config, settings, client) => {
+module.exports = async (req) => {
+    const guildID = req.guildID;
+    const config = req.config;
+    const settings = req.settings;
+    const client = req.client;
     if(settings.serverOnline === false || settings.serverOnline === undefined) return;
+    req.expirationInSeconds = 60;
+    req.name = 'logPlayers'
+    const timerCheck = await timerFunction(req)
+    if (timerCheck === true) return; // If there is a timer, cancel.
     const guild = client.guilds.cache.get(guildID);
     const mainGuild = client.guilds.cache.get("853247020567101440");
 
@@ -52,101 +44,7 @@ module.exports = async (guildID, config, settings, client) => {
         }
     }
 
-
-
-
-
-
-    // Init Server Bridge
-    const baseUrl = config.baseURL;
-    const port = config.port;
-    const prefix = config.prefix;
-    const secret = config.secret;
-
-    const getNonce = () => crypto.randomBytes(20).toString('base64');
-    const getUtcDate = () => new Date().toUTCString();
-
-    const opts = (method, api, {
-        body,
-        qs
-    } = {}) => {
-        const url = `${baseUrl}:${port}${prefix}${api}`;
-        const nonce = getNonce();
-        const date = getUtcDate();
-        const query = qs ? `?${querystring.stringify(qs)}` : '';
-
-        const key = Buffer.from(secret, 'base64');
-        const message = `${prefix}${api}${query}\r\n${nonce}\r\n${date}\r\n`;
-        const hash = crypto.createHmac('sha1', key).update(Buffer.from(message)).digest('base64');
-
-        return {
-            url: url + query,
-            headers: {
-                Authorization: `${nonce}:${hash}`,
-                Date: date
-            },
-            transformRequest(data) {
-                return JSONBI.stringify(data);
-            },
-            transformResponse(data) {
-                return JSONBI.parse(data);
-            },
-            json: true,
-            body,
-            method
-        };
-    };
-
-    const send = (method, path, {
-        body,
-        qs,
-        log = false
-    } = {}) => {
-        if (log) {
-            console.log(`${method}: ${opts(method, path).url}`)
-        }
-
-        return axios(opts(method, path, {
-                body,
-                qs
-            }))
-            .then((result) => {
-                if (log) {
-                    console.log(result);
-                }
-
-                const {
-                    data: {
-                        data
-                    }
-                } = result;
-                return data || {};
-            })
-            .catch(e => {
-                return;
-            });
-    };
-    // End Bridge Init
-
-    // Start Player Query
-    const players = async (search, options, methods = true) => {
-        try {
-            const {
-                Players
-            } = await send('GET', `${sessionPath}/players`);
-
-            const collection = Players;
-
-            return filterBySearch(collection, search, options);
-        } catch (err) {
-            console.log(`Player Query for guild ID ${guildID} failed.`)
-        };
-    };
-
-    let playerData;
-    await players().then((res) => {
-        playerData = res
-    }).catch(err => {});
+    const playerData = await queryPlayers(config)
 
     let whitelistedPlayers = [];
     let onlinePlayerGTs = [];
@@ -386,6 +284,7 @@ module.exports = async (guildID, config, settings, client) => {
                     })
                 }
             })
-        }, 20000);
+        }, 10000);
     }
+    return;
 }

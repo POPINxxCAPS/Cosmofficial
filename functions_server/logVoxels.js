@@ -8,8 +8,8 @@ module.exports = async (req, res) => {
     const config = req.config;
     const settings = req.settings;
     if (settings.serverOnline === 'false' || settings.serverOnline === undefined || settings.serverOnline === false) return;
-    let current_time = Date.now();
     req.expirationInSeconds = 600;
+    req.name = 'logVoxels'
     const timerCheck = await timerFunction(req)
     if (timerCheck === true) return; // If there is a timer, cancel.
     const voxelData = await queryVoxels(config);

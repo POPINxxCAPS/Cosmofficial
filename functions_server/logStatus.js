@@ -3,11 +3,24 @@ const createInvite = require('../functions_discord/createInvite');
 const queryStatus = require('../functions_execution/queryStatus');
 const timerFunction = require('../functions_db/timerFunction');
 
-module.exports = async (guildID, config, settings, client) => {
+module.exports = async (req) => {
+    const guildID = req.guildID;
+    const config = req.config;
+    const settings = req.settings;
+    const client = req.client;
+    req.expirationInSeconds = 15;
+    req.name = 'logStatus'
+    const timerCheck = await timerFunction(req)
+    if (timerCheck === true) return; // If there is a timer, cancel.
     const current_time = Date.now();
     let servInfo = await queryStatus(config);
     
-    if (servInfo !== undefined) {
+    if (servInfo === undefined) {
+        if (settings.serverOnline === true) { // If document says server is online, update to say offline
+            settings.serverOnline = false;
+            settings.save();
+        }
+    } else {
         if (settings.serverOnline === false || settings.serverOnline === undefined) { // If document says server is offline, update to say online
             settings.serverOnline = true;
             settings.save();
@@ -82,11 +95,6 @@ module.exports = async (guildID, config, settings, client) => {
             } catch(err) {}
             
         }
-
-    } else {
-        if (settings.serverOnline === true) { // If document says server is online, update to say offline
-            settings.serverOnline = false;
-            settings.save();
-        }
+        return;
     }
 }
