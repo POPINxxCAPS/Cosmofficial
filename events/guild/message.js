@@ -132,6 +132,18 @@ module.exports = async (discord, client, message) => {
         userID: message.author.id
       })
     }
+
+    // Making it more "restful"
+    let res = {}
+    res.message = message;
+    res.args = args;
+    res.cmd = cmd;
+    res.client = client;
+    res.discord = discord;
+    res.mainGuild = mainGuild;
+    res.guild = guild;
+    res.playerEco = playerEco;
+    // command.execute(res); // Doing this will require recoding all commands, so disabling for now.
     command.execute(message, args, cmd, client, discord, mainGuild, guild, playerEco);
   } catch (err) {
     message.reply("There was an error trying to execute this command!");
