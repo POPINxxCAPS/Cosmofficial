@@ -1,6 +1,5 @@
 const remoteConfigModel = require('../models/remoteConfigSchema');
 const discordServerSettingsModel = require('../models/discordServerSettngsSchema');
-const ms = require('ms')
 
 // Query Functions
 const statusQuery = require('../functions_server/statusQuery');
@@ -10,27 +9,6 @@ const characterQuery = require('../functions_server/characterQuery');
 const chatQuery = require('../functions_server/chatQuery');
 const floatingObjQuery = require('../functions_server/floatingObjectQuery');
 const logVoxels = require('../functions_server/logVoxels');
-
-const {
-    demotePlayer,
-    banPlayer,
-    kickPlayer,
-    promotePlayer
-} = require('../lib/admin');
-const {
-    filterBySearch
-} = require('../lib/modifiers');
-const sessionPath = '/v1/session';
-const serverPath = '/v1/server';
-
-
-const axios = require('axios');
-const crypto = require('crypto');
-const JSONBI = require('json-bigint')({
-    storeAsString: true,
-    useNativeBigInt: true
-});
-const querystring = require('querystring');
 
 module.exports = async (client) => {
     let guildIDs = await client.guilds.cache.map(guild => guild.id);
