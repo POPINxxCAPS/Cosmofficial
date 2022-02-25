@@ -137,7 +137,7 @@ module.exports = async (client) => {
             await logStatus(req); // Do this first so the rest know if they even need to do anything.
             logPlayers(req);
             logChat(req);
-            logVoxels(req);
+            //logVoxels(req); Disabled due to memory error
         })
     }, 15500) // Timers are now handled in each query seperately, so this is no issue.
 }
