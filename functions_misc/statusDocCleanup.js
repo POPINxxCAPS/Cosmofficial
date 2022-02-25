@@ -10,7 +10,6 @@ module.exports = async () => {
             }
         }
         for(let b = 0; b < statusDocs[i].simSpeedLog.length; b++) {
-            console.log(current_time - parseInt(statusDocs[i].simSpeedLog[b].timestamp))
             if(current_time - parseInt(statusDocs[i].simSpeedLog[b].timestamp) > 1209600000) {
                 statusDocs[i].simSpeedLog[b].remove()
             }

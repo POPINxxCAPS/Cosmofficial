@@ -46,15 +46,20 @@ module.exports = async (req, res) => {
 
 
     // Clear expired voxel docs (respawned voxels)
-    const asteroidDocs = await asteroidModel.find({
-        guildID: guildID
-    });
-    asteroidDocs.forEach(doc => {
-        if (entityIDs.includes(doc.entityID) === false) {
-            try {
-                doc.remove();
-            } catch (err) {}
-            console.log(`Modified Voxel for guild ID ${guildID} respawned`)
-        }
-    })
+    setTimeout(async () => {
+        const asteroidDocs = await asteroidModel.find({
+            guildID: guildID
+        });
+
+        asteroidDocs.forEach(doc => {
+            if (entityIDs.includes(doc.entityID) === false) {
+                try {
+                    doc.remove();
+                } catch (err) {}
+                console.log(`Modified Voxel for guild ID ${guildID} respawned`)
+            }
+        })
+    }, 60000)
+    
+    
 }
