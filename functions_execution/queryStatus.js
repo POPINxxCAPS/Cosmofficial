@@ -1,7 +1,7 @@
 const {
     filterBySearch
 } = require('../lib/modifiers');
-const sessionPath = '/v1/session';
+const serverPath = '/v1/server';
 
 
 const axios = require('axios');

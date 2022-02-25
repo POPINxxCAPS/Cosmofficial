@@ -1,17 +1,17 @@
 const asteroidModel = require('../models/asteroidSchema');
 const timerFunction = require('../functions_db/timerFunction');
+const queryVoxels = require('../functions_execution/queryVoxels')
 // "Asteroids" in the remote API path are actually modified voxel information.
 let entityIDs = []; // Holding variable for the document deletions
 module.exports = async (req, res) => {
     const guildID = req.guildID;
     const config = req.config;
     const settings = req.settings;
-    if(settings.serverOnline === false) return;
+    if (settings.serverOnline === 'false' || settings.serverOnline === undefined || settings.serverOnline === false) return;
     let current_time = Date.now();
-    const expirationInSeconds = 299;
-    const expiration_time = current_time + (expirationInSeconds * 1000);
-    if (settings.serverOnline === 'false' || settings.serverOnline === undefined) return;
+    req.expirationInSeconds = 600;
     const timerCheck = await timerFunction(req)
+    if (timerCheck === true) return; // If there is a timer, cancel.
     const voxelData = await queryVoxels(config);
 
     if (voxelData === undefined) return;
@@ -50,13 +50,11 @@ module.exports = async (req, res) => {
         guildID: guildID
     });
     asteroidDocs.forEach(doc => {
-        if (doc.expirationTime < current_time) {
-            if(entityIDs.includes(doc.entityID)) {} else {
-                try {
-                    doc.remove();
-                } catch (err) {}
-                console.log(`Modified Voxel for guild ID ${guildID} respawned`)
-            }
+        if (entityIDs.includes(doc.entityID) === false) {
+            try {
+                doc.remove();
+            } catch (err) {}
+            console.log(`Modified Voxel for guild ID ${guildID} respawned`)
         }
     })
 }
