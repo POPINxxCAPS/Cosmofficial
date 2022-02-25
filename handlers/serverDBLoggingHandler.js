@@ -9,7 +9,7 @@ const playerQuery = require('../functions_server/playerQuery');
 const characterQuery = require('../functions_server/characterQuery');
 const chatQuery = require('../functions_server/chatQuery');
 const floatingObjQuery = require('../functions_server/floatingObjectQuery');
-const asteroidQuery = require('../functions_server/asteroidQuery');
+const logVoxels = require('../functions_server/logVoxels');
 
 const {
     demotePlayer,
@@ -211,7 +211,7 @@ module.exports = async (client) => {
     }, 45000)
 
     // Asteroid Query (Modified Voxels)
-    /*setInterval(async () => {
+    setInterval(async () => {
         guildIDs.forEach(async guildID => {
             if (guildID === '853247020567101440') return;
             let settings = await discordServerSettingsModel.findOne({
@@ -235,8 +235,12 @@ module.exports = async (client) => {
             if (config === null || settings === null) return;
 
             // Log Floating Objects
-            asteroidQuery(guildID, config, settings);
+            let req = {
+                guildID: guildID,
+                config: config,
+                settings: settings
+            }
+            await logVoxels(req); // Just using await to ensure it's only ran once (weird bug)
         })
-    }, 300000)
-*/
+    }, 600000) // Only runs every 10 minutes because it crashes queries if done too often.
 }
