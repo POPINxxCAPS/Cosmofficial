@@ -13,6 +13,8 @@ module.exports = async (req, res) => {
     const timerCheck = await timerFunction(req)
     if (timerCheck === true) return; // If there is a timer, cancel.
     const voxelData = await queryVoxels(config);
+    const expiration_time = Math.round(Date.now() + ((req.expirationInSeconds * 1000) * 1.5))
+    // Put an expiration on voxel documents to be able to tell when they respawn.
 
     if (voxelData === undefined) return;
 

@@ -108,7 +108,7 @@ module.exports = async (client) => {
     // Query Interval
     setInterval(async () => {
         guildIDs.forEach(async guildID => {
-            if (guildID === '853247020567101440') return;
+            if (guildID === '853247020567101440') return; // Ignore Cosmofficial Discord
             let settings = await discordServerSettingsModel.findOne({
                 guildID: guildID
             });
@@ -137,7 +137,7 @@ module.exports = async (client) => {
             await logStatus(req); // Do this first so the rest know if they even need to do anything.
             logPlayers(req);
             logChat(req);
-            logVoxels(req); // Just using await to ensure it's only ran once (weird bug)
+            logVoxels(req);
         })
     }, 15500) // Timers are now handled in each query seperately, so this is no issue.
 }
