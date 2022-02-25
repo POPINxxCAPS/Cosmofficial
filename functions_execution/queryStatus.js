@@ -83,9 +83,9 @@ module.exports = async (config) => {
     };
 
     const info = () => send('GET', serverPath);
-    let servInfo;
+    let data
     await info().then(res => {
-        servInfo = res
+        data = res
     })
 
     return data;
