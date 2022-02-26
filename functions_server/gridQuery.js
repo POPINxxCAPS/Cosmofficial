@@ -475,88 +475,91 @@ module.exports = async (guildID, config, settings, client) => {
         if (discordSettings === null) return;
         let serverOnline = discordSettings.serverOnline;
         if (serverOnline === false) return; // Continue to delete documents
-        const documents = await gridModel.find({
-            guildID: guildID
-        });
-        documents.forEach(async doc => { // Attempt to find clues to log
-            if (doc.expirationTime < current_time) {
-                if (entityIDs.includes(doc.entityID) === false) {
-                    let gridsNearby = [];
-                    let gridsDangerClose = [];
-                    for (let i = 0; i < gridDocsCache.length; i++) {
-                        let checkGrid = gridDocsCache[i];
-                        var dx = checkGrid.positionX - doc.positionX;
-                        var dy = checkGrid.positionY - doc.positionY;
-                        var dz = checkGrid.positionZ - doc.positionZ;
 
-                        let distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
-                        if (distance < 900) {
-                            gridsDangerClose.push(checkGrid)
-                        }
-                        if (distance < 1750) {
-                            gridsNearby.push(checkGrid)
-                            // If this close and doc is ready to delete, check if there is a player to reward currency
-                            if(NPCNames.includes(doc.ownerDisplayName) === true) {
-                                NPCDeathRewarder(guildID, client, doc)
+        setTimeout(async () => {
+            const documents = await gridModel.find({
+                guildID: guildID
+            });
+            documents.forEach(async doc => { // Attempt to find clues to log
+                if (doc.expirationTime < current_time) {
+                    if (entityIDs.includes(doc.entityID) === false) {
+                        let gridsNearby = [];
+                        let gridsDangerClose = [];
+                        for (let i = 0; i < gridDocsCache.length; i++) {
+                            let checkGrid = gridDocsCache[i];
+                            var dx = checkGrid.positionX - doc.positionX;
+                            var dy = checkGrid.positionY - doc.positionY;
+                            var dz = checkGrid.positionZ - doc.positionZ;
+    
+                            let distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
+                            if (distance < 900) {
+                                gridsDangerClose.push(checkGrid)
+                            }
+                            if (distance < 1750) {
+                                gridsNearby.push(checkGrid)
+                                // If this close and doc is ready to delete, check if there is a player to reward currency
+                                if(NPCNames.includes(doc.ownerDisplayName) === true) {
+                                    NPCDeathRewarder(guildID, client, doc)
+                                }
                             }
                         }
-                    }
-                    if (gridsNearby.length !== 0) { // If there are grids nearby, check the grid for possible clues to log
-                        // If there is an enemy ship nearby, check if there is an enemy
-                        let enemyGridsFound = 0;
-                        let friendlyGridsFound = 0;
-                        let enemyFactionTag;
-                        for (let a = 0; a < gridsNearby.length; a++) {
-                            let grid = gridsNearby[a];
-                            if (grid.factionTag !== doc.factionTag) { // If grid facTag does not match the target grid facTag
-                                enemyGridsFound += 1;
-                                enemyFactionTag = grid.factionTag // Set the enemy facTag
-                            } else {
-                                friendlyGridsFound += 1;
+                        if (gridsNearby.length !== 0) { // If there are grids nearby, check the grid for possible clues to log
+                            // If there is an enemy ship nearby, check if there is an enemy
+                            let enemyGridsFound = 0;
+                            let friendlyGridsFound = 0;
+                            let enemyFactionTag;
+                            for (let a = 0; a < gridsNearby.length; a++) {
+                                let grid = gridsNearby[a];
+                                if (grid.factionTag !== doc.factionTag) { // If grid facTag does not match the target grid facTag
+                                    enemyGridsFound += 1;
+                                    enemyFactionTag = grid.factionTag // Set the enemy facTag
+                                } else {
+                                    friendlyGridsFound += 1;
+                                }
+                            }
+                            if (respawnShipNames.includes(doc.displayName)) {
+                                await serverLogModel.create({
+                                    guildID: guildID,
+                                    category: 'misc',
+                                    string: `${doc.ownerDisplayName}'s ${doc.displayName} despawned.`
+                                })
+                            } else if (enemyFactionTag !== undefined) { // If enemy faction tag found
+                                await serverLogModel.create({
+                                    guildID: guildID,
+                                    category: 'destroyed',
+                                    string: `${doc.displayName} likely destroyed by [${enemyFactionTag}]`
+                                })
+                            } else if (friendlyGridsFound <= 1 && enemyGridsFound === 0 && NPCNames.includes(doc.ownerDisplayName) === false) {
+                                await serverLogModel.create({
+                                    guildID: guildID,
+                                    category: 'destroyed',
+                                    string: `${doc.displayName} likely destroyed. No grids nearby`
+                                })
+                            } else if (NPCNames.includes(doc.ownerDisplayName) === false) {
+                                await serverLogModel.create({
+                                    guildID: guildID,
+                                    category: 'docked',
+                                    string: `${doc.displayName} likely docked. ${friendlyGridsFound} friendly grids nearby`
+                                })
+                            } else if (NPCNames.includes(doc.ownerDisplayName)) {
+                                await serverLogModel.create({
+                                    guildID: guildID,
+                                    category: 'npc',
+                                    string: `NPC Despawned - ${doc.displayName}`
+                                })
                             }
                         }
-                        if (respawnShipNames.includes(doc.displayName)) {
-                            await serverLogModel.create({
-                                guildID: guildID,
-                                category: 'misc',
-                                string: `${doc.ownerDisplayName}'s ${doc.displayName} despawned.`
-                            })
-                        } else if (enemyFactionTag !== undefined) { // If enemy faction tag found
-                            await serverLogModel.create({
-                                guildID: guildID,
-                                category: 'destroyed',
-                                string: `${doc.displayName} likely destroyed by [${enemyFactionTag}]`
-                            })
-                        } else if (friendlyGridsFound <= 1 && enemyGridsFound === 0 && NPCNames.includes(doc.ownerDisplayName) === false) {
-                            await serverLogModel.create({
-                                guildID: guildID,
-                                category: 'destroyed',
-                                string: `${doc.displayName} likely destroyed. No grids nearby`
-                            })
-                        } else if (NPCNames.includes(doc.ownerDisplayName) === false) {
-                            await serverLogModel.create({
-                                guildID: guildID,
-                                category: 'docked',
-                                string: `${doc.displayName} likely docked. ${friendlyGridsFound} friendly grids nearby`
-                            })
-                        } else if (NPCNames.includes(doc.ownerDisplayName)) {
-                            await serverLogModel.create({
-                                guildID: guildID,
-                                category: 'npc',
-                                string: `NPC Despawned - ${doc.displayName}`
-                            })
+                        try {
+                            doc.remove()
+                        } catch (err) {
+                            console.log('Grid database remove error caught')
                         }
+                        return console.log(`${doc.displayName} Grid expired`)
                     }
-                    try {
-                        doc.remove()
-                    } catch (err) {
-                        console.log('Grid database remove error caught')
-                    }
-                    return console.log(`${doc.displayName} Grid expired`)
+    
                 }
-
-            }
-        })
+            })
+        }, 10000)
     }
 
     return;
