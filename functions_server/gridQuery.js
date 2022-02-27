@@ -8,28 +8,14 @@ const serverLogModel = require('../models/serverLogSchema');
 const spawnerModel = require('../models/spawnerSchema');
 const NPCDeathRewarder = require('../functions_execution/NPCDeathRewarder');
 const gridPowerOff = require('../functions_execution/gridPowerOff');
+const queryGrids = require('../functions_execution/queryGrids');
 
 const NPCNames = ['The Tribunal', 'Contractors', 'Gork and Mork', 'Space Pirates', 'Space Spiders', 'The Chairman', 'Miranda Survivors', 'VOID', 'The Great Tarantula', 'Cosmofficial', 'Clang Technologies CEO', 'Merciless Shipping CEO', 'Mystic Settlers CEO', 'Royal Drilling Consortium CEO', 'Secret Makers CEO', 'Secret Prospectors CEO', 'Specialized Merchants CEO', 'Star Inventors CEO', 'Star Minerals CEO', 'The First Heavy Industry CEO', 'The First Manufacturers CEO', 'United Industry CEO', 'Universal Excavators CEO', 'Universal Miners Guild CEO', 'Unyielding Excavators CEO'];
 const NPCGridNames = ['Mining vessel Debris', 'Mining ship Debris', 'Daniel A. Collins', 'Transporter debree']
 const spawnerGridNames = ['Zone Chip Spawner', 'Ice Spawner', 'Iron Spawner', 'Silicon Spawner', 'Cobalt Spawner', 'Silver Spawner', 'Magnesium Spawner', 'Gold Spawner', 'Platinum Spawner', 'Uranium Spawner', 'Powerkit Spawner', 'Space Credit Converter']
 const respawnShipNames = ['Respawn Station', 'Respawn Planet Pod', 'Respawn Space Pod']
-const {
-    filterBySearch
-} = require('../lib/modifiers');
-const sessionPath = '/v1/session';
-const gridPath = `${sessionPath}/grids`;
-const serverPath = '/v1/server';
 
 // Pyramid of HELL noob code lmfao
-
-
-const axios = require('axios');
-const crypto = require('crypto');
-const JSONBI = require('json-bigint')({
-    storeAsString: true,
-    useNativeBigInt: true
-});
-const querystring = require('querystring');
 let verificationCache = [];
 let verificationNameCache = [];
 module.exports = async (guildID, config, settings, client) => {
@@ -74,95 +60,13 @@ module.exports = async (guildID, config, settings, client) => {
 
 
     if (serverOnline === false) return;
-    const baseUrl = config.baseURL;
-    const port = config.port;
-    const prefix = config.prefix;
-    const secret = config.secret;
-
-    const getNonce = () => crypto.randomBytes(20).toString('base64');
-    const getUtcDate = () => new Date().toUTCString();
-
-    const opts = (method, api, {
-        body,
-        qs
-    } = {}) => {
-        const url = `${baseUrl}:${port}${prefix}${api}`;
-        const nonce = getNonce();
-        const date = getUtcDate();
-        const query = qs ? `?${querystring.stringify(qs)}` : '';
-
-        const key = Buffer.from(secret, 'base64');
-        const message = `${prefix}${api}${query}\r\n${nonce}\r\n${date}\r\n`;
-        const hash = crypto.createHmac('sha1', key).update(Buffer.from(message)).digest('base64');
-
-        return {
-            url: url + query,
-            headers: {
-                Authorization: `${nonce}:${hash}`,
-                Date: date
-            },
-            transformRequest(data) {
-                return JSONBI.stringify(data);
-            },
-            transformResponse(data) {
-                return JSONBI.parse(data);
-            },
-            json: true,
-            body,
-            method
-        };
-    };
-
-    const send = (method, path, {
-        body,
-        qs,
-        log = false
-    } = {}) => {
-        if (log) {
-            console.log(`${method}: ${opts(method, path).url}`)
-        }
-
-        return axios(opts(method, path, {
-                body,
-                qs
-            }))
-            .then((result) => {
-                if (log) {
-                    console.log(result);
-                }
-
-                const {
-                    data: {
-                        data
-                    }
-                } = result;
-                return data || {};
-            })
-            .catch(e => {
-                return;
-            });
-    };
-    // End Bridge Init
     // Grids Init
     const expirationInSeconds = 59;
     const expiration_time = current_time + (expirationInSeconds * 1000);
-    let gridData;
-    const grids = async (search) => {
-        try {
-            const path = `${sessionPath}/grids`;
-            const {
-                Grids
-            } = await send('GET', path)
-            const collection = Grids;
-            return filterBySearch(collection, search);
-        } catch (err) {
-            console.log(`Grid query for guild ID ${guildID} failed.`)
-        }
-    };
-
-    await grids().then((result) => {
+    let gridData = await queryGrids().then((result) => {
         gridData = result;
     }).catch(err => {})
+
 
 
     let entityIDs = [];
@@ -171,7 +75,7 @@ module.exports = async (guildID, config, settings, client) => {
     })
     if (gridData !== [] && gridData !== undefined) { // If queries are not broken, handle the data.
         for (let i = 0; i < gridData.length; i++) {
-            if (spawnerGridNames.includes(gridData[i].DisplayName)) { // If it's a spawner grid, check to see if the grid should be powered off. (Deactivation timer failed)
+            if (spawnerGridNames.includes(gridData[i].DisplayName) === true && gridData[i].OwnerDisplayName === "Space Pirates") { // If it's a spawner grid, check to see if the grid should be powered off. (Deactivation timer failed)
                 let spawnerDoc = await spawnerModel.findOne({
                     guildID: guildID,
                     gridName: gridData[i].DisplayName
@@ -221,7 +125,7 @@ module.exports = async (guildID, config, settings, client) => {
                     let gridsDangerClose = [];
                     let documents = gridDocsCache;
                     let doc = gridData[i];
-                    
+
                     for (let i = 0; i < documents.length; i++) {
                         let checkGrid = documents[i];
                         var dx = checkGrid.positionX - doc.Position.X;
@@ -384,7 +288,7 @@ module.exports = async (guildID, config, settings, client) => {
                                 let memberTarget = guild.members.cache.find(member => member.id === verDoc.userID)
                                 try {
                                     //memberTarget.send(`**__Warning__**\n>>> ${check.displayName} has been deleted.\nLarge grids are not allowed.`)
-                                } catch(err) {}
+                                } catch (err) {}
                             }
                         }
                         if (check.queuedForDeletion === false && gridData[i].GridSize === 'Small' && hooverSettings.smallGridAllowed === false) {
@@ -396,7 +300,7 @@ module.exports = async (guildID, config, settings, client) => {
                                 let memberTarget = guild.members.cache.find(member => member.id === verDoc.userID)
                                 try {
                                     //memberTarget.send(`**__Warning__**\n>>> ${check.displayName} has been deleted.\nSmall grids are not allowed.`)
-                                } catch(err) {}
+                                } catch (err) {}
                             }
                         }
                         if (check.queuedForDeletion === false && check.blocksCount < parseInt(hooverSettings.blockThreshold) && NPCGridNames.includes(gridData[i].DisplayName) === false && NPCNames.includes(gridData[i].OwnerDisplayName) === false) {
@@ -408,7 +312,7 @@ module.exports = async (guildID, config, settings, client) => {
                                 let memberTarget = guild.members.cache.find(member => member.id === verDoc.userID)
                                 try {
                                     //memberTarget.send(`**__Warning__**\n>>> ${check.displayName} is less than ${hooverSettings.blockThreshold} blocks.\nIncrease the build size within 24hrs or the grid will be removed!`)
-                                } catch(err) {}
+                                } catch (err) {}
                             }
                         }
                         if (check.queuedForDeletion === false && gridData[i].IsPowered === false && hooverSettings.unpoweredGridRemoval === true && NPCNames.includes(gridData[i].OwnerDisplayName) === false) {
@@ -420,7 +324,7 @@ module.exports = async (guildID, config, settings, client) => {
                                 let memberTarget = guild.members.cache.find(member => member.id === verDoc.userID)
                                 try {
                                     //memberTarget.send(`**__Warning__**\n>>> ${check.displayName} has run out of power.\nRestore power within 24hrs or the grid will be removed!`)
-                                } catch(err) {}
+                                } catch (err) {}
                             }
                         }
                         // Unfinished
@@ -451,7 +355,7 @@ module.exports = async (guildID, config, settings, client) => {
                             }
                         }
                         //
-                        
+
                     }
 
                 }
@@ -459,10 +363,10 @@ module.exports = async (guildID, config, settings, client) => {
             if (deletionUpdated === true) { // Only save if doc was updated with new deletion settings
                 try { // Double Doc Save Catch
                     await check.save();
-                } catch(err) {};
+                } catch (err) {};
             }
         }
-        
+
         if (hooverTriggered === true) {
             hooverSettings.nextCleanup = current_time + parseInt(hooverSettings.cleanupInterval);
             try {
@@ -490,7 +394,7 @@ module.exports = async (guildID, config, settings, client) => {
                             var dx = checkGrid.positionX - doc.positionX;
                             var dy = checkGrid.positionY - doc.positionY;
                             var dz = checkGrid.positionZ - doc.positionZ;
-    
+
                             let distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
                             if (distance < 900) {
                                 gridsDangerClose.push(checkGrid)
@@ -498,7 +402,7 @@ module.exports = async (guildID, config, settings, client) => {
                             if (distance < 1750) {
                                 gridsNearby.push(checkGrid)
                                 // If this close and doc is ready to delete, check if there is a player to reward currency
-                                if(NPCNames.includes(doc.ownerDisplayName) === true) {
+                                if (NPCNames.includes(doc.ownerDisplayName) === true) {
                                     NPCDeathRewarder(guildID, client, doc)
                                 }
                             }
@@ -556,10 +460,9 @@ module.exports = async (guildID, config, settings, client) => {
                         }
                         return console.log(`${doc.displayName} Grid expired`)
                     }
-    
                 }
             })
-        }, 10000)
+        }, 20000)
     }
 
     return;
