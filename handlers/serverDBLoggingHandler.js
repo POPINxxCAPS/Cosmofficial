@@ -18,35 +18,6 @@ module.exports = async (client) => {
         guildIDs = await client.guilds.cache.map(guild => guild.id);
     }, 300000)
 
-    // Grid Query
-    setInterval(async () => {
-        guildIDs.forEach(async guildID => {
-            if (guildID === '853247020567101440') return;
-            let settings = await discordServerSettingsModel.findOne({
-                guildID: guildID
-            });
-            if (settings === null) {
-                try {
-                settings = await discordServerSettingsModel.create({
-                    guildID: guildID,
-                    serverLogChannel: 'None',
-                    hotzoneChannel: 'None',
-                    chatRelayChannel: 'None',
-                    botCommandChannel: 'None'
-                })
-                } catch(err) {}
-            }
-
-            let config = await remoteConfigModel.findOne({
-                guildID: guildID
-            })
-            if (config === null || settings === null) return;
-
-            // Log Grids
-            gridQuery(guildID, config, settings, client);
-        })
-    }, 90000)
-
     // Character Query
     setInterval(async () => {
         guildIDs.forEach(async guildID => {
@@ -107,7 +78,8 @@ module.exports = async (client) => {
 
     // Query Interval
     setInterval(async () => {
-        guildIDs.forEach(async guildID => {
+        for(let g = 0; g < guildIDs.length; g++) { // Changed to for instead of forEach to avoid heap error
+            const guildID = guildIDs[g];
             if (guildID === '853247020567101440') return; // Ignore Cosmofficial Discord
             let settings = await discordServerSettingsModel.findOne({
                 guildID: guildID
@@ -134,10 +106,11 @@ module.exports = async (client) => {
                 settings: settings,
                 client: client
             }
-            await logStatus(req); // Do this first so the rest know if they even need to do anything.
-            logPlayers(req);
-            logChat(req);
+            await logStatus(req); // Specific Ordering.
+            await logChat(req);
+            await logPlayers(req);
+            gridQuery(req);
             //logVoxels(req); Disabled due to memory error
-        })
+        }
     }, 15500) // Timers are now handled in each query seperately, so this is no issue.
 }

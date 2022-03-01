@@ -18,9 +18,17 @@ const respawnShipNames = ['Respawn Station', 'Respawn Planet Pod', 'Respawn Spac
 // Pyramid of HELL noob code lmfao
 let verificationCache = [];
 let verificationNameCache = [];
-module.exports = async (guildID, config, settings, client) => {
+module.exports = async (req) => {
+    const guildID = req.guildID;
+    const config = req.config;
+    const settings = req.settings;
+    const client = req.client;
     const current_time = Date.now();
     if (settings.serverOnline === 'false' || settings.serverOnline === undefined) return;
+    req.expirationInSeconds = 75;
+    req.name = 'logGrids'
+    const timerCheck = await timerFunction(req);
+    if (timerCheck === true) return; // If there is a timer, cancel.
     let cancel = false;
     let chatDoc = await chatModel.findOne({
         guildID: guildID
@@ -63,7 +71,7 @@ module.exports = async (guildID, config, settings, client) => {
     // Grids Init
     const expirationInSeconds = 59;
     const expiration_time = current_time + (expirationInSeconds * 1000);
-    let gridData = await queryGrids().then((result) => {
+    let gridData = await queryGrids(config).then((result) => {
         gridData = result;
     }).catch(err => {})
 
