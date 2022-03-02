@@ -23,20 +23,7 @@ module.exports = async (client) => {
     setInterval(async () => {
         guildIDs.forEach(async guildID => {
             if (guildID === '853247020567101440') return;
-            let settings = await discordServerSettingsModel.findOne({
-                guildID: guildID
-            });
-            if (settings === null) {
-                try {
-                settings = await discordServerSettingsModel.create({
-                    guildID: guildID,
-                    serverLogChannel: 'None',
-                    hotzoneChannel: 'None',
-                    chatRelayChannel: 'None',
-                    botCommandChannel: 'None'
-                })
-                } catch(err) {}
-            }
+            let settings = await getDiscordServerSettings(guildID);
 
             let config = await remoteConfigModel.findOne({
                 guildID: guildID
@@ -52,20 +39,7 @@ module.exports = async (client) => {
     setInterval(async () => {
         guildIDs.forEach(async guildID => {
             if (guildID === '853247020567101440') return;
-            let settings = await discordServerSettingsModel.findOne({
-                guildID: guildID
-            });
-            if (settings === null) {
-                try {
-                settings = await discordServerSettingsModel.create({
-                    guildID: guildID,
-                    serverLogChannel: 'None',
-                    hotzoneChannel: 'None',
-                    chatRelayChannel: 'None',
-                    botCommandChannel: 'None'
-                })
-                } catch(err) {}
-            }
+            let settings = await getDiscordServerSettings(guildID);
 
             let config = await remoteConfigModel.findOne({
                 guildID: guildID
