@@ -1,5 +1,6 @@
+// Database Model Stuff
 const remoteConfigModel = require('../models/remoteConfigSchema');
-const discordServerSettingsModel = require('../models/discordServerSettngsSchema');
+const getDiscordServerSettings = require('../functions_db/getDiscordServerSettings');
 
 // Query Functions
 const logStatus = require('../functions_server/logStatus');
@@ -80,27 +81,18 @@ module.exports = async (client) => {
     setInterval(async () => {
         for(let g = 0; g < guildIDs.length; g++) { // Changed to for instead of forEach to avoid heap error
             const guildID = guildIDs[g];
-            if (guildID === '853247020567101440') return; // Ignore Cosmofficial Discord
-            let settings = await discordServerSettingsModel.findOne({
-                guildID: guildID
-            });
-            if (settings === null) {
-                try {
-                settings = await discordServerSettingsModel.create({
-                    guildID: guildID,
-                    serverLogChannel: 'None',
-                    hotzoneChannel: 'None',
-                    chatRelayChannel: 'None',
-                    botCommandChannel: 'None'
-                })
-                } catch(err) {}
-            }
+            if (guildID === '853247020567101440') continue; // Ignore Cosmofficial Discord
+            // Discord Channel Settings (needs COMPLETE remodel) - This is just prep
+            let settings = await getDiscordServerSettings(guildID);
 
+            // Get config
             let config = await remoteConfigModel.findOne({
                 guildID: guildID
             })
-            if (config === null || settings === null) return;
-            let req = {
+            if (config === null || settings === null) continue;
+
+            // Start querys
+            const req = {
                 guildID: guildID,
                 config: config,
                 settings: settings,
