@@ -44,7 +44,7 @@ module.exports = async (username, userID, channel) => {
             }
             return null;
         }
-        messageString = `${targetPlayer.displayName} successfully registered to <@${userID}>!\nUnlinked from ${verDoc.username}.`
+        messageString = `${playerDoc.displayName} successfully registered to <@${userID}>!\nUnlinked from ${verDoc.username}.`
         verDoc.username = username
         verDoc.save()
     } else { // If user wasn't verified previously, create a new verification document, with no cooldown
