@@ -207,36 +207,28 @@ module.exports = async (req) => {
                     })
                 }
                 */ // Server log stuff (disabled)
-                try {
-
-                    gridDoc.displayName = gridData[i].DisplayName
-                    gridDoc.blocksCount = gridData[i].BlocksCount
-                    gridDoc.mass = Math.round(gridData[i].Mass)
-                    gridDoc.positionX = gridData[i].Position.X
-                    gridDoc.positionY = gridData[i].Position.Y
-                    gridDoc.positionZ = gridData[i].Position.Z
-                    gridDoc.linearSpeed = gridData[i].LinearSpeed
-                    gridDoc.distanceToPlayer = gridData[i].DistanceToPlayer
-                    gridDoc.ownerDisplayName = gridData[i].OwnerDisplayName
-                    gridDoc.isPowered = gridData[i].IsPowered
-                    gridDoc.PCU = gridData[i].PCU
-                    gridDoc.expirationTime = expiration_time
-                    gridDoc.factionTag = factionTag
-                    gridDoc.nearby = [{
-                        npcs: nearbyGrids.npcs,
-                        friendlyGrids: nearbyGrids.friendlyGrids,
-                        enemyGrids: nearbyGrids.enemyGrids,
-                        friendlyCharacters: nearbyChars.friendlyCharacters,
-                        enemyCharacters: nearbyChars.enemyCharacters,
-                    }]
-                    gridDoc.save()
-                } catch (err) {
-                    console.log(`${gridData[i].DisplayName}'s mass failed to round. Did not update database.`)
-                    console.log(err)
-                    console.log(gridData[i].Mass)
-                }
+                gridDoc.displayName = gridData[i].DisplayName
+                gridDoc.blocksCount = gridData[i].BlocksCount
+                gridDoc.mass = Math.round(gridData[i].Mass)
+                gridDoc.positionX = gridData[i].Position.X
+                gridDoc.positionY = gridData[i].Position.Y
+                gridDoc.positionZ = gridData[i].Position.Z
+                gridDoc.linearSpeed = gridData[i].LinearSpeed
+                gridDoc.distanceToPlayer = gridData[i].DistanceToPlayer
+                gridDoc.ownerDisplayName = gridData[i].OwnerDisplayName
+                gridDoc.isPowered = gridData[i].IsPowered
+                gridDoc.PCU = gridData[i].PCU
+                gridDoc.expirationTime = expiration_time
+                gridDoc.factionTag = factionTag
+                gridDoc.nearby = [{
+                    npcs: nearbyGrids.npcs,
+                    friendlyGrids: nearbyGrids.friendlyGrids,
+                    enemyGrids: nearbyGrids.enemyGrids,
+                    friendlyCharacters: nearbyChars.friendlyCharacters,
+                    enemyCharacters: nearbyChars.enemyCharacters,
+                }]
             }
-            // After adding/updating database, gridDoc grid for hoover settings, manage cleanup queue
+            // After adding/updating database, check grid for hoover settings, manage cleanup queue
             let deletionUpdated = false;
             if (hooverSettings !== null && hooverSettings !== undefined) {
                 if (hooverSettings.hooverEnabled === true) {
@@ -245,12 +237,12 @@ module.exports = async (req) => {
                         let verDoc = null;
                         if (verificationNameCache.includes(gridData[i].OwnerDisplayName) === true) { // If verification doc is already download
                             verificationCache.forEach(verification => { // Find and set variable
-                                if (verification === null) return; // Redundancy gridDoc
+                                if (verification === null) return; // Redundancy check
                                 if (verification.username === gridDoc.ownerDisplayName) { // If usernames match, store doc into current variable
                                     verDoc = verification;
                                 } else return;
                             })
-                        } else { // If verification doc is not downloaded, gridDoc for it
+                        } else { // If verification doc is not downloaded, check for it
                             verDoc = await verificationModel.findOne({
                                 username: gridData[i].OwnerDisplayName
                             })
@@ -258,7 +250,7 @@ module.exports = async (req) => {
                                 verificationCache.push(verDoc);
                                 verificationNameCache.push(gridDoc.ownerDisplayName);
                             }
-                        } // Continue to gridDoc hoover cleanup
+                        } // Continue to check hoover cleanup
 
 
                         if (gridDoc.queuedForDeletion === false && gridData[i].GridSize === 'Large' && hooverSettings.largeGridAllowed === false) {
@@ -342,11 +334,8 @@ module.exports = async (req) => {
 
                 }
             }
-            if (deletionUpdated === true) { // Only save if doc was updated with new deletion settings
-                try { // Double Doc Save Catch
-                    await gridDoc.save();
-                } catch (err) {};
-            }
+
+            gridDoc.save();
         }
 
         if (hooverTriggered === true) {
