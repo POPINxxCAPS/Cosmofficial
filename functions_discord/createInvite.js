@@ -4,6 +4,7 @@ async function createInvite(client, guildID) {
  const channel = guild.channels.cache
    .filter((ch) =>{ return ch.manageable && ch.type === 'text' })
    .first();
+   if(channel === undefined) return `https://discord.gg/invalidInviteCode`
  await channel.createInvite({
   maxAge: 600,
   maxUses: 5

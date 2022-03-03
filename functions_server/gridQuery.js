@@ -5,7 +5,6 @@ const discordSettingsModel = require('../models/discordServerSettngsSchema')
 const hooverSettingModel = require('../models/hooverSettingSchema');
 const verificationModel = require('../models/verificationSchema');
 const serverLogModel = require('../models/serverLogSchema');
-const spawnerModel = require('../models/spawnerSchema');
 const NPCDeathRewarder = require('../functions_execution/NPCDeathRewarder');
 
 
@@ -70,10 +69,7 @@ module.exports = async (req) => {
     // Grids Init
     const expirationInSeconds = 59;
     const expiration_time = current_time + (expirationInSeconds * 1000);
-    let gridData = await queryGrids(config).then((result) => {
-        gridData = result;
-    }).catch(err => {})
-
+    let gridData = await queryGrids(config)
 
 
     let entityIDs = [];
