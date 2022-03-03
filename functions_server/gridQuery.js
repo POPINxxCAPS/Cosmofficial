@@ -1,20 +1,22 @@
 const gridModel = require('../models/gridSchema');
 const chatModel = require('../models/chatSchema');
-const checkGridForFaction = require('../functions_db/checkGridForFaction');
+const gridDocGridForFaction = require('../functions_db/gridDocGridForFaction');
 const discordSettingsModel = require('../models/discordServerSettngsSchema')
 const hooverSettingModel = require('../models/hooverSettingSchema');
 const verificationModel = require('../models/verificationSchema');
 const serverLogModel = require('../models/serverLogSchema');
 const spawnerModel = require('../models/spawnerSchema');
 const NPCDeathRewarder = require('../functions_execution/NPCDeathRewarder');
-const gridPowerOff = require('../functions_execution/gridPowerOff');
+
 
 const queryGrids = require('../functions_execution/queryGrids')
+const getNearbyGrids = require('../functions_db/nearbyGrids');
+const getNearbyCharacters = require('../functions_db/nearbyCharacters');
 const timerFunction = require('../functions_db/timerFunction');
+const spawnerGridHandler = require('../handlers/spawnerGridHandler');
 
 const NPCNames = ['The Tribunal', 'Contractors', 'Gork and Mork', 'Space Pirates', 'Space Spiders', 'The Chairman', 'Miranda Survivors', 'VOID', 'The Great Tarantula', 'Cosmofficial', 'Clang Technologies CEO', 'Merciless Shipping CEO', 'Mystic Settlers CEO', 'Royal Drilling Consortium CEO', 'Secret Makers CEO', 'Secret Prospectors CEO', 'Specialized Merchants CEO', 'Star Inventors CEO', 'Star Minerals CEO', 'The First Heavy Industry CEO', 'The First Manufacturers CEO', 'United Industry CEO', 'Universal Excavators CEO', 'Universal Miners Guild CEO', 'Unyielding Excavators CEO'];
 const NPCGridNames = ['Mining vessel Debris', 'Mining ship Debris', 'Daniel A. Collins', 'Transporter debree']
-const spawnerGridNames = ['Zone Chip Spawner', 'Ice Spawner', 'Iron Spawner', 'Silicon Spawner', 'Cobalt Spawner', 'Silver Spawner', 'Magnesium Spawner', 'Gold Spawner', 'Platinum Spawner', 'Uranium Spawner', 'Powerkit Spawner', 'Space Credit Converter']
 const respawnShipNames = ['Respawn Station', 'Respawn Planet Pod', 'Respawn Space Pod']
 
 // Pyramid of HELL noob code lmfao
@@ -29,8 +31,8 @@ module.exports = async (req) => {
     if (settings.serverOnline === 'false' || settings.serverOnline === undefined) return;
     req.expirationInSeconds = 75;
     req.name = 'logGrids'
-    const timerCheck = await timerFunction(req);
-    if (timerCheck === true) return; // If there is a timer, cancel.
+    const timergridDoc = await timerFunction(req);
+    if (timergridDoc === true) return; // If there is a timer, cancel.
     let cancel = false;
     let chatDoc = await chatModel.findOne({
         guildID: guildID
@@ -45,7 +47,7 @@ module.exports = async (req) => {
     if (cancel === true) return;
 
     let hooverTriggered = false;
-    // Check if hoover settings should be loaded/used
+    // gridDoc if hoover settings should be loaded/used
     const guild = client.guilds.cache.get(guildID);
     const mainGuild = client.guilds.cache.get("853247020567101440");
 
@@ -80,154 +82,125 @@ module.exports = async (req) => {
     })
     if (gridData !== [] && gridData !== undefined) { // If queries are not broken, handle the data.
         for (let i = 0; i < gridData.length; i++) {
-            if (spawnerGridNames.includes(gridData[i].DisplayName) === true && gridData[i].OwnerDisplayName === "Space Pirates") { // If it's a spawner grid, check to see if the grid should be powered off. (Deactivation timer failed)
-                let spawnerDoc = await spawnerModel.findOne({
-                    guildID: guildID,
-                    gridName: gridData[i].DisplayName
-                })
-                if (spawnerDoc !== null) { // Redundancy Check
-                    if (spawnerDoc.expirationTime < current_time && gridData[i].IsPowered === true) {
-                        gridPowerOff(guildID, gridData[i].EntityId)
-                    }
-                }
-            }
-            let check = await gridModel.findOne({
+            spawnerGridHandler(guildID, gridData[i]) // Spawner Grid Handler/gridDocer/Exploit Prevention
+            entityIDs.push(gridData[i].EntityId) // Add the grid's entity ID to the "existing" list9
+
+
+            let factionTag = await gridDocGridForFaction.serverGrid(gridData[i], guildID); // Get faction tag from owner of the grid
+
+            let nearbyChars = await getNearbyCharacters(guildID, gridData[i].Position.X, gridData[i].Position.Y, gridData[i].Position.Z, factionTag);
+            let nearbyGrids = await getNearbyGrids(guildID, gridData[i].Position.X, gridData[i].Position.Y, gridData[i].Position.Z, factionTag, 15000, gridDocsCache);
+
+            let gridDoc = await gridModel.findOne({
                 entityID: gridData[i].EntityId,
                 guildID: guildID
-            });
-            let factionTag = '';
-            await checkGridForFaction.serverGrid(gridData[i], guildID).then((result) => {
-                factionTag = result
-            });
-            if (factionTag === undefined) {
-                factionTag = 'NoF'
-            }
-            if (check === null) { // If no file found, create
-                entityIDs.push(gridData[i].EntityId)
-                try {
-                    check = await gridModel.create({
-                        guildID: guildID,
-                        displayName: gridData[i].DisplayName,
-                        entityID: gridData[i].EntityId,
-                        gridSize: gridData[i].GridSize,
-                        blocksCount: gridData[i].BlocksCount,
-                        mass: Math.round(gridData[i].Mass),
-                        positionX: gridData[i].Position.X,
-                        positionY: gridData[i].Position.Y,
-                        positionZ: gridData[i].Position.Z,
-                        linearSpeed: gridData[i].LinearSpeed,
-                        distanceToPlayer: gridData[i].DistanceToPlayer,
-                        ownerSteamID: gridData[i].OwnerSteamId,
-                        ownerDisplayName: gridData[i].OwnerDisplayName,
-                        isPowered: gridData[i].IsPowered,
-                        PCU: gridData[i].PCU,
-                        expirationTime: expiration_time,
-                        factionTag: factionTag,
-                        queuedForDeletion: false,
-                    });
+            }); // gridDoc if the grid exists already in the database 
+            if (gridDoc === null) { // If no file found, create one.
+                gridDoc = await gridModel.create({
+                    guildID: guildID,
+                    displayName: gridData[i].DisplayName,
+                    entityID: gridData[i].EntityId,
+                    gridSize: gridData[i].GridSize,
+                    blocksCount: gridData[i].BlocksCount,
+                    mass: Math.round(gridData[i].Mass),
+                    positionX: gridData[i].Position.X,
+                    positionY: gridData[i].Position.Y,
+                    positionZ: gridData[i].Position.Z,
+                    linearSpeed: gridData[i].LinearSpeed,
+                    distanceToPlayer: gridData[i].DistanceToPlayer,
+                    ownerSteamID: gridData[i].OwnerSteamId,
+                    ownerDisplayName: gridData[i].OwnerDisplayName,
+                    isPowered: gridData[i].IsPowered,
+                    PCU: gridData[i].PCU,
+                    expirationTime: expiration_time,
+                    factionTag: factionTag,
+                    queuedForDeletion: false,
+                    nearby: [{
+                        npcs: nearbyGrids.npcs,
+                        friendlyGrids: nearbyGrids.friendlyGrids,
+                        enemyGrids: nearbyGrids.enemyGrids,
+                        friendlyCharacters: nearbyChars.friendlyCharacters,
+                        enemyCharacters: nearbyChars.enemyCharacters,
+                    }]
+                });
 
-                    let gridsNearby = [];
-                    let gridsDangerClose = [];
-                    let documents = gridDocsCache;
-                    let doc = gridData[i];
-
-                    for (let i = 0; i < documents.length; i++) {
-                        let checkGrid = documents[i];
-                        var dx = checkGrid.positionX - doc.Position.X;
-                        var dy = checkGrid.positionY - doc.Position.Y;
-                        var dz = checkGrid.positionZ - doc.Position.Z;
-
-                        let distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
-                        if (distance < 400) {
-                            gridsDangerClose.push(checkGrid)
-                        }
-                        if (distance < 1300) {
-                            gridsNearby.push(checkGrid)
-                        }
-                    }
-                    if (gridsNearby.length !== 0) { // If there are grids nearby, check the grid for possible clues to log
-                        // If there are grid nearby, check how many friendly/enemy grids there are
-                        let enemyGridsFound = 0;
-                        let friendlyGridsFound = 0;
-                        let enemyFactionTag;
-                        for (let a = 0; a < gridsNearby.length; a++) {
-                            let grid = gridsNearby[a];
-                            if (grid.factionTag !== doc.FactionTag) { // If grid facTag does not match the target grid facTag
-                                enemyGridsFound += 1;
-                                enemyFactionTag = grid.factionTag // Set the enemy facTag
-                            } else {
-                                friendlyGridsFound += 1;
-                            }
-                        }
-
-                        // Server log messages
-                        if (NPCNames.includes(doc.OwnerDisplayName)) {
-                            await serverLogModel.create({
-                                guildID: guildID,
-                                category: 'npc',
-                                string: `NPC Spawned - ${doc.DisplayName}`
-                            })
-                        } else if (respawnShipNames.includes(doc.DisplayName) === true) {
-                            await serverLogModel.create({
-                                guildID: guildID,
-                                category: 'misc',
-                                string: `${doc.OwnerDisplayName} spawned in a ${doc.DisplayName}`
-                            })
-                        } else if (friendlyGridsFound >= 0 && enemyGridsFound <= 1) { // Assume faction is building
-                            await serverLogModel.create({
-                                guildID: guildID,
-                                category: 'created',
-                                string: `${doc.DisplayName} built by [${factionTag}]`
-                            })
-                        } else if (enemyFactionTag !== undefined && NPCNames.includes(doc.OwnerDisplayName) === false) { // Assume enemy is blowing grids up
-                            await serverLogModel.create({
-                                guildID: guildID,
-                                category: 'created',
-                                string: `${doc.DisplayName} wreckage created by [${enemyFactionTag}]`
-                            })
-                        }
-
-                    } else {
-                        if (NPCNames.includes(doc.OwnerDisplayName)) {
-                            await serverLogModel.create({
-                                guildID: guildID,
-                                category: 'npc',
-                                string: `NPC Spawned - ${doc.DisplayName}`
-                            })
+                /* Server log crap (disabled)
+                if (gridsNearby.length !== 0) { // If there are grids nearby, gridDoc the grid for possible clues to log
+                    // If there are grid nearby, gridDoc how many friendly/enemy grids there are
+                    let enemyGridsFound = 0;
+                    let friendlyGridsFound = 0;
+                    let enemyFactionTag;
+                    for (let a = 0; a < gridsNearby.length; a++) {
+                        let grid = gridsNearby[a];
+                        if (grid.factionTag !== doc.FactionTag) { // If grid facTag does not match the target grid facTag
+                            enemyGridsFound += 1;
+                            enemyFactionTag = grid.factionTag // Set the enemy facTag
                         } else {
-                            await serverLogModel.create({
-                                guildID: guildID,
-                                category: 'created',
-                                string: `${doc.DisplayName} built by [${factionTag}]`
-                            })
+                            friendlyGridsFound += 1;
                         }
                     }
-                    console.log(`${gridData[i].DisplayName} added to db`)
-                } catch (err) {
-                    console.log(err)
-                    console.log(gridData[i].Mass)
-                    console.log(`${gridData[i].DisplayName}'s mass failed to round. Did not add to database.`)
-                }
+
+                    // Server log messages
+                    if (NPCNames.includes(doc.OwnerDisplayName)) {
+                        await serverLogModel.create({
+                            guildID: guildID,
+                            category: 'npc',
+                            string: `NPC Spawned - ${doc.DisplayName}`
+                        })
+                    } else if (respawnShipNames.includes(doc.DisplayName) === true) {
+                        await serverLogModel.create({
+                            guildID: guildID,
+                            category: 'misc',
+                            string: `${doc.OwnerDisplayName} spawned in a ${doc.DisplayName}`
+                        })
+                    } else if (friendlyGridsFound >= 0 && enemyGridsFound <= 1) { // Assume faction is building
+                        await serverLogModel.create({
+                            guildID: guildID,
+                            category: 'created',
+                            string: `${doc.DisplayName} built by [${factionTag}]`
+                        })
+                    } else if (enemyFactionTag !== undefined && NPCNames.includes(doc.OwnerDisplayName) === false) { // Assume enemy is blowing grids up
+                        await serverLogModel.create({
+                            guildID: guildID,
+                            category: 'created',
+                            string: `${doc.DisplayName} wreckage created by [${enemyFactionTag}]`
+                        })
+                    }
+                    
+                } else {
+                    if (NPCNames.includes(doc.OwnerDisplayName)) {
+                        await serverLogModel.create({
+                            guildID: guildID,
+                            category: 'npc',
+                            string: `NPC Spawned - ${doc.DisplayName}`
+                        })
+                    } else {
+                        await serverLogModel.create({
+                            guildID: guildID,
+                            category: 'created',
+                            string: `${doc.DisplayName} built by [${factionTag}]`
+                        })
+                    }
+                }*/
             } else { // If grid is found in db, just update information
-                entityIDs.push(gridData[i].EntityId)
-                if (check.displayName !== gridData[i].DisplayName) { // If grid is renamed
+                /*if (gridDoc.displayName !== gridData[i].DisplayName) { // If grid is renamed
                     await serverLogModel.create({
                         guildID: guildID,
                         category: 'misc',
-                        string: `[${check.factionTag}] ${check.displayName} renamed to ${gridData[i].DisplayName}`
+                        string: `[${gridDoc.factionTag}] ${gridDoc.displayName} renamed to ${gridData[i].DisplayName}`
                     })
                 } //
-                if (check.ownerDisplayName !== gridData[i].OwnerDisplayName) { // If ownership given or taken by another faction
+                if (gridDoc.ownerDisplayName !== gridData[i].OwnerDisplayName) { // If ownership given or taken by another faction
                     await serverLogModel.create({
                         guildID: guildID,
                         category: 'taken',
-                        string: `[${factionTag}] ${gridData[i].OwnerDisplayName} claimed [${check.factionTag}] ${check.displayName}`
+                        string: `[${factionTag}] ${gridData[i].OwnerDisplayName} claimed [${gridDoc.factionTag}] ${gridDoc.displayName}`
                     })
                 }
                 // End server log messages, except jumping
-                var dx = check.positionX - gridData[i].Position.X;
-                var dy = check.positionY - gridData[i].Position.Y;
-                var dz = check.positionZ - gridData[i].Position.Z;
+                var dx = gridDoc.positionX - gridData[i].Position.X;
+                var dy = gridDoc.positionY - gridData[i].Position.Y;
+                var dz = gridDoc.positionZ - gridData[i].Position.Z;
 
                 let distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
                 if (distance > 30000) { // Assume jump drive used if grid has traveled more than 30,000m since last query
@@ -237,29 +210,37 @@ module.exports = async (req) => {
                         string: `[${factionTag}] ${gridData[i].DisplayName} jumped ${Math.round(distance).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}m`
                     })
                 }
+                */ // Server log stuff (disabled)
                 try {
 
-                    check.displayName = gridData[i].DisplayName
-                    check.blocksCount = gridData[i].BlocksCount
-                    check.mass = Math.round(gridData[i].Mass)
-                    check.positionX = gridData[i].Position.X
-                    check.positionY = gridData[i].Position.Y
-                    check.positionZ = gridData[i].Position.Z
-                    check.linearSpeed = gridData[i].LinearSpeed
-                    check.distanceToPlayer = gridData[i].DistanceToPlayer
-                    check.ownerDisplayName = gridData[i].OwnerDisplayName
-                    check.isPowered = gridData[i].IsPowered
-                    check.PCU = gridData[i].PCU
-                    check.expirationTime = expiration_time
-                    check.factionTag = factionTag
-                    check.save()
+                    gridDoc.displayName = gridData[i].DisplayName
+                    gridDoc.blocksCount = gridData[i].BlocksCount
+                    gridDoc.mass = Math.round(gridData[i].Mass)
+                    gridDoc.positionX = gridData[i].Position.X
+                    gridDoc.positionY = gridData[i].Position.Y
+                    gridDoc.positionZ = gridData[i].Position.Z
+                    gridDoc.linearSpeed = gridData[i].LinearSpeed
+                    gridDoc.distanceToPlayer = gridData[i].DistanceToPlayer
+                    gridDoc.ownerDisplayName = gridData[i].OwnerDisplayName
+                    gridDoc.isPowered = gridData[i].IsPowered
+                    gridDoc.PCU = gridData[i].PCU
+                    gridDoc.expirationTime = expiration_time
+                    gridDoc.factionTag = factionTag
+                    gridDoc.nearby = [{
+                        npcs: nearbyGrids.npcs,
+                        friendlyGrids: nearbyGrids.friendlyGrids,
+                        enemyGrids: nearbyGrids.enemyGrids,
+                        friendlyCharacters: nearbyChars.friendlyCharacters,
+                        enemyCharacters: nearbyChars.enemyCharacters,
+                    }]
+                    gridDoc.save()
                 } catch (err) {
                     console.log(`${gridData[i].DisplayName}'s mass failed to round. Did not update database.`)
                     console.log(err)
                     console.log(gridData[i].Mass)
                 }
             }
-            // After adding/updating database, check grid for hoover settings, manage cleanup queue
+            // After adding/updating database, gridDoc grid for hoover settings, manage cleanup queue
             let deletionUpdated = false;
             if (hooverSettings !== null && hooverSettings !== undefined) {
                 if (hooverSettings.hooverEnabled === true) {
@@ -268,83 +249,83 @@ module.exports = async (req) => {
                         let verDoc = null;
                         if (verificationNameCache.includes(gridData[i].OwnerDisplayName) === true) { // If verification doc is already download
                             verificationCache.forEach(verification => { // Find and set variable
-                                if (verification === null) return; // Redundancy Check
-                                if (verification.username === check.ownerDisplayName) { // If usernames match, store doc into current variable
+                                if (verification === null) return; // Redundancy gridDoc
+                                if (verification.username === gridDoc.ownerDisplayName) { // If usernames match, store doc into current variable
                                     verDoc = verification;
                                 } else return;
                             })
-                        } else { // If verification doc is not downloaded, check for it
+                        } else { // If verification doc is not downloaded, gridDoc for it
                             verDoc = await verificationModel.findOne({
                                 username: gridData[i].OwnerDisplayName
                             })
                             if (verDoc !== null) { // If verdoc found, set variable and add to cache
                                 verificationCache.push(verDoc);
-                                verificationNameCache.push(check.ownerDisplayName);
+                                verificationNameCache.push(gridDoc.ownerDisplayName);
                             }
-                        } // Continue to check hoover cleanup
+                        } // Continue to gridDoc hoover cleanup
 
 
-                        if (check.queuedForDeletion === false && gridData[i].GridSize === 'Large' && hooverSettings.largeGridAllowed === false) {
-                            check.deletionReason = 'large grids not allowed'
-                            check.queuedForDeletion = true;
-                            check.deletionTime = current_time + 86400000;
+                        if (gridDoc.queuedForDeletion === false && gridData[i].GridSize === 'Large' && hooverSettings.largeGridAllowed === false) {
+                            gridDoc.deletionReason = 'large grids not allowed'
+                            gridDoc.queuedForDeletion = true;
+                            gridDoc.deletionTime = current_time + 86400000;
                             deletionUpdated = true
                             if (verDoc !== null) {
                                 let memberTarget = guild.members.cache.find(member => member.id === verDoc.userID)
                                 try {
-                                    //memberTarget.send(`**__Warning__**\n>>> ${check.displayName} has been deleted.\nLarge grids are not allowed.`)
+                                    //memberTarget.send(`**__Warning__**\n>>> ${gridDoc.displayName} has been deleted.\nLarge grids are not allowed.`)
                                 } catch (err) {}
                             }
                         }
-                        if (check.queuedForDeletion === false && gridData[i].GridSize === 'Small' && hooverSettings.smallGridAllowed === false) {
-                            check.deletionReason = 'small grids not allowed'
-                            check.queuedForDeletion = true;
-                            check.deletionTime = current_time + 86400000;
+                        if (gridDoc.queuedForDeletion === false && gridData[i].GridSize === 'Small' && hooverSettings.smallGridAllowed === false) {
+                            gridDoc.deletionReason = 'small grids not allowed'
+                            gridDoc.queuedForDeletion = true;
+                            gridDoc.deletionTime = current_time + 86400000;
                             deletionUpdated = true
                             if (verDoc !== null) {
                                 let memberTarget = guild.members.cache.find(member => member.id === verDoc.userID)
                                 try {
-                                    //memberTarget.send(`**__Warning__**\n>>> ${check.displayName} has been deleted.\nSmall grids are not allowed.`)
+                                    //memberTarget.send(`**__Warning__**\n>>> ${gridDoc.displayName} has been deleted.\nSmall grids are not allowed.`)
                                 } catch (err) {}
                             }
                         }
-                        if (check.queuedForDeletion === false && check.blocksCount < parseInt(hooverSettings.blockThreshold) && NPCGridNames.includes(gridData[i].DisplayName) === false && NPCNames.includes(gridData[i].OwnerDisplayName) === false) {
-                            check.deletionReason = 'less than block threshold'
-                            check.queuedForDeletion = true;
-                            check.deletionTime = current_time + 86400000;
+                        if (gridDoc.queuedForDeletion === false && gridDoc.blocksCount < parseInt(hooverSettings.blockThreshold) && NPCGridNames.includes(gridData[i].DisplayName) === false && NPCNames.includes(gridData[i].OwnerDisplayName) === false) {
+                            gridDoc.deletionReason = 'less than block threshold'
+                            gridDoc.queuedForDeletion = true;
+                            gridDoc.deletionTime = current_time + 86400000;
                             deletionUpdated = true
                             if (verDoc !== null) {
                                 let memberTarget = guild.members.cache.find(member => member.id === verDoc.userID)
                                 try {
-                                    //memberTarget.send(`**__Warning__**\n>>> ${check.displayName} is less than ${hooverSettings.blockThreshold} blocks.\nIncrease the build size within 24hrs or the grid will be removed!`)
+                                    //memberTarget.send(`**__Warning__**\n>>> ${gridDoc.displayName} is less than ${hooverSettings.blockThreshold} blocks.\nIncrease the build size within 24hrs or the grid will be removed!`)
                                 } catch (err) {}
                             }
                         }
-                        if (check.queuedForDeletion === false && gridData[i].IsPowered === false && hooverSettings.unpoweredGridRemoval === true && NPCNames.includes(gridData[i].OwnerDisplayName) === false) {
-                            check.deletionReason = 'unpowered'
-                            check.queuedForDeletion = true;
-                            check.deletionTime = current_time + 86400000;
+                        if (gridDoc.queuedForDeletion === false && gridData[i].IsPowered === false && hooverSettings.unpoweredGridRemoval === true && NPCNames.includes(gridData[i].OwnerDisplayName) === false) {
+                            gridDoc.deletionReason = 'unpowered'
+                            gridDoc.queuedForDeletion = true;
+                            gridDoc.deletionTime = current_time + 86400000;
                             deletionUpdated = true
                             if (verDoc !== null) {
                                 let memberTarget = guild.members.cache.find(member => member.id === verDoc.userID)
                                 try {
-                                    //memberTarget.send(`**__Warning__**\n>>> ${check.displayName} has run out of power.\nRestore power within 24hrs or the grid will be removed!`)
+                                    //memberTarget.send(`**__Warning__**\n>>> ${gridDoc.displayName} has run out of power.\nRestore power within 24hrs or the grid will be removed!`)
                                 } catch (err) {}
                             }
                         }
                         // Unfinished
                         if (hooverSettings.cleanUnverifiedPlayerGrids === true) { // If unverified cleanup is enabled
-                            if (verDoc === null && check.queuedForDeletion === false) { // If verdoc is not found, and grid is not already queued for deletion
-                                if (check.queuedForDeletion === false && NPCNames.includes(gridData[i].OwnerDisplayName) === false) {
-                                    if (check.ownerDisplayName === '') {
-                                        check.deletionReason = 'no clear owner'
-                                        check.queuedForDeletion = true;
-                                        check.deletionTime = current_time + 86400000;
+                            if (verDoc === null && gridDoc.queuedForDeletion === false) { // If verdoc is not found, and grid is not already queued for deletion
+                                if (gridDoc.queuedForDeletion === false && NPCNames.includes(gridData[i].OwnerDisplayName) === false) {
+                                    if (gridDoc.ownerDisplayName === '') {
+                                        gridDoc.deletionReason = 'no clear owner'
+                                        gridDoc.queuedForDeletion = true;
+                                        gridDoc.deletionTime = current_time + 86400000;
                                         deletionUpdated = true
                                     } else {
-                                        check.deletionReason = 'unverified player grid'
-                                        check.queuedForDeletion = true;
-                                        check.deletionTime = current_time + 86400000;
+                                        gridDoc.deletionReason = 'unverified player grid'
+                                        gridDoc.queuedForDeletion = true;
+                                        gridDoc.deletionTime = current_time + 86400000;
                                         deletionUpdated = true
                                     }
                                 }
@@ -352,11 +333,11 @@ module.exports = async (req) => {
                                 // If there is a verification doc, try to see if they are still in the discord.
                                 let memberTarget = await guild.members.cache.get(verDoc.userID);
                                 if (memberTarget === null || memberTarget === undefined) {
-                                    check.deletionReason = 'player left the discord'
-                                    check.queuedForDeletion = true;
-                                    check.deletionTime = current_time + 86400000;
+                                    gridDoc.deletionReason = 'player left the discord'
+                                    gridDoc.queuedForDeletion = true;
+                                    gridDoc.deletionTime = current_time + 86400000;
                                     deletionUpdated = true
-                                } // Discord check end
+                                } // Discord gridDoc end
                             }
                         }
                         //
@@ -367,7 +348,7 @@ module.exports = async (req) => {
             }
             if (deletionUpdated === true) { // Only save if doc was updated with new deletion settings
                 try { // Double Doc Save Catch
-                    await check.save();
+                    await gridDoc.save();
                 } catch (err) {};
             }
         }
@@ -378,7 +359,7 @@ module.exports = async (req) => {
                 await hooverSettings.save();
             } catch (err) {}
         }
-        let discordSettings = await discordSettingsModel.findOne({ // Double check before deleting documents
+        let discordSettings = await discordSettingsModel.findOne({ // Double gridDoc before deleting documents
             guildID: guildID
         })
         if (discordSettings === null) return;
@@ -392,40 +373,7 @@ module.exports = async (req) => {
             documents.forEach(async doc => { // Attempt to find clues to log
                 if (doc.expirationTime < current_time) {
                     if (entityIDs.includes(doc.entityID) === false) {
-                        let gridsNearby = [];
-                        let gridsDangerClose = [];
-                        for (let i = 0; i < gridDocsCache.length; i++) {
-                            let checkGrid = gridDocsCache[i];
-                            var dx = checkGrid.positionX - doc.positionX;
-                            var dy = checkGrid.positionY - doc.positionY;
-                            var dz = checkGrid.positionZ - doc.positionZ;
-
-                            let distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
-                            if (distance < 900) {
-                                gridsDangerClose.push(checkGrid)
-                            }
-                            if (distance < 1750) {
-                                gridsNearby.push(checkGrid)
-                                // If this close and doc is ready to delete, check if there is a player to reward currency
-                                if (NPCNames.includes(doc.ownerDisplayName) === true) {
-                                    NPCDeathRewarder(guildID, client, doc)
-                                }
-                            }
-                        }
-                        if (gridsNearby.length !== 0) { // If there are grids nearby, check the grid for possible clues to log
-                            // If there is an enemy ship nearby, check if there is an enemy
-                            let enemyGridsFound = 0;
-                            let friendlyGridsFound = 0;
-                            let enemyFactionTag;
-                            for (let a = 0; a < gridsNearby.length; a++) {
-                                let grid = gridsNearby[a];
-                                if (grid.factionTag !== doc.factionTag) { // If grid facTag does not match the target grid facTag
-                                    enemyGridsFound += 1;
-                                    enemyFactionTag = grid.factionTag // Set the enemy facTag
-                                } else {
-                                    friendlyGridsFound += 1;
-                                }
-                            }
+                        /*
                             if (respawnShipNames.includes(doc.displayName)) {
                                 await serverLogModel.create({
                                     guildID: guildID,
@@ -458,6 +406,7 @@ module.exports = async (req) => {
                                 })
                             }
                         }
+                        */ // Disabled server-log stuff
                         try {
                             doc.remove()
                         } catch (err) {

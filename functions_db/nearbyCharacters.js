@@ -5,8 +5,8 @@ const allianceModel = require('../models/allianceSchema')
 module.exports = async (guildID, x, y, z, factionTag, distance) => {
     if (distance === undefined) distance === 15000; // If no distance specified, use this default.
     let data = {
-        enemyCharacter: [],
-        friendlyCharacter: []
+        enemyCharacters: [],
+        friendlyCharacters: []
     };
     if (factionTag === undefined) return data;
 
@@ -29,9 +29,9 @@ module.exports = async (guildID, x, y, z, factionTag, distance) => {
             displayName: char.name
         })
         if (playerDoc === null) continue; // Redundancy check
+        char.factionTag === playerDoc.factionTag
         if (playerDoc.factionTag === '' || playerDoc.factionTag === undefined || playerDoc.factionTag === 'NoFac') { // If no faction
-            char.factionTag === playerDoc.factionTag
-            data.enemyCharacter.push(char) // Just count it as an enemy. No way to tell.
+            data.enemyCharacters.push(char) // Just count it as an enemy. No way to tell.
             continue;
         }
 
@@ -55,10 +55,10 @@ module.exports = async (guildID, x, y, z, factionTag, distance) => {
         }
 
         // After getting allied tags, decide whether it's an enemy or not.
-        if(allys.includes(factionTag) === true) {
-            data.friendlyCharacter.push(char);
+        if(allys.includes(char.factionTag) === true) {
+            data.friendlyCharacters.push(char);
         } else {
-            data.enemyCharacter.push(char);
+            data.enemyCharacters.push(char);
         }
     }
 

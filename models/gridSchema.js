@@ -2,30 +2,30 @@ const mongoose = require("mongoose");
 
 // Nearby Schema
 const npcSchema = new mongoose.Schema({
-    displayName: { type: String, require: true },
-    ownerDisplayName: { type: String, require: true }, 
-    entityID: { type: String, require: true }, 
+    displayName: { type: String },
+    ownerDisplayName: { type: String }, 
+    entityID: { type: String }, 
 })
 const friendlyGridSchema = new mongoose.Schema({
-    displayName: { type: String, require: true },
-    ownerDisplayName: { type: String, require: true }, 
-    entityID: { type: String, require: true },
+    displayName: { type: String },
+    ownerDisplayName: { type: String }, 
+    entityID: { type: String },
     factionTag: { type: String } 
 })
 const enemyGridSchema = new mongoose.Schema({
-    displayName: { type: String, require: true },
-    ownerDisplayName: { type: String, require: true }, 
-    entityID: { type: String, require: true },
+    displayName: { type: String },
+    ownerDisplayName: { type: String }, 
+    entityID: { type: String },
     factionTag: { type: String } 
 })
 const friendlyCharacterSchema = new mongoose.Schema({
-    displayName: { type: String, require: true },
-    entityID: { type: String, require: true },
+    displayName: { type: String },
+    entityID: { type: String },
     factionTag: { type: String } 
 })
 const enemyCharacterSchema = new mongoose.Schema({
-    displayName: { type: String, require: true },
-    entityID: { type: String, require: true },
+    displayName: { type: String },
+    entityID: { type: String },
     factionTag: { type: String } 
 })
 
