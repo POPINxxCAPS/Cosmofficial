@@ -22,9 +22,9 @@ module.exports = async (guildID, x, y, z, factionTag, distance, gridCache) => {
 
     for (let i = 0; i < gridCache.length; i++) { // Sift through the cache, find grids that are close.
         let grid = gridCache[i];
-        var dx = Math.round(parseFloat(grid.x)) - x;
-        var dy = Math.round(parseFloat(grid.y)) - y;
-        var dz = Math.round(parseFloat(grid.z)) - z;
+        var dx = Math.round(parseFloat(grid.positionX)) - x;
+        var dy = Math.round(parseFloat(grid.positionY)) - y;
+        var dz = Math.round(parseFloat(grid.positionZ)) - z;
 
         let mathDistance = Math.sqrt(dx * dx + dy * dy + dz * dz);
         if (mathDistance > distance) continue;
