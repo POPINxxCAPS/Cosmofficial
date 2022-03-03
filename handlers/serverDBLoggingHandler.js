@@ -52,10 +52,16 @@ module.exports = async (client) => {
     }, 45000)
 
     // Query Interval
+    let queryIsRunning = false;
     setInterval(async () => {
         for(let g = 0; g < guildIDs.length; g++) { // Changed to for instead of forEach to avoid heap error
+            if(queryIsRunning === true) break; // Cancel if there's already another server being queried.
+            queryIsRunning = true;
             const guildID = guildIDs[g];
-            if (guildID === '853247020567101440') continue; // Ignore Cosmofficial Discord
+            if (guildID === '853247020567101440') {
+                queryIsRunning = false;
+                continue;
+            }; // Ignore Cosmofficial Discord
             // Discord Channel Settings (needs COMPLETE remodel) - This is just prep
             let settings = await getDiscordServerSettings(guildID);
 
@@ -63,7 +69,11 @@ module.exports = async (client) => {
             let config = await remoteConfigModel.findOne({
                 guildID: guildID
             })
-            if (config === null || settings === null) continue;
+            if (config === null || settings === null) {
+                queryIsRunning = false;
+                continue;
+            }
+            console.log(`Doing queries for guild ID ${guildID}`)
 
             // Start querys
             const req = {
@@ -75,8 +85,10 @@ module.exports = async (client) => {
             await logStatus(req); // Specific Ordering.
             await logChat(req);
             await logPlayers(req);
-            gridQuery(req);
+            await gridQuery(req); // The last one needs await to ensure it's only running for one server at a time (performance reasons)
             //logVoxels(req); Disabled due to memory error
+            console.log(`Finished queries for guild ID ${guildID}`)
+            queryIsRunning = false;
         }
-    }, 15500) // Timers are now handled in each query seperately, so this is no issue.
+    }, 10000) //  Main timers are now handled in each query seperately.
 }

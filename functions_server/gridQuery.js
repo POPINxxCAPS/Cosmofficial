@@ -18,7 +18,7 @@ const NPCNames = ['The Tribunal', 'Contractors', 'Gork and Mork', 'Space Pirates
 const NPCGridNames = ['Mining vessel Debris', 'Mining ship Debris', 'Daniel A. Collins', 'Transporter debree']
 const respawnShipNames = ['Respawn Station', 'Respawn Planet Pod', 'Respawn Space Pod']
 
-// Pyramid of HELL noob code lmfao
+// Pyramid of HELL noob code lmfao (Getting smaller, slowly)
 let verificationCache = [];
 let verificationNameCache = [];
 module.exports = async (req) => {
@@ -46,7 +46,7 @@ module.exports = async (req) => {
     if (cancel === true) return;
 
     let hooverTriggered = false;
-    // gridDoc if hoover settings should be loaded/used
+    // Check if hoover settings should be loaded/used
     const guild = client.guilds.cache.get(guildID);
     const mainGuild = client.guilds.cache.get("853247020567101440");
 
@@ -78,7 +78,7 @@ module.exports = async (req) => {
     })
     if (gridData !== [] && gridData !== undefined) { // If queries are not broken, handle the data.
         for (let i = 0; i < gridData.length; i++) {
-            spawnerGridHandler(guildID, gridData[i]) // Spawner Grid Handler/gridDocer/Exploit Prevention
+            spawnerGridHandler(guildID, gridData[i]) // Spawner Grid Handler/checker/Exploit Prevention
             entityIDs.push(gridData[i].EntityId) // Add the grid's entity ID to the "existing" list9
 
 
@@ -90,7 +90,7 @@ module.exports = async (req) => {
             let gridDoc = await gridModel.findOne({
                 entityID: gridData[i].EntityId,
                 guildID: guildID
-            }); // gridDoc if the grid exists already in the database 
+            }); // Check if the grid exists already in the database 
             if (gridDoc === null) { // If no file found, create one.
                 gridDoc = await gridModel.create({
                     guildID: guildID,
@@ -229,7 +229,6 @@ module.exports = async (req) => {
                 }]
             }
             // After adding/updating database, check grid for hoover settings, manage cleanup queue
-            let deletionUpdated = false;
             if (hooverSettings !== null && hooverSettings !== undefined) {
                 if (hooverSettings.hooverEnabled === true) {
                     if (parseInt(hooverSettings.nextCleanup) < current_time) {
@@ -257,7 +256,6 @@ module.exports = async (req) => {
                             gridDoc.deletionReason = 'large grids not allowed'
                             gridDoc.queuedForDeletion = true;
                             gridDoc.deletionTime = current_time + 86400000;
-                            deletionUpdated = true
                             if (verDoc !== null) {
                                 let memberTarget = guild.members.cache.find(member => member.id === verDoc.userID)
                                 try {
@@ -269,7 +267,6 @@ module.exports = async (req) => {
                             gridDoc.deletionReason = 'small grids not allowed'
                             gridDoc.queuedForDeletion = true;
                             gridDoc.deletionTime = current_time + 86400000;
-                            deletionUpdated = true
                             if (verDoc !== null) {
                                 let memberTarget = guild.members.cache.find(member => member.id === verDoc.userID)
                                 try {
@@ -281,7 +278,6 @@ module.exports = async (req) => {
                             gridDoc.deletionReason = 'less than block threshold'
                             gridDoc.queuedForDeletion = true;
                             gridDoc.deletionTime = current_time + 86400000;
-                            deletionUpdated = true
                             if (verDoc !== null) {
                                 let memberTarget = guild.members.cache.find(member => member.id === verDoc.userID)
                                 try {
@@ -293,7 +289,6 @@ module.exports = async (req) => {
                             gridDoc.deletionReason = 'unpowered'
                             gridDoc.queuedForDeletion = true;
                             gridDoc.deletionTime = current_time + 86400000;
-                            deletionUpdated = true
                             if (verDoc !== null) {
                                 let memberTarget = guild.members.cache.find(member => member.id === verDoc.userID)
                                 try {
@@ -309,12 +304,10 @@ module.exports = async (req) => {
                                         gridDoc.deletionReason = 'no clear owner'
                                         gridDoc.queuedForDeletion = true;
                                         gridDoc.deletionTime = current_time + 86400000;
-                                        deletionUpdated = true
                                     } else {
                                         gridDoc.deletionReason = 'unverified player grid'
                                         gridDoc.queuedForDeletion = true;
                                         gridDoc.deletionTime = current_time + 86400000;
-                                        deletionUpdated = true
                                     }
                                 }
                             } else if (verDoc !== null) {
@@ -324,8 +317,7 @@ module.exports = async (req) => {
                                     gridDoc.deletionReason = 'player left the discord'
                                     gridDoc.queuedForDeletion = true;
                                     gridDoc.deletionTime = current_time + 86400000;
-                                    deletionUpdated = true
-                                } // Discord gridDoc end
+                                } // Discord check end
                             }
                         }
                         //
@@ -403,6 +395,5 @@ module.exports = async (req) => {
             })
         }, 20000)
     }
-
     return;
 }
