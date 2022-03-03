@@ -7,9 +7,9 @@ const NPCNames = ['The Tribunal', 'Contractors', 'Gork and Mork', 'Space Pirates
 module.exports = async (guildID, x, y, z, factionTag, distance, gridCache) => {
     if (distance === undefined) distance === 15000; // If no distance specified, use this default.
     let data = {
-        npcs = [],
-        friendlyGrids = [],
-        enemyGrids = [],
+        npcs: [],
+        friendlyGrids: [],
+        enemyGrids: [],
     };
     if (factionTag === undefined) return data;
 

@@ -1,6 +1,6 @@
 const gridModel = require('../models/gridSchema');
 const chatModel = require('../models/chatSchema');
-const gridDocGridForFaction = require('../functions_db/gridDocGridForFaction');
+const gridDocGridForFaction = require('../functions_db/checkGridForFaction');
 const discordSettingsModel = require('../models/discordServerSettngsSchema')
 const hooverSettingModel = require('../models/hooverSettingSchema');
 const verificationModel = require('../models/verificationSchema');
