@@ -65,9 +65,9 @@ module.exports = async (req) => {
 
 
 
-    if (serverOnline === false) return;
+    if (serverOnline === false || serverOnline === undefined) return;
     // Grids Init
-    const expirationInSeconds = 59;
+    const expirationInSeconds = 3600;
     const expiration_time = current_time + (expirationInSeconds * 1000);
     let gridData = await queryGrids(config)
 
@@ -86,7 +86,6 @@ module.exports = async (req) => {
 
             let nearbyChars = await getNearbyCharacters(guildID, gridData[i].Position.X, gridData[i].Position.Y, gridData[i].Position.Z, factionTag);
             let nearbyGrids = await getNearbyGrids(guildID, gridData[i].Position.X, gridData[i].Position.Y, gridData[i].Position.Z, factionTag, 15000, gridDocsCache);
-
             let gridDoc = await gridModel.findOne({
                 entityID: gridData[i].EntityId,
                 guildID: guildID
@@ -336,64 +335,56 @@ module.exports = async (req) => {
                 await hooverSettings.save();
             } catch (err) {}
         }
-        let discordSettings = await discordSettingsModel.findOne({ // Double gridDoc before deleting documents
-            guildID: guildID
-        })
-        if (discordSettings === null) return;
-        let serverOnline = discordSettings.serverOnline;
-        if (serverOnline === false) return; // Continue to delete documents
 
-        setTimeout(async () => {
-            const documents = await gridModel.find({
-                guildID: guildID
-            });
-            documents.forEach(async doc => { // Attempt to find clues to log
-                if (doc.expirationTime < current_time) {
-                    if (entityIDs.includes(doc.entityID) === false) {
-                        /*
-                            if (respawnShipNames.includes(doc.displayName)) {
-                                await serverLogModel.create({
-                                    guildID: guildID,
-                                    category: 'misc',
-                                    string: `${doc.ownerDisplayName}'s ${doc.displayName} despawned.`
-                                })
-                            } else if (enemyFactionTag !== undefined) { // If enemy faction tag found
-                                await serverLogModel.create({
-                                    guildID: guildID,
-                                    category: 'destroyed',
-                                    string: `${doc.displayName} likely destroyed by [${enemyFactionTag}]`
-                                })
-                            } else if (friendlyGridsFound <= 1 && enemyGridsFound === 0 && NPCNames.includes(doc.ownerDisplayName) === false) {
-                                await serverLogModel.create({
-                                    guildID: guildID,
-                                    category: 'destroyed',
-                                    string: `${doc.displayName} likely destroyed. No grids nearby`
-                                })
-                            } else if (NPCNames.includes(doc.ownerDisplayName) === false) {
-                                await serverLogModel.create({
-                                    guildID: guildID,
-                                    category: 'docked',
-                                    string: `${doc.displayName} likely docked. ${friendlyGridsFound} friendly grids nearby`
-                                })
-                            } else if (NPCNames.includes(doc.ownerDisplayName)) {
-                                await serverLogModel.create({
-                                    guildID: guildID,
-                                    category: 'npc',
-                                    string: `NPC Despawned - ${doc.displayName}`
-                                })
-                            }
+        const documents = await gridModel.find({
+            guildID: guildID
+        });
+        documents.forEach(async doc => { // Attempt to find clues to log
+            if (doc.expirationTime < current_time) {
+                if (entityIDs.includes(doc.entityID) === false) {
+                    /*
+                        if (respawnShipNames.includes(doc.displayName)) {
+                            await serverLogModel.create({
+                                guildID: guildID,
+                                category: 'misc',
+                                string: `${doc.ownerDisplayName}'s ${doc.displayName} despawned.`
+                            })
+                        } else if (enemyFactionTag !== undefined) { // If enemy faction tag found
+                            await serverLogModel.create({
+                                guildID: guildID,
+                                category: 'destroyed',
+                                string: `${doc.displayName} likely destroyed by [${enemyFactionTag}]`
+                            })
+                        } else if (friendlyGridsFound <= 1 && enemyGridsFound === 0 && NPCNames.includes(doc.ownerDisplayName) === false) {
+                            await serverLogModel.create({
+                                guildID: guildID,
+                                category: 'destroyed',
+                                string: `${doc.displayName} likely destroyed. No grids nearby`
+                            })
+                        } else if (NPCNames.includes(doc.ownerDisplayName) === false) {
+                            await serverLogModel.create({
+                                guildID: guildID,
+                                category: 'docked',
+                                string: `${doc.displayName} likely docked. ${friendlyGridsFound} friendly grids nearby`
+                            })
+                        } else if (NPCNames.includes(doc.ownerDisplayName)) {
+                            await serverLogModel.create({
+                                guildID: guildID,
+                                category: 'npc',
+                                string: `NPC Despawned - ${doc.displayName}`
+                            })
                         }
-                        */ // Disabled server-log stuff
-                        try {
-                            doc.remove()
-                        } catch (err) {
-                            console.log('Grid database remove error caught')
-                        }
-                        return console.log(`${doc.displayName} Grid expired`)
                     }
+                    */ // Disabled server-log stuff
+                    try {
+                        doc.remove()
+                    } catch (err) {
+                        console.log('Grid database remove error caught')
+                    }
+                    return console.log(`${doc.displayName} Grid expired`)
                 }
-            })
-        }, 20000)
+            }
+        })
     }
     return;
 }

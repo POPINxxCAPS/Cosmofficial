@@ -8,7 +8,7 @@ module.exports = async (req) => {
     const config = req.config;
     const settings = req.settings;
     const client = req.client;
-    req.expirationInSeconds = 15;
+    req.expirationInSeconds = 60;
     req.name = 'logStatus'
     const timerCheck = await timerFunction(req)
     if (timerCheck === true) return; // If there is a timer, cancel.
@@ -64,7 +64,7 @@ module.exports = async (req) => {
             if (servInfoDoc.nextPopLog < current_time) {
                 let invLink = "https://cosmofficial.herokuapp.com/"
                 await createInvite(client, guildID).then(res => invLink = res)
-                let popLogTimer = current_time + 300000;
+                let popLogTimer = current_time + 600000;
                 servInfoDoc.populationLog.push({
                     playerCount: servInfo.Players,
                     timestamp: current_time

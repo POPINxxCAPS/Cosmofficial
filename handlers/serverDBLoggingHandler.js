@@ -82,13 +82,14 @@ module.exports = async (client) => {
                 settings: settings,
                 client: client
             }
-            await logStatus(req); // Specific Ordering.
+            logStatus(req); // Specific Ordering. Do not await this one because it needs to be able to fail without causing issues for a var update
             await logChat(req);
             await logPlayers(req);
-            await gridQuery(req); // The last one needs await to ensure it's only running for one server at a time (performance reasons)
+            gridQuery(req); // The last one needs await to ensure it's only running for one server at a time (performance reasons)
+            // However, until this one is fully recoded I cannot use await or it makes the bot run 40x slower.
             //logVoxels(req); Disabled due to memory error
             console.log(`Finished queries for guild ID ${guildID}`)
             queryIsRunning = false;
         }
-    }, 10000) //  Main timers are now handled in each query seperately.
+    }, 15000) //  Main timers are now handled in each query seperately. This just restarts the queries when the last server finishes.
 }
