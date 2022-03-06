@@ -19,13 +19,13 @@ const NPCGridNames = ['Mining vessel Debris', 'Mining ship Debris', 'Daniel A. C
 const respawnShipNames = ['Respawn Station', 'Respawn Planet Pod', 'Respawn Space Pod']
 
 // Pyramid of HELL noob code lmfao (Getting smaller, slowly)
-let verificationCache = [];
-let verificationNameCache = [];
 module.exports = async (req) => {
     const guildID = req.guildID;
     const config = req.config;
     const settings = req.settings;
     const client = req.client;
+    const verificationCache = [];
+
     const current_time = Date.now();
     if (settings.serverOnline === 'false' || settings.serverOnline === undefined) return;
     req.expirationInSeconds = 75;
@@ -233,23 +233,13 @@ module.exports = async (req) => {
                     if (parseInt(hooverSettings.nextCleanup) < current_time) {
                         hooverTriggered = true;
                         let verDoc = null;
-                        if (verificationNameCache.includes(gridData[i].OwnerDisplayName) === true) { // If verification doc is already download
-                            verificationCache.forEach(verification => { // Find and set variable
-                                if (verification === null) return; // Redundancy check
-                                if (verification.username === gridDoc.ownerDisplayName) { // If usernames match, store doc into current variable
-                                    verDoc = verification;
-                                } else return;
-                            })
-                        } else { // If verification doc is not downloaded, check for it
-                            verDoc = await verificationModel.findOne({
-                                username: gridData[i].OwnerDisplayName
-                            })
-                            if (verDoc !== null) { // If verdoc found, set variable and add to cache
-                                verificationCache.push(verDoc);
-                                verificationNameCache.push(gridDoc.ownerDisplayName);
-                            }
+                        for (let v = 0; v < verificationCache.length; v++) { // Find and set variable
+                            if (verificationCache[v] === null) continue; // Redundancy check
+                            if (verificationCache[v].username === gridDoc.ownerDisplayName) { // If usernames match, store doc into current variable
+                                verDoc = verificationCache[v];
+                                break;
+                            } else continue;
                         } // Continue to check hoover cleanup
-
 
                         if (gridDoc.queuedForDeletion === false && gridData[i].GridSize === 'Large' && hooverSettings.largeGridAllowed === false) {
                             gridDoc.deletionReason = 'large grids not allowed'

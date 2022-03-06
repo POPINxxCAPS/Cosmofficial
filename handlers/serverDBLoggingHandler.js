@@ -10,14 +10,16 @@ const characterQuery = require('../functions_server/characterQuery');
 const logChat = require('../functions_server/logChat');
 const floatingObjQuery = require('../functions_server/floatingObjectQuery');
 const logVoxels = require('../functions_server/logVoxels');
+const verificationModel = require('../models/verificationSchema');
 
 module.exports = async (client) => {
     let guildIDs = await client.guilds.cache.map(guild => guild.id);
-    
-    // Interval to check for new discords
+    let verDocs = await verificationModel.find({});
+
+    // Interval to check for new discords and update verifications
     setInterval(async () => {
         guildIDs = await client.guilds.cache.map(guild => guild.id);
-    }, 300000)
+    }, 600000)
 
     // Character Query
     setInterval(async () => {
@@ -54,8 +56,8 @@ module.exports = async (client) => {
     // Query Interval
     let queryIsRunning = false;
     setInterval(async () => {
-        for(let g = 0; g < guildIDs.length; g++) { // Changed to for instead of forEach to avoid heap error
-            if(queryIsRunning === true) break; // Cancel if there's already another server being queried.
+        for (let g = 0; g < guildIDs.length; g++) { // Changed to for instead of forEach to avoid heap error
+            if (queryIsRunning === true) break; // Cancel if there's already another server being queried.
             queryIsRunning = true;
             const guildID = guildIDs[g];
             if (guildID === '853247020567101440') {
@@ -80,7 +82,8 @@ module.exports = async (client) => {
                 guildID: guildID,
                 config: config,
                 settings: settings,
-                client: client
+                client: client,
+                verDocs: verDocs
             }
             logStatus(req); // Specific Ordering. Do not await this one because it needs to be able to fail without causing issues for a var update
             await logChat(req);
