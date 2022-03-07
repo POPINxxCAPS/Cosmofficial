@@ -196,10 +196,12 @@ module.exports = async (req) => {
 
                 }
             }
+
             cacheIndex = gridDocsCache.indexOf(gridDoc);
-            console.log(`Updated index of ${cacheIndex}`)
+            await gridDoc.save().then(savedDoc => {
+                gridDoc = savedDoc;
+            }); // Await this save so it stores the updated doc version information
             gridDocsCache[cacheIndex] = gridDoc;
-            gridDoc.save();
         }
         console.log('loop finished')
 
