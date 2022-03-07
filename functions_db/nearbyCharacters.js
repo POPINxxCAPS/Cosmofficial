@@ -2,7 +2,7 @@ const playerModel = require('../models/playerSchema');
 const characterModel = require('../models/characterSchema');
 const allianceModel = require('../models/allianceSchema')
 
-module.exports = async (guildID, x, y, z, factionTag, distance) => {
+module.exports = async (guildID, x, y, z, factionTag, distance, allianceCache, characterDocsCache) => {
     if (distance === undefined) distance === 15000; // If no distance specified, use this default.
     let data = {
         enemyCharacters: [],
@@ -10,10 +10,13 @@ module.exports = async (guildID, x, y, z, factionTag, distance) => {
     };
     if (factionTag === undefined) return data;
 
-    const charDocs = await characterModel.find({
-        guildID: guildID
-    })
-    if (charDocs.length === 0) return data;
+    if (characterDocsCache === undefined) {
+        characterDocsCache = await characterModel.find({
+            guildID: guildID
+        })
+    }
+    const charDocs = characterDocsCache;
+    if (charDocs.length === 0 || charDocs === null || charDocs === undefined) return data;
 
     for (let i = 0; i < charDocs.length; i++) {
         let char = charDocs[i];
@@ -37,9 +40,12 @@ module.exports = async (guildID, x, y, z, factionTag, distance) => {
 
 
         // If there is a faction, find allied faction tags
-        const allianceDocs = await allianceModel.find({
-            guildID: guildID
-        })
+        if (allianceCache === undefined) {
+            allianceCache = await allianceModel.find({
+                guildID: guildID
+            })
+        }
+        const allianceDocs = allianceCache;
 
         let allys = [];
         for (let a = 0; a < allianceDocs.length; a++) { // Need to check every alliance doc since there is no search function
@@ -55,7 +61,7 @@ module.exports = async (guildID, x, y, z, factionTag, distance) => {
         }
 
         // After getting allied tags, decide whether it's an enemy or not.
-        if(allys.includes(char.factionTag) === true) {
+        if (allys.includes(char.factionTag) === true) {
             data.friendlyCharacters.push(char);
         } else {
             data.enemyCharacters.push(char);

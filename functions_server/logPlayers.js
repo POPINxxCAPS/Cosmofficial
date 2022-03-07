@@ -13,13 +13,14 @@ module.exports = async (req) => {
     const config = req.config;
     const settings = req.settings;
     const client = req.client;
-    if(settings.serverOnline === false || settings.serverOnline === undefined) return;
+    if (settings.serverOnline === false || settings.serverOnline === undefined) return;
     req.expirationInSeconds = 60;
     req.name = 'logPlayers'
     const timerCheck = await timerFunction(req)
     if (timerCheck === true) return; // If there is a timer, cancel.
-    const guild = client.guilds.cache.get(guildID);
-    const mainGuild = client.guilds.cache.get("853247020567101440");
+    const guild = await client.guilds.cache.get(guildID);
+    const mainGuild = await client.guilds.cache.get("853247020567101440");
+    if (guild === null || mainGuild === null || guild.owner === null) return; // Redundancy Crash Check
 
     // Economy Settings
     let patron;
@@ -48,26 +49,23 @@ module.exports = async (req) => {
 
     let whitelistedPlayers = [];
     let onlinePlayerGTs = [];
-    if (playerData !== undefined) {
-        let whitelistSettings;
-        if (patron === true) {
-            whitelistSettings = await whitelistSettingModel.findOne({
+    let whitelistSettings = await whitelistSettingModel.findOne({
+        guildID: guild.id
+    })
+    if (playerData !== undefined && patron === true) {
+        if (whitelistSettings === null) {
+            whitelistSettings = await whitelistSettingModel.create({
+                guildID: guild.id,
+                enabled: false
+            })
+        }
+        if (whitelistSettings.enabled === true) {
+            let whitelistDocs = await whitelistModel.find({
                 guildID: guild.id
             })
-            if (whitelistSettings === null) {
-                whitelistSettings = await whitelistSettingModel.create({
-                    guildID: guild.id,
-                    enabled: false
-                })
-            }
-            if (whitelistSettings.enabled === true) {
-                let whitelistDocs = await whitelistModel.find({
-                    guildID: guild.id
-                })
 
-                for(let i = 0; i < whitelistDocs.length; i++) {
+            for (let i = 0; i < whitelistDocs.length; i++) {
                 whitelistedPlayers.push(whitelistDocs[i].username)
-                }
             }
         }
 
@@ -75,8 +73,9 @@ module.exports = async (req) => {
 
 
         let time = Date.now();
-        await playerData.forEach(async player => {
-            if (player.DisplayName === '') return;
+        for (let i = 0; i < playerData.length; i++) {
+            const player = playerData[i];
+            if (player.DisplayName === '') continue;;
             onlinePlayerGTs.push(player.DisplayName);
             let playerDoc = await playerModel.findOne({
                 guildID: guildID,
@@ -98,19 +97,19 @@ module.exports = async (req) => {
                 })
             } else {
                 if (playerDoc.online === true) { // Player was already logged in
-                    if(playerDoc.factionTag !== player.FactionTag  && player.FactionTag !== '') { // Check if a new faction was created
+                    if (playerDoc.factionTag !== player.FactionTag && player.FactionTag !== '') { // Check if a new faction was created
                         let tempDocs = await playerModel.find({
                             guildID: guildID,
                             factionTag: player.FactionTag
                         })
-                        if(tempDocs.length === 0) { // If there are no other players with that tag, assume faction creation
+                        if (tempDocs.length === 0) { // If there are no other players with that tag, assume faction creation
                             await serverLogModel.create({
                                 guildID: guildID,
                                 category: 'misc',
                                 string: `${player.DisplayName} created faction: ${player.FactionTag}.`
                             })
                         }
-                        if(tempDocs.length > 0) { // If there are other players with that tag, assume faction join
+                        if (tempDocs.length > 0) { // If there are other players with that tag, assume faction join
                             await serverLogModel.create({
                                 guildID: guildID,
                                 category: 'misc',
@@ -118,7 +117,7 @@ module.exports = async (req) => {
                             })
                         }
                     }
-                    if(playerDoc.factionTag !== player.FactionTag  && player.FactionTag === '') { // Assume faction left
+                    if (playerDoc.factionTag !== player.FactionTag && player.FactionTag === '') { // Assume faction left
                         await serverLogModel.create({
                             guildID: guildID,
                             category: 'misc',
@@ -132,19 +131,19 @@ module.exports = async (req) => {
                     playerDoc.ping = player.Ping;
                     playerDoc.save();
                 } else { // Player just logged in
-                    if(playerDoc.factionTag !== player.FactionTag  && player.FactionTag !== '') { // Check if a new faction was created
+                    if (playerDoc.factionTag !== player.FactionTag && player.FactionTag !== '') { // Check if a new faction was created
                         let tempDocs = await playerModel.find({
                             guildID: guildID,
                             factionTag: playerDoc.factionTag
                         })
-                        if(tempDocs.length === 0) { // If there are no other players with that tag, assume faction creation
+                        if (tempDocs.length === 0) { // If there are no other players with that tag, assume faction creation
                             await serverLogModel.create({
                                 guildID: guildID,
                                 category: 'misc',
                                 string: `${player.DisplayName} created faction: ${player.FactionTag}.`
                             })
                         }
-                        if(tempDocs.length > 0) { // If there are other players with that tag, assume faction join
+                        if (tempDocs.length > 0) { // If there are other players with that tag, assume faction join
                             await serverLogModel.create({
                                 guildID: guildID,
                                 category: 'misc',
@@ -152,7 +151,7 @@ module.exports = async (req) => {
                             })
                         }
                     }
-                    if(playerDoc.factionTag !== player.FactionTag  && player.FactionTag === '') { // Assume faction left
+                    if (playerDoc.factionTag !== player.FactionTag && player.FactionTag === '') { // Assume faction left
                         await serverLogModel.create({
                             guildID: guildID,
                             category: 'misc',
@@ -178,19 +177,15 @@ module.exports = async (req) => {
             } // End of player doc creation/updating
 
             // Whitelist check
-            if (patron === true) {
-                if (whitelistSettings.enabled === true) {
-                    if (whitelistedPlayers.includes(player.DisplayName) === false) {
-                        await send('POST', `${adminPath}/kickedPlayers/${player.SteamID}`)
-                        console.log(player.SteamID)
-                        console.log('Removed player from server due to whitelist.')
-                    }
+            if (whitelistSettings.enabled === true) {
+                if (whitelistedPlayers.includes(player.DisplayName) === false) {
+                    await send('POST', `${adminPath}/kickedPlayers/${player.SteamID}`)
+                    console.log(player.SteamID)
+                    console.log('Removed player from server due to whitelist.')
                 }
             }
 
-
             // Start of online player reward system
-
             if (patron === true) {
                 let verificationDoc = await verificationModel.findOne({
                     username: player.DisplayName
@@ -249,42 +244,33 @@ module.exports = async (req) => {
                     }
 
                 }
-
             }
-        })
-
-
-
-
-
-
-
+        }
 
 
         // Update offline players
-        setTimeout(async () => {
-            let playerDocs = await playerModel.find({
-                guildID: guildID
-            });
-            playerDocs.forEach(async doc => {
-                if (onlinePlayerGTs.includes(doc.displayName) || doc.online === false) {} else {
-                    let current_time = Date.now();
-                    doc.lastLogout = current_time;
-                    doc.loginHistory.push({
-                        login: doc.lastLogin,
-                        logout: current_time
-                    })
-                    doc.online = false;
-                    doc.save();
-
-                    await serverLogModel.create({
-                        guildID: guildID,
-                        category: 'loggedInOut',
-                        string: `${doc.displayName} logged out.`
-                    })
-                }
+        let playerDocs = await playerModel.find({
+            guildID: guildID,
+            online: true
+        });
+        playerDocs.forEach(async doc => {
+            if (onlinePlayerGTs.includes(doc.displayName) || doc.online === false) return;
+            let current_time = Date.now();
+            doc.lastLogout = current_time;
+            doc.loginHistory.push({
+                login: doc.lastLogin,
+                logout: current_time
             })
-        }, 10000);
+            doc.online = false;
+            doc.save();
+
+            await serverLogModel.create({
+                guildID: guildID,
+                category: 'loggedInOut',
+                string: `${doc.displayName} logged out.`
+            })
+        })
+        return;
     }
     return;
 }

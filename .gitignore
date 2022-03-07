@@ -1,3 +1,4 @@
 node_modules
 env
 middleware_templates
+functions_server/crapStorage

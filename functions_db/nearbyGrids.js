@@ -1,10 +1,9 @@
 const gridModel = require('../models/gridSchema');
 const allianceModel = require('../models/allianceSchema')
 
-
 const NPCNames = ['The Tribunal', 'Contractors', 'Gork and Mork', 'Space Pirates', 'Space Spiders', 'The Chairman', 'Miranda Survivors', 'VOID', 'The Great Tarantula', 'Cosmofficial', 'Clang Technologies CEO', 'Merciless Shipping CEO', 'Mystic Settlers CEO', 'Royal Drilling Consortium CEO', 'Secret Makers CEO', 'Secret Prospectors CEO', 'Specialized Merchants CEO', 'Star Inventors CEO', 'Star Minerals CEO', 'The First Heavy Industry CEO', 'The First Manufacturers CEO', 'United Industry CEO', 'Universal Excavators CEO', 'Universal Miners Guild CEO', 'Unyielding Excavators CEO'];
 
-module.exports = async (guildID, x, y, z, factionTag, distance, gridCache) => {
+module.exports = async (guildID, x, y, z, factionTag, distance, gridCache, allianceCache) => {
     if (distance === undefined) distance === 15000; // If no distance specified, use this default.
     let data = {
         npcs: [],
@@ -18,6 +17,25 @@ module.exports = async (guildID, x, y, z, factionTag, distance, gridCache) => {
         gridCache = await gridModel.find({
             guildID: guildID
         })
+    }
+    if(allianceCache === undefined) {
+        allianceCache = await allianceModel.find({
+            guildID: guildID
+        })
+    }
+    const allianceDocs = allianceCache;
+
+    let allys = []; // Get allies
+    for (let a = 0; a < allianceDocs.length; a++) { // Need to check every alliance doc since there is no search method (I am aware of yet, at least)
+        const alliance = allianceDocs[a];
+        // Check if faction is in the alliance, if it is add tags to allys array. If not, continue.
+        if (alliance.factionTags.includes({
+                factionTag: factionTag
+            }) === false) continue;
+        for (let b = 0; b < alliance.factionTags.length; b++) {
+            let tag = alliance.factionTags[b].factionTag;
+            allys.push(tag)
+        }
     }
 
     for (let i = 0; i < gridCache.length; i++) { // Sift through the cache, find grids that are close.
@@ -49,26 +67,7 @@ module.exports = async (guildID, x, y, z, factionTag, distance, gridCache) => {
             continue; // Skip the rest of the checks if no faction.
         }
 
-
-        // If there is a faction, find allied faction tags
-        const allianceDocs = await allianceModel.find({
-            guildID: guildID
-        })
-
-        let allys = [];
-        for (let a = 0; a < allianceDocs.length; a++) { // Need to check every alliance doc since there is no search function
-            const alliance = allianceDocs[a];
-            // Check if faction is in the alliance, if it is add tags to allys array. If not, continue.
-            if (alliance.factionTags.includes({
-                    factionTag: factionTag
-                }) === false) continue;
-            for (let b = 0; b < alliance.factionTags.length; b++) {
-                let tag = alliance.factionTags[b].factionTag;
-                allys.push(tag)
-            }
-        }
-
-        // After getting allied tags, decide whether it's an enemy or not.
+        // If there is a faction, decide whether it's an enemy or not.
         if(allys.includes(grid.factionTag) === true) {
             data.friendlyGrids.push({
                 displayName: grid.displayName,

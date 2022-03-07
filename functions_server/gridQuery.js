@@ -24,89 +24,89 @@ module.exports = async (req) => {
     const config = req.config;
     const settings = req.settings;
     const client = req.client;
-    const verificationCache = [];
+    const verificationCache = req.verDocs;
+    let gridDocsCache = req.gridDocsCache;
+    if (gridDocsCache === undefined) return console.log('Fix me') // lol
+    if (settings.serverOnline === false || settings.serverOnline === undefined) return null;
+
 
     const current_time = Date.now();
-    if (settings.serverOnline === 'false' || settings.serverOnline === undefined) return;
     req.expirationInSeconds = 75;
     req.name = 'logGrids'
     const timergridDoc = await timerFunction(req);
-    if (timergridDoc === true) return; // If there is a timer, cancel.
-    let cancel = false;
-    let chatDoc = await chatModel.findOne({
-        guildID: guildID
-    })
-    if (chatDoc === null) return;
-    for (let i = 0; i < chatDoc.chatHistory.length; i++) {
-        let chat = chatDoc.chatHistory[i];
-        if (chat.content.includes('WARNING! Server will restart in 5 minutes') && (current_time - chat.msTimestamp) < 420000) {
-            cancel = true;
-        }
-    }
-    if (cancel === true) return;
+    if (timergridDoc === true) return null; // If there is a timer, cancel.
 
     let hooverTriggered = false;
     // Check if hoover settings should be loaded/used
-    const guild = client.guilds.cache.get(guildID);
-    const mainGuild = client.guilds.cache.get("853247020567101440");
+    const guild = await client.guilds.cache.get(guildID);
+    const mainGuild = await client.guilds.cache.get("853247020567101440");
 
     let guildOwner = mainGuild.members.cache.get(guild.owner.user.id);
-    if (!guildOwner) return; // If guild owner is no longer in Cosmofficial discord
-
-    let discordSettings = await discordSettingsModel.findOne({
-        guildID: guildID
-    })
-    if (discordSettings === null) return;
-    let serverOnline = discordSettings.serverOnline
+    if (!guildOwner) return null; // If guild owner is no longer in Cosmofficial discord
 
     let hooverSettings = await hooverSettingModel.findOne({
         guildID: guildID
     })
 
-
-
-    if (serverOnline === false || serverOnline === undefined) return;
     // Grids Init
     const expirationInSeconds = 3600;
     const expiration_time = current_time + (expirationInSeconds * 1000);
+    console.log('5.5')
     let gridData = await queryGrids(config)
 
 
     let entityIDs = [];
-    let gridDocsCache = await gridModel.find({
-        guildID: guildID
-    })
-    if (gridData !== [] && gridData !== undefined) { // If queries are not broken, handle the data.
+    let factionTagCache = [];
+    console.log('6')
+    if (gridData !== [] && gridData !== undefined && gridData.length !== 0) { // If queries are not broken, handle the data.
         for (let i = 0; i < gridData.length; i++) {
             spawnerGridHandler(guildID, gridData[i]) // Spawner Grid Handler/checker/Exploit Prevention
-            entityIDs.push(gridData[i].EntityId) // Add the grid's entity ID to the "existing" list9
+            entityIDs.push(gridData[i].EntityId) // Add the grid's entity ID to the "existing" list
+            const singleGrid = gridData[i];
 
+            let factionTag = factionTagCache.find(cache => cache.username === singleGrid.OwnerDisplayName) // Attempt to use cache to avoid using the below function
+            if(factionTag === undefined || factionTag === null) {
+                factionTag = await gridDocGridForFaction.serverGrid(singleGrid, guildID); // Get faction tag from owner of the grid
+                factionTagCache.push({
+                    username: singleGrid.OwnerDisplayName,
+                    factionTag: factionTag
+                })
+            } else {
+                factionTag = factionTag.factionTag
+            }
 
-            let factionTag = await gridDocGridForFaction.serverGrid(gridData[i], guildID); // Get faction tag from owner of the grid
+            let nearbyChars = await getNearbyCharacters(guildID, singleGrid.Position.X, singleGrid.Position.Y, singleGrid.Position.Z, factionTag, 15000, req.allianceCache, req.characterDocsCache);
+            let nearbyGrids = await getNearbyGrids(guildID, singleGrid.Position.X, singleGrid.Position.Y, singleGrid.Position.Z, factionTag, 15000, gridDocsCache, req.allianceCache);
 
-            let nearbyChars = await getNearbyCharacters(guildID, gridData[i].Position.X, gridData[i].Position.Y, gridData[i].Position.Z, factionTag);
-            let nearbyGrids = await getNearbyGrids(guildID, gridData[i].Position.X, gridData[i].Position.Y, gridData[i].Position.Z, factionTag, 15000, gridDocsCache);
-            let gridDoc = await gridModel.findOne({
-                entityID: gridData[i].EntityId,
-                guildID: guildID
-            }); // Check if the grid exists already in the database 
-            if (gridDoc === null) { // If no file found, create one.
+            let gridDoc = gridDocsCache.find(doc => doc.entityID === singleGrid.EntityId)
+            let cacheIndex;
+            if (gridDoc === null || gridDoc === undefined) { // Attempt to download doc if not in the cache
+                gridDoc = await gridModel.findOne({
+                    guildID: guildID,
+                    entityID: singleGrid.EntityId
+                })
+                if (gridDoc !== null) {
+                    gridDocsCache.push(gridDoc)
+                }
+            }
+
+            if (gridDoc === null || gridDoc === undefined) { // If no file found, create one.
                 gridDoc = await gridModel.create({
                     guildID: guildID,
-                    displayName: gridData[i].DisplayName,
-                    entityID: gridData[i].EntityId,
-                    gridSize: gridData[i].GridSize,
-                    blocksCount: gridData[i].BlocksCount,
-                    mass: Math.round(gridData[i].Mass),
-                    positionX: gridData[i].Position.X,
-                    positionY: gridData[i].Position.Y,
-                    positionZ: gridData[i].Position.Z,
-                    linearSpeed: gridData[i].LinearSpeed,
-                    distanceToPlayer: gridData[i].DistanceToPlayer,
-                    ownerSteamID: gridData[i].OwnerSteamId,
-                    ownerDisplayName: gridData[i].OwnerDisplayName,
-                    isPowered: gridData[i].IsPowered,
-                    PCU: gridData[i].PCU,
+                    displayName: singleGrid.DisplayName,
+                    entityID: singleGrid.EntityId,
+                    gridSize: singleGrid.GridSize,
+                    blocksCount: singleGrid.BlocksCount,
+                    mass: Math.round(singleGrid.Mass),
+                    positionX: singleGrid.Position.X,
+                    positionY: singleGrid.Position.Y,
+                    positionZ: singleGrid.Position.Z,
+                    linearSpeed: singleGrid.LinearSpeed,
+                    distanceToPlayer: singleGrid.DistanceToPlayer,
+                    ownerSteamID: singleGrid.OwnerSteamId,
+                    ownerDisplayName: singleGrid.OwnerDisplayName,
+                    isPowered: singleGrid.IsPowered,
+                    PCU: singleGrid.PCU,
                     expirationTime: expiration_time,
                     factionTag: factionTag,
                     queuedForDeletion: false,
@@ -119,104 +119,20 @@ module.exports = async (req) => {
                     }]
                 });
 
-                /* Server log crap (disabled)
-                if (gridsNearby.length !== 0) { // If there are grids nearby, gridDoc the grid for possible clues to log
-                    // If there are grid nearby, gridDoc how many friendly/enemy grids there are
-                    let enemyGridsFound = 0;
-                    let friendlyGridsFound = 0;
-                    let enemyFactionTag;
-                    for (let a = 0; a < gridsNearby.length; a++) {
-                        let grid = gridsNearby[a];
-                        if (grid.factionTag !== doc.FactionTag) { // If grid facTag does not match the target grid facTag
-                            enemyGridsFound += 1;
-                            enemyFactionTag = grid.factionTag // Set the enemy facTag
-                        } else {
-                            friendlyGridsFound += 1;
-                        }
-                    }
-
-                    // Server log messages
-                    if (NPCNames.includes(doc.OwnerDisplayName)) {
-                        await serverLogModel.create({
-                            guildID: guildID,
-                            category: 'npc',
-                            string: `NPC Spawned - ${doc.DisplayName}`
-                        })
-                    } else if (respawnShipNames.includes(doc.DisplayName) === true) {
-                        await serverLogModel.create({
-                            guildID: guildID,
-                            category: 'misc',
-                            string: `${doc.OwnerDisplayName} spawned in a ${doc.DisplayName}`
-                        })
-                    } else if (friendlyGridsFound >= 0 && enemyGridsFound <= 1) { // Assume faction is building
-                        await serverLogModel.create({
-                            guildID: guildID,
-                            category: 'created',
-                            string: `${doc.DisplayName} built by [${factionTag}]`
-                        })
-                    } else if (enemyFactionTag !== undefined && NPCNames.includes(doc.OwnerDisplayName) === false) { // Assume enemy is blowing grids up
-                        await serverLogModel.create({
-                            guildID: guildID,
-                            category: 'created',
-                            string: `${doc.DisplayName} wreckage created by [${enemyFactionTag}]`
-                        })
-                    }
-                    
-                } else {
-                    if (NPCNames.includes(doc.OwnerDisplayName)) {
-                        await serverLogModel.create({
-                            guildID: guildID,
-                            category: 'npc',
-                            string: `NPC Spawned - ${doc.DisplayName}`
-                        })
-                    } else {
-                        await serverLogModel.create({
-                            guildID: guildID,
-                            category: 'created',
-                            string: `${doc.DisplayName} built by [${factionTag}]`
-                        })
-                    }
-                }*/
+                gridDocsCache.push(gridDoc)
             } else { // If grid is found in db, just update information
-                /*if (gridDoc.displayName !== gridData[i].DisplayName) { // If grid is renamed
-                    await serverLogModel.create({
-                        guildID: guildID,
-                        category: 'misc',
-                        string: `[${gridDoc.factionTag}] ${gridDoc.displayName} renamed to ${gridData[i].DisplayName}`
-                    })
-                } //
-                if (gridDoc.ownerDisplayName !== gridData[i].OwnerDisplayName) { // If ownership given or taken by another faction
-                    await serverLogModel.create({
-                        guildID: guildID,
-                        category: 'taken',
-                        string: `[${factionTag}] ${gridData[i].OwnerDisplayName} claimed [${gridDoc.factionTag}] ${gridDoc.displayName}`
-                    })
-                }
-                // End server log messages, except jumping
-                var dx = gridDoc.positionX - gridData[i].Position.X;
-                var dy = gridDoc.positionY - gridData[i].Position.Y;
-                var dz = gridDoc.positionZ - gridData[i].Position.Z;
 
-                let distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
-                if (distance > 30000) { // Assume jump drive used if grid has traveled more than 30,000m since last query
-                    await serverLogModel.create({
-                        guildID: guildID,
-                        category: 'jumped',
-                        string: `[${factionTag}] ${gridData[i].DisplayName} jumped ${Math.round(distance).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}m`
-                    })
-                }
-                */ // Server log stuff (disabled)
-                gridDoc.displayName = gridData[i].DisplayName
-                gridDoc.blocksCount = gridData[i].BlocksCount
-                gridDoc.mass = Math.round(gridData[i].Mass)
-                gridDoc.positionX = gridData[i].Position.X
-                gridDoc.positionY = gridData[i].Position.Y
-                gridDoc.positionZ = gridData[i].Position.Z
-                gridDoc.linearSpeed = gridData[i].LinearSpeed
-                gridDoc.distanceToPlayer = gridData[i].DistanceToPlayer
-                gridDoc.ownerDisplayName = gridData[i].OwnerDisplayName
-                gridDoc.isPowered = gridData[i].IsPowered
-                gridDoc.PCU = gridData[i].PCU
+                gridDoc.displayName = singleGrid.DisplayName
+                gridDoc.blocksCount = singleGrid.BlocksCount
+                gridDoc.mass = Math.round(singleGrid.Mass)
+                gridDoc.positionX = singleGrid.Position.X
+                gridDoc.positionY = singleGrid.Position.Y
+                gridDoc.positionZ = singleGrid.Position.Z
+                gridDoc.linearSpeed = singleGrid.LinearSpeed
+                gridDoc.distanceToPlayer = singleGrid.DistanceToPlayer
+                gridDoc.ownerDisplayName = singleGrid.OwnerDisplayName
+                gridDoc.isPowered = singleGrid.IsPowered
+                gridDoc.PCU = singleGrid.PCU
                 gridDoc.expirationTime = expiration_time
                 gridDoc.factionTag = factionTag
                 gridDoc.nearby = [{
@@ -229,95 +145,67 @@ module.exports = async (req) => {
             }
             // After adding/updating database, check grid for hoover settings, manage cleanup queue
             if (hooverSettings !== null && hooverSettings !== undefined) {
-                if (hooverSettings.hooverEnabled === true) {
-                    if (parseInt(hooverSettings.nextCleanup) < current_time) {
-                        hooverTriggered = true;
-                        let verDoc = null;
-                        for (let v = 0; v < verificationCache.length; v++) { // Find and set variable
-                            if (verificationCache[v] === null) continue; // Redundancy check
-                            if (verificationCache[v].username === gridDoc.ownerDisplayName) { // If usernames match, store doc into current variable
-                                verDoc = verificationCache[v];
-                                break;
-                            } else continue;
-                        } // Continue to check hoover cleanup
-
-                        if (gridDoc.queuedForDeletion === false && gridData[i].GridSize === 'Large' && hooverSettings.largeGridAllowed === false) {
-                            gridDoc.deletionReason = 'large grids not allowed'
-                            gridDoc.queuedForDeletion = true;
-                            gridDoc.deletionTime = current_time + 86400000;
-                            if (verDoc !== null) {
-                                let memberTarget = guild.members.cache.find(member => member.id === verDoc.userID)
-                                try {
-                                    //memberTarget.send(`**__Warning__**\n>>> ${gridDoc.displayName} has been deleted.\nLarge grids are not allowed.`)
-                                } catch (err) {}
-                            }
-                        }
-                        if (gridDoc.queuedForDeletion === false && gridData[i].GridSize === 'Small' && hooverSettings.smallGridAllowed === false) {
-                            gridDoc.deletionReason = 'small grids not allowed'
-                            gridDoc.queuedForDeletion = true;
-                            gridDoc.deletionTime = current_time + 86400000;
-                            if (verDoc !== null) {
-                                let memberTarget = guild.members.cache.find(member => member.id === verDoc.userID)
-                                try {
-                                    //memberTarget.send(`**__Warning__**\n>>> ${gridDoc.displayName} has been deleted.\nSmall grids are not allowed.`)
-                                } catch (err) {}
-                            }
-                        }
-                        if (gridDoc.queuedForDeletion === false && gridDoc.blocksCount < parseInt(hooverSettings.blockThreshold) && NPCGridNames.includes(gridData[i].DisplayName) === false && NPCNames.includes(gridData[i].OwnerDisplayName) === false) {
-                            gridDoc.deletionReason = 'less than block threshold'
-                            gridDoc.queuedForDeletion = true;
-                            gridDoc.deletionTime = current_time + 86400000;
-                            if (verDoc !== null) {
-                                let memberTarget = guild.members.cache.find(member => member.id === verDoc.userID)
-                                try {
-                                    //memberTarget.send(`**__Warning__**\n>>> ${gridDoc.displayName} is less than ${hooverSettings.blockThreshold} blocks.\nIncrease the build size within 24hrs or the grid will be removed!`)
-                                } catch (err) {}
-                            }
-                        }
-                        if (gridDoc.queuedForDeletion === false && gridData[i].IsPowered === false && hooverSettings.unpoweredGridRemoval === true && NPCNames.includes(gridData[i].OwnerDisplayName) === false) {
-                            gridDoc.deletionReason = 'unpowered'
-                            gridDoc.queuedForDeletion = true;
-                            gridDoc.deletionTime = current_time + 86400000;
-                            if (verDoc !== null) {
-                                let memberTarget = guild.members.cache.find(member => member.id === verDoc.userID)
-                                try {
-                                    //memberTarget.send(`**__Warning__**\n>>> ${gridDoc.displayName} has run out of power.\nRestore power within 24hrs or the grid will be removed!`)
-                                } catch (err) {}
-                            }
-                        }
-                        // Unfinished
-                        if (hooverSettings.cleanUnverifiedPlayerGrids === true) { // If unverified cleanup is enabled
-                            if (verDoc === null && gridDoc.queuedForDeletion === false) { // If verdoc is not found, and grid is not already queued for deletion
-                                if (gridDoc.queuedForDeletion === false && NPCNames.includes(gridData[i].OwnerDisplayName) === false) {
-                                    if (gridDoc.ownerDisplayName === '') {
-                                        gridDoc.deletionReason = 'no clear owner'
-                                        gridDoc.queuedForDeletion = true;
-                                        gridDoc.deletionTime = current_time + 86400000;
-                                    } else {
-                                        gridDoc.deletionReason = 'unverified player grid'
-                                        gridDoc.queuedForDeletion = true;
-                                        gridDoc.deletionTime = current_time + 86400000;
-                                    }
-                                }
-                            } else if (verDoc !== null) {
-                                // If there is a verification doc, try to see if they are still in the discord.
-                                let memberTarget = await guild.members.cache.get(verDoc.userID);
-                                if (memberTarget === null || memberTarget === undefined) {
-                                    gridDoc.deletionReason = 'player left the discord'
+                if (hooverSettings.hooverEnabled === true && parseInt(hooverSettings.nextCleanup) < current_time) {
+                    hooverTriggered = true;
+                    const verDoc = verificationCache.find(verification => verification.username === gridDoc.ownerDisplayName)
+                    if (gridDoc.queuedForDeletion === false && singleGrid.GridSize === 'Large' && hooverSettings.largeGridAllowed === false) {
+                        gridDoc.deletionReason = 'large grids not allowed'
+                        gridDoc.queuedForDeletion = true;
+                        gridDoc.deletionTime = current_time + 86400000;
+                    }
+                    if (gridDoc.queuedForDeletion === false && singleGrid.GridSize === 'Small' && hooverSettings.smallGridAllowed === false) {
+                        gridDoc.deletionReason = 'small grids not allowed'
+                        gridDoc.queuedForDeletion = true;
+                        gridDoc.deletionTime = current_time + 86400000;
+                    }
+                    if (gridDoc.queuedForDeletion === false && gridDoc.blocksCount < parseInt(hooverSettings.blockThreshold) && NPCGridNames.includes(singleGrid.DisplayName) === false && NPCNames.includes(singleGrid.OwnerDisplayName) === false) {
+                        gridDoc.deletionReason = 'less than block threshold'
+                        gridDoc.queuedForDeletion = true;
+                        gridDoc.deletionTime = current_time + 86400000;
+                    }
+                    if (gridDoc.queuedForDeletion === false && singleGrid.IsPowered === false && hooverSettings.unpoweredGridRemoval === true && NPCNames.includes(singleGrid.OwnerDisplayName) === false) {
+                        gridDoc.deletionReason = 'unpowered'
+                        gridDoc.queuedForDeletion = true;
+                        gridDoc.deletionTime = current_time + 86400000;
+                    }
+                    // Unfinished
+                    if (hooverSettings.cleanUnverifiedPlayerGrids === true) { // If unverified cleanup is enabled
+                        if ((verDoc === null || verDoc === undefined) === true && gridDoc.queuedForDeletion === false) { // If verdoc is not found, and grid is not already queued for deletion
+                            if (gridDoc.queuedForDeletion === false && NPCNames.includes(singleGrid.OwnerDisplayName) === false) {
+                                if (gridDoc.ownerDisplayName === '') {
+                                    gridDoc.deletionReason = 'no clear owner'
                                     gridDoc.queuedForDeletion = true;
                                     gridDoc.deletionTime = current_time + 86400000;
-                                } // Discord check end
+                                } else {
+                                    gridDoc.deletionReason = 'unverified player grid'
+                                    gridDoc.queuedForDeletion = true;
+                                    gridDoc.deletionTime = current_time + 86400000;
+                                }
                             }
+                        } else if (verDoc !== null && verDoc !== undefined) {
+                            // If there is a verification doc, try to see if they are still in the discord.
+                            let memberTarget = guild.members.cache.find(member => member.id === verDoc.userID)
+                            if (memberTarget === null || memberTarget === undefined) {
+                                gridDoc.deletionReason = 'player left the discord'
+                                gridDoc.queuedForDeletion = true;
+                                gridDoc.deletionTime = current_time + 86400000;
+                            } // Discord check end
                         }
-                        //
-
                     }
+                    //
 
                 }
             }
-
+            cacheIndex = gridDocsCache.indexOf(gridDoc);
+            console.log(`Updated index of ${cacheIndex}`)
+            gridDocsCache[cacheIndex] = gridDoc;
             gridDoc.save();
         }
+        console.log('loop finished')
+
+
+
+
 
         if (hooverTriggered === true) {
             hooverSettings.nextCleanup = current_time + parseInt(hooverSettings.cleanupInterval);
@@ -325,47 +213,12 @@ module.exports = async (req) => {
                 await hooverSettings.save();
             } catch (err) {}
         }
-
-        const documents = await gridModel.find({
-            guildID: guildID
-        });
-        documents.forEach(async doc => { // Attempt to find clues to log
+        console.log('data downloading')
+        gridDocsCache.forEach(async doc => { // Attempt to find clues to log
+            let index = gridDocsCache.indexOf(doc);
+            // Might need to manually remove old items from the cache, we'll see on the next loop tho
             if (doc.expirationTime < current_time) {
                 if (entityIDs.includes(doc.entityID) === false) {
-                    /*
-                        if (respawnShipNames.includes(doc.displayName)) {
-                            await serverLogModel.create({
-                                guildID: guildID,
-                                category: 'misc',
-                                string: `${doc.ownerDisplayName}'s ${doc.displayName} despawned.`
-                            })
-                        } else if (enemyFactionTag !== undefined) { // If enemy faction tag found
-                            await serverLogModel.create({
-                                guildID: guildID,
-                                category: 'destroyed',
-                                string: `${doc.displayName} likely destroyed by [${enemyFactionTag}]`
-                            })
-                        } else if (friendlyGridsFound <= 1 && enemyGridsFound === 0 && NPCNames.includes(doc.ownerDisplayName) === false) {
-                            await serverLogModel.create({
-                                guildID: guildID,
-                                category: 'destroyed',
-                                string: `${doc.displayName} likely destroyed. No grids nearby`
-                            })
-                        } else if (NPCNames.includes(doc.ownerDisplayName) === false) {
-                            await serverLogModel.create({
-                                guildID: guildID,
-                                category: 'docked',
-                                string: `${doc.displayName} likely docked. ${friendlyGridsFound} friendly grids nearby`
-                            })
-                        } else if (NPCNames.includes(doc.ownerDisplayName)) {
-                            await serverLogModel.create({
-                                guildID: guildID,
-                                category: 'npc',
-                                string: `NPC Despawned - ${doc.displayName}`
-                            })
-                        }
-                    }
-                    */ // Disabled server-log stuff
                     try {
                         doc.remove()
                     } catch (err) {
@@ -374,7 +227,8 @@ module.exports = async (req) => {
                     return console.log(`${doc.displayName} Grid expired`)
                 }
             }
+            return; // Extra return to ensure forEach ends, doesn't hurt lol
         })
     }
-    return;
+    return gridDocsCache;
 }
