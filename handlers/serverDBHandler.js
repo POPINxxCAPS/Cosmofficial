@@ -8,7 +8,7 @@ const gridQuery = require('../functions_server/gridQuery');
 const logPlayers = require('../functions_server/logPlayers');
 const logCharacters = require('../functions_server/logCharacters');
 const logChat = require('../functions_server/logChat');
-const floatingObjQuery = require('../functions_server/floatingObjectQuery');
+const logFloatingObjs = require('../functions_server/logFloatingObjs');
 const logVoxels = require('../functions_server/logVoxels');
 const verificationModel = require('../models/verificationSchema');
 const allianceModel = require('../models/allianceSchema');
@@ -25,22 +25,6 @@ module.exports = async (client) => {
         guildIDs = await client.guilds.cache.map(guild => guild.id);
         verDocs = await verificationModel.find({});
     }, 600000)
-
-    // Floating Object Query
-    /*setInterval(async () => {
-        guildIDs.forEach(async guildID => {
-            if (guildID === '853247020567101440') return;
-            let settings = await getDiscordServerSettings(guildID);
-
-            let config = await remoteConfigModel.findOne({
-                guildID: guildID
-            })
-            if (config === null || settings === null) return;
-
-            // Log Floating Objects
-            floatingObjQuery(guildID, config, settings);
-        })
-    }, 45000)*/
 
     // Query Interval
     let queryIsRunning = false;
@@ -100,6 +84,7 @@ module.exports = async (client) => {
                 characterDocsCache: characterDocs
             }
             logStatus(req); // Specific Ordering. Do not await this one because it needs to be able to fail without causing issues for a var update
+            logFloatingObjs(req); // This doesn't need anything special
             await logChat(req);
             await logPlayers(req);
             await logCharacters(req);
