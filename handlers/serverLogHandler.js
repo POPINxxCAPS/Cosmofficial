@@ -1,6 +1,6 @@
 const serverLogModel = require('../models/serverLogSchema');
 const serverLogSettingModel = require('../models/serverLogSettingSchema');
-const discordServerSettingsModel = require('../models/discordServerSettngsSchema');
+const discordServerSettingsModel = require('../models/discordServerSettingsSchema');
 // More noob pyramid code
 
 module.exports = async (client, discord) => {

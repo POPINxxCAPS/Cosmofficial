@@ -1,5 +1,5 @@
 const cooldowns = new Map();
-const discordServerSettingsModel = require('../../models/discordServerSettngsSchema')
+const discordServerSettingsModel = require('../../models/discordServerSettingsSchema')
 const playerEcoModel = require('../../models/playerEcoSchema');
 const economySettingModel = require('../../models/economySettingSchema');
 
@@ -9,7 +9,7 @@ module.exports = async (discord, client, message) => {
   const mainGuild = client.guilds.cache.get("853247020567101440");
   
   if (!message.content.startsWith(prefix) || message.author.bot) return;
-
+  if(message.guild === null) return; // Redundancy Crash Fix
   let discordSettings = await discordServerSettingsModel.findOne({
     guildID: message.guild.id
   })

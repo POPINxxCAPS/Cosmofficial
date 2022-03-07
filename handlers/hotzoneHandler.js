@@ -8,9 +8,10 @@ const ms = require('ms');
 const hotzoneSettingModel = require('../models/hotzoneSettingSchema');
 const hotzoneEntityModel = require('../models/hotzoneEntitySchema');
 const hotzoneModel = require('../models/hotzoneSchema');
-const discordServerSettingModel = require('../models/discordServerSettngsSchema');
+const discordServerSettingModel = require('../models/discordServerSettingsSchema');
 const interval = 60000;
 
+// Noob code from absolute hell. Needs complete re-do.
 module.exports = async (client, discord) => {
     const guildIDs = await client.guilds.cache.map(guild => guild.id);
     const mainGuild = client.guilds.cache.get("853247020567101440");

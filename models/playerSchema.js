@@ -17,7 +17,8 @@ const playersSchema = new mongoose.Schema({
     online: { type: Boolean, require: true, index: true },
     lastLogin: { type: String },
     lastLogout: { type: String },
-    loginHistory: [loginHistory]
+    loginHistory: [loginHistory],
+    playTime: { type: String }
 });
 // End Main Schema
 

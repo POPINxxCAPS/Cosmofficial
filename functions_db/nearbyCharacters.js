@@ -1,8 +1,10 @@
 const playerModel = require('../models/playerSchema');
 const characterModel = require('../models/characterSchema');
 const allianceModel = require('../models/allianceSchema')
+const ms = require('ms')
 
 module.exports = async (guildID, x, y, z, factionTag, distance, allianceCache, characterDocsCache) => {
+    const current_time = Date.now();
     if (distance === undefined) distance === 15000; // If no distance specified, use this default.
     let data = {
         enemyCharacters: [],
@@ -67,6 +69,6 @@ module.exports = async (guildID, x, y, z, factionTag, distance, allianceCache, c
             data.enemyCharacters.push(char);
         }
     }
-
+    //console.log(`Nearby characters took ${ms((Date.now() - current_time))}`);
     return data;
 }

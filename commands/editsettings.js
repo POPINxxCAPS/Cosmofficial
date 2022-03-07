@@ -1,4 +1,4 @@
-const discordSettings = require('../models/discordServerSettngsSchema');
+const discordSettings = require('../models/discordServerSettingsSchema');
 const lockedEmbed = require('../functions_discord/lockedEmbed');
 const errorEmbed = require('../functions_discord/errorEmbed')
 

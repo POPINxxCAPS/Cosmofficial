@@ -1,5 +1,5 @@
 const playerModel = require('../models/playerSchema');
-const discordServerSettings = require('../models/discordServerSettngsSchema');
+const discordServerSettings = require('../models/discordServerSettingsSchema');
 const ms = require('ms');
 
 module.exports = {

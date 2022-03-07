@@ -38,7 +38,7 @@ client.login(token);
 
 // Start bot functions
 const gridModel = require('./models/gridSchema');
-const serverDBLoggingHandler = require('./handlers/serverDBLoggingHandler');
+const serverDBHandler = require('./handlers/serverDBHandler');
 const hooverHandler = require('./handlers/hooverHandler');
 const cooldownHandler = require('./handlers/cooldownHandler');
 
@@ -52,31 +52,25 @@ const TDMServerHandler = require('./handlers/TDMServerHandler');
 const TDMMatchHandler = require('./handlers/TDMMatchHandler');
 const TDMDeathCounter = require('./counters/TDMDeathCounter');
 
-const memberCounter = require('./counters/memberCounter');
-const botGuildCounter = require('./counters/botGuildCounter');
 const autoRoleCosmic = require('./cosmicOnly/autoRoleFunction');
 const gridDeletionQueue = require('./cosmicOnly/hooverDeletionQueue');
 const cleanupTimer = require('./cosmicOnly/cleanupTimer');
 const liveMapHandler = require('./cosmicOnly/liveMapHandler');
-const activePlayerCounter = require('./cosmicOnly/activePlayerCounter')
 const spaceTicketEnforcer = require('./cosmicOnly/spaceTicketEnforcer')
 const cosmicCharts = require('./cosmicOnly/charts')
-const totalPlayTime = require('./cosmicOnly/totalPlayTime');
 const statusDocCleanup = require('./functions_misc/statusDocCleanup');
+const updateChannelTickers = require('./functions_discord/updateChannelTickers');
 
 
 client.on('ready', () => {
   statusDocCleanup();
 
-  memberCounter(client);
-  botGuildCounter(client);
-
-  hotzoneHandler(client, discord);
-  serverDBLoggingHandler(client);
-  hooverHandler(client);
+  //hotzoneHandler(client, discord); // Disabled until complete recode, noob code causing performancing problems
+  serverDBHandler(client);
+  //hooverHandler(client);
   dominationHandler(client, discord);
 
-  //TDMQueue(client);
+  //TDMQueue(client); // Stuff for a TDM server nobody played, was shut down.
   //TDMServerHandler(client);
   //TDMMatchHandler(client);
   //TDMDeathCounter(client);
@@ -87,41 +81,19 @@ client.on('ready', () => {
   //liveMapHandler(client)
 
 
-  setInterval(cooldownHandler, 15000);
+  setInterval(cooldownHandler, 20000);
 
 
-  // Bot activity messages
-  const statusModel = require('./models/statusSchema');
-  let placeholder = 0;
+  // Bot activity/channel tickers
   setInterval(async () => {
-    if (placeholder === 0) {
-      let grids = await gridModel.find();
-      client.user.setActivity(`${grids.length} Grids`, ({
-        type: "WATCHING"
-      }))
-      placeholder = 1;
-    } else if (placeholder === 1) {
-      const statusDocs = await statusModel.find({})
-      let servers = 0;
-      statusDocs.forEach(doc => {
-        if (doc.serverOnline === true) {
-          servers += 1;
-        }
-      })
-      client.user.setActivity(`${servers} Servers`, ({
-        type: "WATCHING"
-      }))
-      placeholder = 0;
-    }
-  }, 180000)
+    updateChannelTickers(client);
+  }, 300000)
 
 
 
   autoRoleCosmic(client);
   //cleanupTimer(client); // No longer needed
-  activePlayerCounter(client)
-  gridDeletionQueue(client, discord)
-  spaceTicketEnforcer(client)
+  //gridDeletionQueue(client, discord)
+  //spaceTicketEnforcer(client)
   //cosmicCharts(client, discord);
-  totalPlayTime(client)
 })

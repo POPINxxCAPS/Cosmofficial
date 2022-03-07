@@ -3,7 +3,7 @@ const lotteryPotModel = require('../models/lotteryPotSchema');
 const playerEcoModel = require('../models/playerEcoSchema');
 const ms = require('ms');
 const economySettingModel = require('../models/economySettingSchema');
-const discordServerSettingModel = require('../models/discordServerSettngsSchema');
+const discordServerSettingModel = require('../models/discordServerSettingsSchema');
 
 const dailyInterestRate = 0.1;
 module.exports = async (client, discord) => {

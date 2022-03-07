@@ -1,11 +1,12 @@
 const gridModel = require('../models/gridSchema');
 const chatModel = require('../models/chatSchema');
 const gridDocGridForFaction = require('../functions_db/checkGridForFaction');
-const discordSettingsModel = require('../models/discordServerSettngsSchema')
+const discordSettingsModel = require('../models/discordServerSettingsSchema')
 const hooverSettingModel = require('../models/hooverSettingSchema');
 const verificationModel = require('../models/verificationSchema');
 const serverLogModel = require('../models/serverLogSchema');
 const NPCDeathRewarder = require('../functions_execution/NPCDeathRewarder');
+const ms = require('ms')
 
 
 const queryGrids = require('../functions_execution/queryGrids')
@@ -31,10 +32,16 @@ module.exports = async (req) => {
 
 
     const current_time = Date.now();
-    req.expirationInSeconds = 75;
+    if (req.gridQueryDelay === undefined) {
+        req.expirationInSeconds = 90;
+    } else {
+        req.expirationInSeconds = req.gridQueryDelay / 1000;
+    }
     req.name = 'logGrids'
-    const timergridDoc = await timerFunction(req);
-    if (timergridDoc === true) return null; // If there is a timer, cancel.
+    const timer = await timerFunction(req);
+    if (timer === true) return null; // If there is a timer, cancel.
+    console.log('Running Grid Query')
+
 
     let hooverTriggered = false;
     // Check if hoover settings should be loaded/used
@@ -51,13 +58,11 @@ module.exports = async (req) => {
     // Grids Init
     const expirationInSeconds = 3600;
     const expiration_time = current_time + (expirationInSeconds * 1000);
-    console.log('5.5')
     let gridData = await queryGrids(config)
 
 
     let entityIDs = [];
     let factionTagCache = [];
-    console.log('6')
     if (gridData !== [] && gridData !== undefined && gridData.length !== 0) { // If queries are not broken, handle the data.
         for (let i = 0; i < gridData.length; i++) {
             spawnerGridHandler(guildID, gridData[i]) // Spawner Grid Handler/checker/Exploit Prevention
@@ -65,7 +70,7 @@ module.exports = async (req) => {
             const singleGrid = gridData[i];
 
             let factionTag = factionTagCache.find(cache => cache.username === singleGrid.OwnerDisplayName) // Attempt to use cache to avoid using the below function
-            if(factionTag === undefined || factionTag === null) {
+            if (factionTag === undefined || factionTag === null) {
                 factionTag = await gridDocGridForFaction.serverGrid(singleGrid, guildID); // Get faction tag from owner of the grid
                 factionTagCache.push({
                     username: singleGrid.OwnerDisplayName,
@@ -74,7 +79,6 @@ module.exports = async (req) => {
             } else {
                 factionTag = factionTag.factionTag
             }
-
             let nearbyChars = await getNearbyCharacters(guildID, singleGrid.Position.X, singleGrid.Position.Y, singleGrid.Position.Z, factionTag, 15000, req.allianceCache, req.characterDocsCache);
             let nearbyGrids = await getNearbyGrids(guildID, singleGrid.Position.X, singleGrid.Position.Y, singleGrid.Position.Z, factionTag, 15000, gridDocsCache, req.allianceCache);
 
@@ -91,7 +95,7 @@ module.exports = async (req) => {
             }
 
             if (gridDoc === null || gridDoc === undefined) { // If no file found, create one.
-                gridDoc = await gridModel.create({
+                gridDoc = gridModel.create({
                     guildID: guildID,
                     displayName: singleGrid.DisplayName,
                     entityID: singleGrid.EntityId,
@@ -170,17 +174,15 @@ module.exports = async (req) => {
                     }
                     // Unfinished
                     if (hooverSettings.cleanUnverifiedPlayerGrids === true) { // If unverified cleanup is enabled
-                        if ((verDoc === null || verDoc === undefined) === true && gridDoc.queuedForDeletion === false) { // If verdoc is not found, and grid is not already queued for deletion
-                            if (gridDoc.queuedForDeletion === false && NPCNames.includes(singleGrid.OwnerDisplayName) === false) {
-                                if (gridDoc.ownerDisplayName === '') {
-                                    gridDoc.deletionReason = 'no clear owner'
-                                    gridDoc.queuedForDeletion = true;
-                                    gridDoc.deletionTime = current_time + 86400000;
-                                } else {
-                                    gridDoc.deletionReason = 'unverified player grid'
-                                    gridDoc.queuedForDeletion = true;
-                                    gridDoc.deletionTime = current_time + 86400000;
-                                }
+                        if ((verDoc === null || verDoc === undefined) === true && gridDoc.queuedForDeletion === false && NPCNames.includes(singleGrid.OwnerDisplayName) === false) { // If verdoc is not found, and grid is not already queued for deletion
+                            if (gridDoc.ownerDisplayName === '') {
+                                gridDoc.deletionReason = 'no clear owner'
+                                gridDoc.queuedForDeletion = true;
+                                gridDoc.deletionTime = current_time + 86400000;
+                            } else {
+                                gridDoc.deletionReason = 'unverified player grid'
+                                gridDoc.queuedForDeletion = true;
+                                gridDoc.deletionTime = current_time + 86400000;
                             }
                         } else if (verDoc !== null && verDoc !== undefined) {
                             // If there is a verification doc, try to see if they are still in the discord.
@@ -200,37 +202,34 @@ module.exports = async (req) => {
             cacheIndex = gridDocsCache.indexOf(gridDoc);
             await gridDoc.save().then(savedDoc => {
                 gridDoc = savedDoc;
+            }).catch((err) => {
+                console.log('Error Caught')
             }); // Await this save so it stores the updated doc version information
             gridDocsCache[cacheIndex] = gridDoc;
         }
-        console.log('loop finished')
-
-
-
-
 
         if (hooverTriggered === true) {
             hooverSettings.nextCleanup = current_time + parseInt(hooverSettings.cleanupInterval);
-            try {
-                await hooverSettings.save();
-            } catch (err) {}
+            hooverSettings.save();
         }
-        console.log('data downloading')
         gridDocsCache.forEach(async doc => { // Attempt to find clues to log
             let index = gridDocsCache.indexOf(doc);
             // Might need to manually remove old items from the cache, we'll see on the next loop tho
             if (doc.expirationTime < current_time) {
                 if (entityIDs.includes(doc.entityID) === false) {
-                    try {
-                        doc.remove()
-                    } catch (err) {
-                        console.log('Grid database remove error caught')
-                    }
+                    doc.remove()
+                    gridDocsCache.splice(index, 1);
+
                     return console.log(`${doc.displayName} Grid expired`)
                 }
             }
             return; // Extra return to ensure forEach ends, doesn't hurt lol
         })
     }
-    return gridDocsCache;
+    console.log(`Grid query took ${ms((Date.now() - current_time))}`);
+    const runTime = (Date.now() - current_time);
+    return {
+        gridDocsCache: gridDocsCache,
+        runTime: runTime
+    };
 }

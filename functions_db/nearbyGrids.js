@@ -1,9 +1,11 @@
 const gridModel = require('../models/gridSchema');
 const allianceModel = require('../models/allianceSchema')
+const ms = require('ms')
 
 const NPCNames = ['The Tribunal', 'Contractors', 'Gork and Mork', 'Space Pirates', 'Space Spiders', 'The Chairman', 'Miranda Survivors', 'VOID', 'The Great Tarantula', 'Cosmofficial', 'Clang Technologies CEO', 'Merciless Shipping CEO', 'Mystic Settlers CEO', 'Royal Drilling Consortium CEO', 'Secret Makers CEO', 'Secret Prospectors CEO', 'Specialized Merchants CEO', 'Star Inventors CEO', 'Star Minerals CEO', 'The First Heavy Industry CEO', 'The First Manufacturers CEO', 'United Industry CEO', 'Universal Excavators CEO', 'Universal Miners Guild CEO', 'Unyielding Excavators CEO'];
 
 module.exports = async (guildID, x, y, z, factionTag, distance, gridCache, allianceCache) => {
+    const current_time = Date.now()
     if (distance === undefined) distance === 15000; // If no distance specified, use this default.
     let data = {
         npcs: [],
@@ -85,5 +87,6 @@ module.exports = async (guildID, x, y, z, factionTag, distance, gridCache, allia
         }
     }
 
+    //console.log(`Nearby grids took ${ms((Date.now() - current_time))}`);
     return data;
 }

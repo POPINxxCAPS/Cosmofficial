@@ -13,6 +13,7 @@ module.exports = async (req) => {
     const config = req.config;
     const settings = req.settings;
     const client = req.client;
+    const verificationCache = req.verDocs
     if (settings.serverOnline === false || settings.serverOnline === undefined) return;
     req.expirationInSeconds = 60;
     req.name = 'logPlayers'
@@ -52,13 +53,13 @@ module.exports = async (req) => {
     let whitelistSettings = await whitelistSettingModel.findOne({
         guildID: guild.id
     })
-    if (playerData !== undefined && patron === true) {
-        if (whitelistSettings === null) {
-            whitelistSettings = await whitelistSettingModel.create({
-                guildID: guild.id,
-                enabled: false
-            })
-        }
+    if (whitelistSettings === null) {
+        whitelistSettings = await whitelistSettingModel.create({
+            guildID: guild.id,
+            enabled: false
+        })
+    }
+    if (playerData !== undefined) {
         if (whitelistSettings.enabled === true) {
             let whitelistDocs = await whitelistModel.find({
                 guildID: guild.id
@@ -82,7 +83,7 @@ module.exports = async (req) => {
                 steamID: player.SteamID
             })
             if (playerDoc === null || playerDoc === undefined) {
-                playerModel.create({
+                playerDoc = await playerModel.create({
                     guildID: guildID,
                     steamID: player.SteamID,
                     displayName: player.DisplayName,
@@ -187,10 +188,8 @@ module.exports = async (req) => {
 
             // Start of online player reward system
             if (patron === true) {
-                let verificationDoc = await verificationModel.findOne({
-                    username: player.DisplayName
-                })
-                if (verificationDoc !== null) {
+                let verificationDoc = verificationCache.find(cache => cache.username === player.DisplayName)
+                if (verificationDoc !== null && verificationDoc !== undefined) {
                     let playerEcoDoc = await playerEcoModel.findOne({
                         guildID: guildID,
                         userID: verificationDoc.userID

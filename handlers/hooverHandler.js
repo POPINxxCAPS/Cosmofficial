@@ -1,6 +1,6 @@
 const hooverRemover = require('../functions_server/hooverRemover');
 const hooverUpdater = require('../functions_server/hooverUpdater');
-const discordServerSettings = require('../models/discordServerSettngsSchema');
+const discordServerSettings = require('../models/discordServerSettingsSchema');
 
 module.exports = (client) => {
     setInterval(async () => {

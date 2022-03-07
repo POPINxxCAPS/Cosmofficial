@@ -1,4 +1,4 @@
-const discordSettings = require('../models/discordServerSettngsSchema');
+const discordSettings = require('../models/discordServerSettingsSchema');
 const dominationSettingsModel = require('../models/dominationSettingSchema');
 
 module.exports = {

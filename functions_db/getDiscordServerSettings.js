@@ -1,4 +1,4 @@
-const discordServerSettingsModel = require('../models/discordServerSettngsSchema');
+const discordServerSettingsModel = require('../models/discordServerSettingsSchema');
 
 module.exports = async (guildID) => {
     let settings = await discordServerSettingsModel.findOne({
