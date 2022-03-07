@@ -40,13 +40,11 @@ module.exports = async (req) => {
     req.name = 'logGrids'
     const timer = await timerFunction(req);
     if (timer === true) return null; // If there is a timer, cancel.
-    console.log('Running Grid Query')
-
 
     let hooverTriggered = false;
     // Check if hoover settings should be loaded/used
-    const guild = await client.guilds.cache.get(guildID);
-    const mainGuild = await client.guilds.cache.get("853247020567101440");
+    const guild = client.guilds.cache.get(guildID);
+    const mainGuild = client.guilds.cache.get("853247020567101440");
 
     let guildOwner = mainGuild.members.cache.get(guild.owner.user.id);
     if (!guildOwner) return null; // If guild owner is no longer in Cosmofficial discord
@@ -54,6 +52,8 @@ module.exports = async (req) => {
     let hooverSettings = await hooverSettingModel.findOne({
         guildID: guildID
     })
+
+    console.log('Running Grid Query')
 
     // Grids Init
     const expirationInSeconds = 3600;
