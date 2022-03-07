@@ -18,6 +18,8 @@ module.exports = async (req, res) => {
     if(timerDoc === null) return false; // Redundancy check
     let timeRemaining = parseInt(timerDoc.expirationTime) - current_time
     if(timeRemaining <= 0) {
+        timerDoc.expirationTime = expirationTime;
+        timerDoc.save();
         return false;
     } else return true;
 }
