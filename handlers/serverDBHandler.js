@@ -76,7 +76,7 @@ module.exports = async (client) => {
                 guildID: guildID
             })
 
-            let gridQueryDelay = gridDocsCache.gridQueryRunTime * 4 || 60000; // Setting delay to 2.5x the runtime of an individual server's grid query speed
+            let gridQueryDelay = gridDocsCache.gridQueryRunTime * 3 || 60000; // Setting delay to 4x the runtime of an individual server's grid query speed
 
 
             if (gridDocsCache !== undefined) {
