@@ -95,7 +95,7 @@ module.exports = async (req) => {
             }
 
             if (gridDoc === null || gridDoc === undefined) { // If no file found, create one.
-                gridDoc = gridModel.create({
+                gridDoc = await gridModel.create({
                     guildID: guildID,
                     displayName: singleGrid.DisplayName,
                     entityID: singleGrid.EntityId,
@@ -198,7 +198,6 @@ module.exports = async (req) => {
 
                 }
             }
-
             cacheIndex = gridDocsCache.indexOf(gridDoc);
             await gridDoc.save().then(savedDoc => {
                 gridDoc = savedDoc;
