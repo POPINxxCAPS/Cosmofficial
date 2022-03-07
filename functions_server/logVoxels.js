@@ -8,15 +8,16 @@ module.exports = async (req, res) => {
     const config = req.config;
     const settings = req.settings;
     if (settings.serverOnline === 'false' || settings.serverOnline === undefined || settings.serverOnline === false) return;
-    req.expirationInSeconds = 600;
+    req.expirationInSeconds = req.voxelQueryDelay / 1000 || 600;
     req.name = 'logVoxels'
     const timerCheck = await timerFunction(req)
-    if (timerCheck === true) return; // If there is a timer, cancel.
+    if (timerCheck === true) return null; // If there is a timer, cancel.
     const voxelData = await queryVoxels(config);
-    const expiration_time = Math.round(Date.now() + ((req.expirationInSeconds * 1000) * 1.5))
+    const current_time = Date.now();
+    const expiration_time = Math.round(current_time + ((req.expirationInSeconds * 1000) * 2))
     // Put an expiration on voxel documents to be able to tell when they respawn.
 
-    if (voxelData === undefined) return;
+    if (voxelData === undefined) return null;
 
     for (let i = 0; i < voxelData.length; i++) {
         const asteroid = voxelData[i];
@@ -48,20 +49,16 @@ module.exports = async (req, res) => {
 
 
     // Clear expired voxel docs (respawned voxels)
-    setTimeout(async () => {
-        const asteroidDocs = await asteroidModel.find({
-            guildID: guildID
-        });
+    const asteroidDocs = await asteroidModel.find({
+        guildID: guildID
+    });
 
-        asteroidDocs.forEach(doc => {
-            if (entityIDs.includes(doc.entityID) === false) {
-                try {
-                    doc.remove();
-                } catch (err) {}
-                console.log(`Modified Voxel for guild ID ${guildID} respawned`)
-            }
-        })
-    }, 60000)
-    
-    
+    asteroidDocs.forEach(doc => {
+        if (entityIDs.includes(doc.entityID) === false) {
+            doc.remove();
+            console.log(`Modified Voxel for guild ID ${guildID} respawned`)
+        }
+    })
+    const runTime = (Date.now() - current_time)
+    return runTime
 }
