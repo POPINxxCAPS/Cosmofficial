@@ -17,7 +17,7 @@ module.exports = async (req) => {
     const client = req.client;
     const verificationCache = req.verDocs
     if (settings.serverOnline === false || settings.serverOnline === undefined) return;
-    req.expirationInSeconds = req.gridQueryDelay / 2 || 60;
+    req.expirationInSeconds = (req.gridQueryDelay / 2) / 1000 || 30;
     req.name = 'logPlayers'
     const timerCheck = await timerFunction(req)
     if (timerCheck === true) return; // If there is a timer, cancel.

@@ -14,7 +14,8 @@ module.exports = async (req) => {
     let current_time = Date.now();
     const expirationInSeconds = 29;
     const expiration_time = current_time + (expirationInSeconds * 1000);
-    req.expirationInSeconds = req.gridQueryDelay / 2 || 30;
+    req.expirationInSeconds = (req.gridQueryDelay / 5) / 1000 || 30;
+    if(req.expirationInSeconds < 20)
     req.name = 'logCharacters'
     const timer = await timerFunction(req);
     if (timer === true) return null; // If there is a timer, cancel.

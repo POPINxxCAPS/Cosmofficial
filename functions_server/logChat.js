@@ -10,7 +10,7 @@ module.exports = async (req) => {
     const settings = req.settings;
     const client = req.client;
     if (settings.serverOnline === false || settings.serverOnline === undefined) return;
-    req.expirationInSeconds = req.gridQueryDelay * 0.75 || 45;
+    req.expirationInSeconds = (req.gridQueryDelay * 0.75) / 1000 || 30;
     req.name = 'logChat'
     const timerCheck = await timerFunction(req)
     if (timerCheck === true) return; // If there is a timer, cancel.
