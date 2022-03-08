@@ -47,7 +47,7 @@ module.exports = async (req) => {
     const guild = client.guilds.cache.get(guildID);
     const mainGuild = client.guilds.cache.get("853247020567101440");
 
-    if(guild.owner === null) return null;
+    if (guild.owner === null) return null;
     let guildOwner = mainGuild.members.cache.get(guild.owner.user.id);
     if (!guildOwner) return null; // If guild owner is no longer in Cosmofficial discord
 
@@ -199,28 +199,28 @@ module.exports = async (req) => {
                 }
             }
             cacheIndex = gridDocsCache.indexOf(gridDoc);
-            await gridDoc.save().then(savedDoc => {
+            gridDoc.save().then(savedDoc => {
                 gridDoc = savedDoc;
+                gridDocsCache[cacheIndex] = gridDoc;
             }).catch((err) => {
                 console.log('Error Caught')
             }); // Await this save so it stores the updated doc version information
-            gridDocsCache[cacheIndex] = gridDoc;
         }
 
         if (hooverTriggered === true) {
             hooverSettings.nextCleanup = current_time + parseInt(hooverSettings.cleanupInterval);
             hooverSettings.save();
         }
+
+
+
+
         gridDocsCache.forEach(async doc => { // Attempt to find clues to log
             let index = gridDocsCache.indexOf(doc);
-            // Might need to manually remove old items from the cache, we'll see on the next loop tho
-            if (doc.expirationTime < current_time) {
-                if (entityIDs.includes(doc.entityID) === false) {
-                    doc.remove()
-                    gridDocsCache.splice(index, 1);
-
-                    return console.log(`${doc.displayName} Grid expired`)
-                }
+            if (doc.expirationTime < current_time && entityIDs.includes(doc.entityID) === false) {
+                doc.remove();
+                gridDocsCache.splice(index, 1);
+                return console.log(`${doc.displayName} Grid expired`)
             }
             return; // Extra return to ensure forEach ends, doesn't hurt lol
         })
