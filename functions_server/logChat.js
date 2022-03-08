@@ -70,8 +70,6 @@ module.exports = async (req) => {
             }
         }
     })
-    try {
-        chatHistory.save()
-    } catch(err) {}
+    chatHistory.save()
     return;
 }

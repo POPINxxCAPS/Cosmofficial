@@ -8,6 +8,8 @@ const serverLogModel = require('../models/serverLogSchema');
 const queryPlayers = require('../functions_execution/queryPlayers');
 const timerFunction = require('../functions_db/timerFunction')
 
+const insertData = [];
+const SLinsertData = [];
 module.exports = async (req) => {
     const guildID = req.guildID;
     const config = req.config;
@@ -59,217 +61,197 @@ module.exports = async (req) => {
             enabled: false
         })
     }
-    if (playerData !== undefined) {
-        if (whitelistSettings.enabled === true) {
-            let whitelistDocs = await whitelistModel.find({
-                guildID: guild.id
-            })
+    if (playerData === undefined) return;
+    if (whitelistSettings.enabled === true) {
+        let whitelistDocs = await whitelistModel.find({
+            guildID: guild.id
+        })
 
-            for (let i = 0; i < whitelistDocs.length; i++) {
-                whitelistedPlayers.push(whitelistDocs[i].username)
-            }
+        for (let i = 0; i < whitelistDocs.length; i++) {
+            whitelistedPlayers.push(whitelistDocs[i].username)
         }
+    }
 
 
 
 
-        let time = Date.now();
-        for (let i = 0; i < playerData.length; i++) {
-            const player = playerData[i];
-            if (player.DisplayName === '') continue;;
-            onlinePlayerGTs.push(player.DisplayName);
-            let playerDoc = await playerModel.findOne({
+    let time = Date.now();
+    for (let i = 0; i < playerData.length; i++) {
+        const player = playerData[i];
+        if (player.DisplayName === '') continue;;
+        onlinePlayerGTs.push(player.DisplayName);
+        let playerDoc = await playerModel.findOne({
+            guildID: guildID,
+            steamID: player.SteamID
+        })
+        if (playerDoc === null || playerDoc === undefined) {
+            playerDoc = {
                 guildID: guildID,
-                steamID: player.SteamID
-            })
-            if (playerDoc === null || playerDoc === undefined) {
-                playerDoc = await playerModel.create({
-                    guildID: guildID,
-                    steamID: player.SteamID,
-                    displayName: player.DisplayName,
-                    factionName: player.FactionName,
-                    factionTag: player.FactionTag,
-                    promoteLevel: player.PromoteLevel,
-                    ping: player.Ping,
-                    online: true,
-                    lastLogin: `${time}`,
-                    lastLogout: '0',
-                    loginHistory: []
-                })
-            } else {
-                if (playerDoc.online === true) { // Player was already logged in
-                    if (playerDoc.factionTag !== player.FactionTag && player.FactionTag !== '') { // Check if a new faction was created
-                        let tempDocs = await playerModel.find({
-                            guildID: guildID,
-                            factionTag: player.FactionTag
-                        })
-                        if (tempDocs.length === 0) { // If there are no other players with that tag, assume faction creation
-                            await serverLogModel.create({
-                                guildID: guildID,
-                                category: 'misc',
-                                string: `${player.DisplayName} created faction: ${player.FactionTag}.`
-                            })
-                        }
-                        if (tempDocs.length > 0) { // If there are other players with that tag, assume faction join
-                            await serverLogModel.create({
-                                guildID: guildID,
-                                category: 'misc',
-                                string: `${player.DisplayName} joined faction: ${player.FactionTag}.`
-                            })
-                        }
-                    }
-                    if (playerDoc.factionTag !== player.FactionTag && player.FactionTag === '') { // Assume faction left
+                steamID: player.SteamID,
+                displayName: player.DisplayName,
+                factionName: player.FactionName,
+                factionTag: player.FactionTag,
+                promoteLevel: player.PromoteLevel,
+                ping: player.Ping,
+                online: true,
+                lastLogin: `${time}`,
+                lastLogout: '0',
+                loginHistory: []
+            }
+            insertData.push(playerDoc)
+        } else {
+            if (playerDoc.online === true) { // Player was already logged in
+                if (playerDoc.factionTag !== player.FactionTag && player.FactionTag !== '') { // Check if a new faction was created
+                    let tempDocs = await playerModel.find({
+                        guildID: guildID,
+                        factionTag: player.FactionTag
+                    })
+                    if (tempDocs.length === 0) { // If there are no other players with that tag, assume faction creation
                         await serverLogModel.create({
                             guildID: guildID,
                             category: 'misc',
-                            string: `${player.DisplayName} left faction: ${playerDoc.factionTag}.`
+                            string: `${player.DisplayName} created faction: ${player.FactionTag}.`
                         })
                     }
-                    playerDoc.displayName = player.DisplayName;
-                    playerDoc.factionName = player.FactionName;
-                    playerDoc.factionTag = player.FactionTag;
-                    playerDoc.promoteLevel = player.PromoteLevel;
-                    playerDoc.ping = player.Ping;
-                    playerDoc.save();
-                } else { // Player just logged in
-                    if (playerDoc.factionTag !== player.FactionTag && player.FactionTag !== '') { // Check if a new faction was created
-                        let tempDocs = await playerModel.find({
-                            guildID: guildID,
-                            factionTag: playerDoc.factionTag
-                        })
-                        if (tempDocs.length === 0) { // If there are no other players with that tag, assume faction creation
-                            await serverLogModel.create({
-                                guildID: guildID,
-                                category: 'misc',
-                                string: `${player.DisplayName} created faction: ${player.FactionTag}.`
-                            })
-                        }
-                        if (tempDocs.length > 0) { // If there are other players with that tag, assume faction join
-                            await serverLogModel.create({
-                                guildID: guildID,
-                                category: 'misc',
-                                string: `${player.DisplayName} joined faction: ${player.FactionTag}.`
-                            })
-                        }
-                    }
-                    if (playerDoc.factionTag !== player.FactionTag && player.FactionTag === '') { // Assume faction left
+                    if (tempDocs.length > 0) { // If there are other players with that tag, assume faction join
                         await serverLogModel.create({
                             guildID: guildID,
                             category: 'misc',
-                            string: `${player.DisplayName} kicked from faction: ${playerDoc.factionTag}.`
+                            string: `${player.DisplayName} joined faction: ${player.FactionTag}.`
                         })
                     }
-                    playerDoc.displayName = player.DisplayName;
-                    playerDoc.factionName = player.FactionName;
-                    playerDoc.factionTag = player.FactionTag;
-                    playerDoc.promoteLevel = player.PromoteLevel;
-                    playerDoc.ping = player.Ping;
-                    playerDoc.online = true;
-                    playerDoc.lastLogin = `${time}`;
-                    playerDoc.save();
-
+                }
+                if (playerDoc.factionTag !== player.FactionTag && player.FactionTag === '') { // Assume faction left
                     await serverLogModel.create({
                         guildID: guildID,
-                        category: 'loggedInOut',
-                        string: `${player.DisplayName} logged in.`
+                        category: 'misc',
+                        string: `${player.DisplayName} left faction: ${playerDoc.factionTag}.`
                     })
-
                 }
-            } // End of player doc creation/updating
-
-            // Whitelist check
-            if (whitelistSettings.enabled === true) {
-                if (whitelistedPlayers.includes(player.DisplayName) === false) {
-                    await send('POST', `${adminPath}/kickedPlayers/${player.SteamID}`)
-                    console.log(player.SteamID)
-                    console.log('Removed player from server due to whitelist.')
-                }
-            }
-
-            // Start of online player reward system
-            if (patron === true) {
-                let verificationDoc = verificationCache.find(cache => cache.username === player.DisplayName)
-                if (verificationDoc !== null && verificationDoc !== undefined) {
-                    let playerEcoDoc = await playerEcoModel.findOne({
+                playerDoc.displayName = player.DisplayName;
+                playerDoc.factionName = player.FactionName;
+                playerDoc.factionTag = player.FactionTag;
+                playerDoc.promoteLevel = player.PromoteLevel;
+                playerDoc.ping = player.Ping;
+                playerDoc.save();
+            } else { // Player just logged in
+                if (playerDoc.factionTag !== player.FactionTag && player.FactionTag !== '') { // Check if a new faction was created
+                    let tempDocs = await playerModel.find({
                         guildID: guildID,
-                        userID: verificationDoc.userID
+                        factionTag: playerDoc.factionTag
                     })
-                    if (playerEcoDoc !== null) {
-                        // If player eco doc found, update telemetry and reward with tokens
-                        let rewardModifier = 1;
-                        let memberTarget = guild.members.cache.find(member => member.id === verificationDoc.userID);
-                        let memberTargetMainGuild = mainGuild.members.cache.find(member => member.id === verificationDoc.userID);
-                        if (memberTarget === null || memberTarget === undefined) {} else {
-                            if (memberTarget.roles.cache.has('853949230350991392')) {
-                                rewardModifier += .35
-                            }
-                            if (memberTarget.roles.cache.has('853947102521851914')) {
-                                rewardModifier += .7
-                            }
-                            if (memberTarget.roles.cache.has('847648987933835285')) {
-                                rewardModifier += 1.15
-                            }
-                        }
-                        if (memberTargetMainGuild === null || memberTargetMainGuild === undefined) {} else {
-                            if (memberTargetMainGuild.roles.cache.has('883564759541243925')) {
-                                rewardModifier += .35
-                            }
-                            if (memberTargetMainGuild.roles.cache.has('883563886815617025')) {
-                                rewardModifier += .7
-                            }
-                            if (memberTargetMainGuild.roles.cache.has('883564396587147275')) {
-                                rewardModifier += 1.15
-                            }
-                        }
-                        let rewardAmount = Math.round(((onlinePlayerReward * 60) * rewardModifier))
-                        console.log(`${verificationDoc.username} Given ${rewardAmount} with ${rewardModifier} reward modifier`)
-
-                        let statFound = false;
-                        playerEcoDoc.statistics.forEach(stat => {
-                            if (stat.name === 'OnlineRewardReceived') {
-                                stat.value = Number(stat.value) + rewardAmount;
-                                statFound = true;
-                            }
+                    if (tempDocs.length === 0) { // If there are no other players with that tag, assume faction creation
+                        await serverLogModel.create({
+                            guildID: guildID,
+                            category: 'misc',
+                            string: `${player.DisplayName} created faction: ${player.FactionTag}.`
                         })
-                        if (statFound === false) {
-                            playerEcoDoc.statistics.push({
-                                name: 'OnlineRewardReceived',
-                                value: `${rewardAmount}`
-                            })
-                        }
-                        playerEcoDoc.currency = Math.round(Number(playerEcoDoc.currency) + Math.round((onlinePlayerReward * rewardModifier * 60)));
-                        playerEcoDoc.save();
-
                     }
-
+                    if (tempDocs.length > 0) { // If there are other players with that tag, assume faction join
+                        await serverLogModel.create({
+                            guildID: guildID,
+                            category: 'misc',
+                            string: `${player.DisplayName} joined faction: ${player.FactionTag}.`
+                        })
+                    }
                 }
+                if (playerDoc.factionTag !== player.FactionTag && player.FactionTag === '') { // Assume faction left
+                    await serverLogModel.create({
+                        guildID: guildID,
+                        category: 'misc',
+                        string: `${player.DisplayName} kicked from faction: ${playerDoc.factionTag}.`
+                    })
+                }
+                playerDoc.displayName = player.DisplayName;
+                playerDoc.factionName = player.FactionName;
+                playerDoc.factionTag = player.FactionTag;
+                playerDoc.promoteLevel = player.PromoteLevel;
+                playerDoc.ping = player.Ping;
+                playerDoc.online = true;
+                playerDoc.lastLogin = `${time}`;
+                playerDoc.save();
+
+                await serverLogModel.create({
+                    guildID: guildID,
+                    category: 'loggedInOut',
+                    string: `${player.DisplayName} logged in.`
+                })
+
+            }
+        } // End of player doc creation/updating
+
+        // Whitelist check
+        if (whitelistSettings.enabled === true) {
+            if (whitelistedPlayers.includes(player.DisplayName) === false) {
+                await send('POST', `${adminPath}/kickedPlayers/${player.SteamID}`)
+                console.log(player.SteamID)
+                console.log('Removed player from server due to whitelist.')
             }
         }
 
+        // Start of online player reward system
+        if (patron === true) {
+            let verificationDoc = verificationCache.find(cache => cache.username === player.DisplayName)
+            if (verificationDoc !== null && verificationDoc !== undefined) {
+                let playerEcoDoc = await playerEcoModel.findOne({
+                    guildID: guildID,
+                    userID: verificationDoc.userID
+                })
+                if (playerEcoDoc === null) continue;
+                // If player eco doc found, update telemetry and reward with tokens
+                let rewardModifier = 1; // Future use with quests + alliance bonuses
+                let rewardAmount = Math.round(((onlinePlayerReward * 60) * rewardModifier))
+                console.log(`${verificationDoc.username} Given ${rewardAmount} with ${rewardModifier} reward modifier`)
 
-        // Update offline players
-        let playerDocs = await playerModel.find({
-            guildID: guildID,
-            online: true
-        });
-        playerDocs.forEach(async doc => {
-            if (onlinePlayerGTs.includes(doc.displayName) || doc.online === false) return;
-            let current_time = Date.now();
-            doc.lastLogout = current_time;
-            doc.loginHistory.push({
-                login: doc.lastLogin,
-                logout: current_time
-            })
-            doc.online = false;
-            doc.save();
+                let statFound = false;
+                // Stat tracking stuff for future use. Ugly, but works
+                for(let s = 0; s < playerEcoDoc.statistics.length; s++) {
+                    if (playerEcoDoc.statistics[s].name === 'OnlineRewardReceived') {
+                        playerEcoDoc.statistics[s].value = Number(playerEcoDoc.statistics[s].value) + rewardAmount;
+                        statFound = true;
+                    }
+                }
+                if (statFound === false) {
+                    playerEcoDoc.statistics.push({
+                        name: 'OnlineRewardReceived',
+                        value: `${rewardAmount}`
+                    })
+                }
+                playerEcoDoc.currency = Math.round(Number(playerEcoDoc.currency) + Math.round((onlinePlayerReward * rewardModifier * 60)));
+                playerEcoDoc.save();
 
-            await serverLogModel.create({
-                guildID: guildID,
-                category: 'loggedInOut',
-                string: `${doc.displayName} logged out.`
-            })
-        })
-        return;
+
+            }
+        }
     }
+    await playerModel.insertMany(insertData);
+
+
+    // Update offline players
+    let playerDocs = await playerModel.find({
+        guildID: guildID,
+        online: true
+    });
+    playerDocs.forEach(async doc => {
+        if (onlinePlayerGTs.includes(doc.displayName) || doc.online === false) return;
+        let current_time = Date.now();
+        doc.lastLogout = current_time;
+        doc.loginHistory.push({
+            login: doc.lastLogin,
+            logout: current_time
+        })
+        doc.online = false;
+        doc.save();
+
+        let SLdoc = {
+            guildID: guildID,
+            category: 'loggedInOut',
+            string: `${doc.displayName} logged out.`
+        }
+        SLinsertData.push(SLdoc);
+    })
+
+    await serverLogModel.insertMany(SLinsertData)
+
     return;
 }

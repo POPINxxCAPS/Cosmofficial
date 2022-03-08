@@ -3,7 +3,8 @@ const serverLogModel = require('../models/serverLogSchema');
 const queryCharacters = require('../functions_execution/queryCharacters');
 const timerFunction = require('../functions_db/timerFunction');
 
-
+let insertData = [];
+let SLinsertData = [];
 module.exports = async (req) => {
     const guildID = req.guildID;
     const settings = req.settings;
@@ -33,7 +34,7 @@ module.exports = async (req) => {
         if (doc === null || doc === undefined) {
             if (char.DisplayName !== '') {
                 console.log(`t${char.DisplayName}t`)
-                await characterModel.create({
+                let doc = {
                     guildID: guildID,
                     name: char.DisplayName,
                     mass: char.Mass,
@@ -42,13 +43,15 @@ module.exports = async (req) => {
                     x: char.Position.X,
                     y: char.Position.Y,
                     z: char.Position.Z
-                })
+                }
+                insertData.push(doc)
                 console.log(`${char.DisplayName} Spawned`)
-                await serverLogModel.create({
+                let SLDoc = {
                     guildID: guildID,
                     category: 'character',
                     string: `${char.DisplayName} Spawned`
-                })
+                }
+                SLinsertData.push(SLDoc);
             }
         } else {
             doc.mass = char.Mass;
@@ -60,6 +63,8 @@ module.exports = async (req) => {
             doc.save().catch(err => {});
         }
     };
+    await characterModel.insertMany(insertData);
+    await serverLogModel.insertMany(SLinsertData);
 
 
     // Clear expired (dead) characters
@@ -69,7 +74,7 @@ module.exports = async (req) => {
     characterDocs.forEach(async doc => {
         if (entityIDs.includes(doc.entityID) === false) {
             console.log(`${doc.name} died`)
-            await serverLogModel.create({
+            await SLModel.create({
                 guildID: guildID,
                 category: 'character',
                 string: `${doc.name} Died`

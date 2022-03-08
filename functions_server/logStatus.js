@@ -14,7 +14,7 @@ module.exports = async (req) => {
     if (timerCheck === true) return; // If there is a timer, cancel.
     const current_time = Date.now();
     let servInfo = await queryStatus(config);
-    
+
     if (servInfo === undefined) {
         if (settings.serverOnline === true) { // If document says server is online, update to say offline
             settings.serverOnline = false;
@@ -90,10 +90,7 @@ module.exports = async (req) => {
             servInfoDoc.worldName = servInfo.WorldName;
             servInfoDoc.lastUpdated = current_time;
 
-            try {
-                servInfoDoc.save();
-            } catch(err) {}
-            
+            servInfoDoc.save();
         }
         return;
     }

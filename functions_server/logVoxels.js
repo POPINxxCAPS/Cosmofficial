@@ -3,6 +3,7 @@ const timerFunction = require('../functions_db/timerFunction');
 const queryVoxels = require('../functions_execution/queryVoxels')
 // "Asteroids" in the remote API path are actually modified voxel information.
 let entityIDs = []; // Holding variable for the document deletions
+let insertData = [];
 module.exports = async (req, res) => {
     const guildID = req.guildID;
     const config = req.config;
@@ -27,14 +28,15 @@ module.exports = async (req, res) => {
         })
         if (doc === null || doc === undefined) {
             entityIDs.push(asteroid.EntityId)
-            await asteroidModel.create({
+            doc = {
                 guildID: guildID,
                 expirationTime: expiration_time,
                 entityID: asteroid.EntityId,
                 x: asteroid.Position.X,
                 y: asteroid.Position.Y,
                 z: asteroid.Position.Z
-            })
+            }
+            insertData.push(doc)
             console.log(`Modified Voxel for guild ID ${guildID} created`)
         } else {
             entityIDs.push(asteroid.EntityId)
@@ -46,18 +48,21 @@ module.exports = async (req, res) => {
             doc.save();
         }
     };
+    await asteroidModel.insertMany(insertData);
 
 
     // Clear expired voxel docs (respawned voxels)
     const asteroidDocs = await asteroidModel.find({
-        guildID: guildID
-    });
-
-    asteroidDocs.forEach(doc => {
-        if (entityIDs.includes(doc.entityID) === false) {
-            doc.remove();
-            console.log(`Modified Voxel for guild ID ${guildID} respawned`)
+        guildID: guildID,
+        entityID: {
+            $nin: entityIDs
         }
+    }); // Download all documents that do not match the entity ID list and remove them
+
+    console.log(asteroidDocs.length);
+    asteroidDocs.forEach(doc => {
+        doc.remove();
+        console.log(`Modified Voxel for guild ID ${guildID} respawned`)
     })
     const runTime = (Date.now() - current_time)
     return runTime

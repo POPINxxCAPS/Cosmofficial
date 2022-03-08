@@ -4,7 +4,7 @@ const getDiscordServerSettings = require('../functions_db/getDiscordServerSettin
 
 // Query Functions
 const logStatus = require('../functions_server/logStatus');
-const gridQuery = require('../functions_server/gridQuery');
+const logGrids = require('../functions_server/logGrids');
 const logPlayers = require('../functions_server/logPlayers');
 const logCharacters = require('../functions_server/logCharacters');
 const logChat = require('../functions_server/logChat');
@@ -88,7 +88,7 @@ module.exports = async (client) => {
             await logChat(req);
             await logPlayers(req);
             await logCharacters(req);
-            const gridQueryResponse = await gridQuery(req); // The last one needs await to ensure it's only running for one server at a time (performance reasons)
+            const gridQueryResponse = await logGrids(req); // The last one needs await to ensure it's only running for one server at a time (performance reasons)
             if (gridQueryResponse === null || gridQueryResponse === undefined) {
                 queryIsRunning = false;
                 continue;
@@ -105,8 +105,6 @@ module.exports = async (client) => {
                 })
             } else { // If they have, find index and replace the cache with updated version
                 let index = fullGridDocsCache.indexOf(test);
-
-                console.log(`Cache updated. GuildID: ${guildID}, New Length: ${newGridDocsCache.length}, Old Length: ${gridDocsCache.length}`)
                 fullGridDocsCache[index] = {
                     guildID: guildID,
                     gridDocsCache: newGridDocsCache,
@@ -114,9 +112,6 @@ module.exports = async (client) => {
                 }
             }
 
-
-
-            // However, until this one is fully recoded I cannot use await or it makes the bot run 40x slower.
             //logVoxels(req); Disabled due to memory error
             console.log(`Finished queries for guild ID ${guildID}`)
             queryIsRunning = false;
