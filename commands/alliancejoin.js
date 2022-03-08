@@ -13,7 +13,10 @@ module.exports = {
     aliases: ['aj'],
     description: "Join an existing alliance",
     permissions: ["SEND_MESSAGES"],
-    async execute(message, args, cmd, client, discord, mainGuild, guild, playerEco) {
+    async execute(req) {
+        const message = req.message;
+        const args = req.args;
+        const discord = req.discord;
         if (args[0] === undefined) return errorEmbed(message.channel, '**Invalid Argument**\nPlease enter an alliance name!');
         let name = args[0];
         for (let i = 1; i < args.length; i++) {

@@ -7,7 +7,12 @@ module.exports = {
     aliases: ['eds'],
     description: "Edit the domination general settings",
     permissions: ["ADMINISTRATOR"],
-    async execute(message, args, cmd, client, discord, mainGuild, guild) {
+    async execute(req) {
+        const message = req.message;
+        const args = req.args;
+        const discord = req.discord;
+        const mainGuild = req.mainGuild;
+        const guild = req.guild;
         const current_time = Date.now();
         const embed = new discord.MessageEmbed()
             .setColor('#E02A6B')

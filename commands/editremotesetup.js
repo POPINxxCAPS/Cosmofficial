@@ -5,7 +5,10 @@ module.exports = {
     aliases: ['ers'],
     description: "Edit this discord's setup file",
     permissions: ["ADMINISTRATOR"],
-    async execute(message, args, cmd, client, discord, mainGuild, guild) {
+    async execute(req) {
+        const message = req.message;
+        const args = req.args;
+        const guild = req.guild;
         let configCheck = await remoteConfigModel.findOne({guildID: guild.id}) // Check if config already created, if true, return message to channel
         if(configCheck === null) return message.channel.send('This discord does not have a server registered.\nUse c!setup to add your remote configuration.');
         

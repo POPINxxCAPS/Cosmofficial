@@ -9,7 +9,9 @@ module.exports = {
     aliases: ['dfo'],
     description: "List all floating objects",
     permissions: ["ADMINISTRATOR"],
-    async execute(message, args, cmd, client, discord, mainGuild, guild) {
+    async execute(req) {
+        const message = req.message;
+        const guild = req.guild;
         let config = await remoteConfigModel.findOne({guildID: guild.id}) // Check if config already created, if true, return message to channel
         if(config === null) return message.channel.send('This discord does not have a server registered.\nUse c!setup to add your remote configuration.');
 

@@ -5,7 +5,11 @@ module.exports = {
   aliases: ['chat'],
   description: "List server chat messages",
   permissions: ["SEND_MESSAGES"],
-  async execute(message, args, cmd, client, discord, mainGuild, guild) {
+  async execute(req) {
+    const message = req.message;
+    const args = req.args;
+    const discord = req.discord;
+    const mainGuild = req.mainGuild;
     let messageCount = 10;
     let index;
     let patronCheck = mainGuild.members.cache.get(message.guild.owner.user.id);
@@ -18,10 +22,10 @@ module.exports = {
     });
     if (chatDoc === null || chatDoc === undefined || !chatDoc) return;
     let serverChats = await chatDoc.chatHistory.sort((a, b) => ((a.timestamp) > (b.timestamp)) ? 1 : -1);
-    if(args[0] === undefined || !args[0] || args[0] === '') {
+    if (args[0] === undefined || !args[0] || args[0] === '') {
       index = 10;
     } else {
-      if(parseInt(args[0]) % 1 != 0 ) return message.channel.send('Invalid command format. Valid: c!chat {page #}')
+      if (parseInt(args[0]) % 1 != 0) return message.channel.send('Invalid command format. Valid: c!chat {page #}')
       index = 10 * parseInt(args[0]);
     }
 

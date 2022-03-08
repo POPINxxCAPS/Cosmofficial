@@ -6,8 +6,11 @@ module.exports = {
     aliases: ['cs'],
     description: "View this discord's settings file",
     permissions: ["SEND_MESSAGES"],
-    async execute(message, args, cmd, client, discord, mainGuild, guild) {
-
+    async execute(req) {
+        const message = req.message;
+        const discord = req.discord;
+        const mainGuild = req.mainGuild;
+        const guild = req.guild;
 
         let patron = false
         let guildOwner = mainGuild.members.cache.get(guild.owner.user.id);

@@ -1,5 +1,6 @@
 const serverLogSettingModel = require('../models/serverLogSettingSchema');
 const lockedEmbed = require('../functions_discord/lockedEmbed');
+const errorEmbed = require('../functions_discord/errorEmbed');
 
 
 let settingArray = [{
@@ -17,15 +18,13 @@ module.exports = {
     aliases: ['csls'],
     description: "Edit this discord's settings file",
     permissions: ["ADMINISTRATOR"],
-    async execute(message, args, cmd, client, discord, mainGuild, guild) {
-
+    async execute(req) {
+        const message = req.message;
+        const discord = req.discord;
+        const mainGuild = req.mainGuild;
+        const guild = req.guild;
         let guildOwner = mainGuild.members.cache.get(message.guild.owner.user.id);
-        let patron = false;
-        if (!guildOwner || guildOwner === null || guildOwner === undefined) return message.channel.send('The owner of this discord must be in the Cosmofficial discord to enable usage of this command.');
-        if (guildOwner.roles.cache.has('883535682553929779') || guildOwner.roles.cache.has('883535930630213653') || guildOwner.roles.cache.has('883534965650882570')) {
-            patron = true;
-        }
-        // if(patron === false) return lockedEmbed(message.channel, discord); // Disabled, is meant to be free
+        if(guildOwner === undefined) return errorEmbed(message.channel, 'The owner of this discord must be in the Cosmofficial discord to use this.')
 
         let settings = await serverLogSettingModel.findOne({
             guildID: guild.id

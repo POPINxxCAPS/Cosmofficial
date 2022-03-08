@@ -8,7 +8,11 @@ module.exports = {
     aliases: ['cdp'],
     description: "Check the domination settings",
     permissions: ["ADMINISTRATOR"],
-    async execute(message, args, cmd, client, discord, mainGuild, guild) {
+    async execute(req) {
+        const message = req.message;
+        const discord = req.discord;
+        const mainGuild = req.mainGuild;
+        const guild = req.guild;
         const current_time = Date.now();
         const embed = new discord.MessageEmbed()
             .setColor('#E02A6B')
@@ -57,7 +61,7 @@ module.exports = {
                 Delete Command: c!rdp ${obj.name}`
             });
         })
-        if(settings.objectives.length === 0) {
+        if (settings.objectives.length === 0) {
             embed.addFields({
                 name: 'No objective points set!',
                 value: 'Use c!adp {name} to add a point and get started.'

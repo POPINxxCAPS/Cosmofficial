@@ -8,7 +8,13 @@ module.exports = {
     aliases: ['adp'],
     description: "Add a domination point",
     permissions: ["ADMINISTRATOR"],
-    async execute(message, args, cmd, client, discord, mainGuild, guild) {
+    async execute(req) {
+        const message = req.message;
+        const args = req.args;
+        const discord = req.discord;
+        const mainGuild = req.mainGuild;
+        const guild = req.guild;
+
         const current_time = Date.now();
         const embed = new discord.MessageEmbed()
             .setColor('#E02A6B')
@@ -47,7 +53,7 @@ module.exports = {
         }
 
         if (args[0] === undefined) return errorEmbed(message.channel, '**Invalid Argument *one***\nPlease enter a point name. (One-Word)')
-        if(settings.objectives.length > 4) return errorEmbed(message.channel, 'Maximum of 5 objectives.\nRemove some objectives and try again.')
+        if (settings.objectives.length > 4) return errorEmbed(message.channel, 'Maximum of 5 objectives.\nRemove some objectives and try again.')
         let objFound = false;
         settings.objectives.forEach(obj => {
             if (obj.name === args[0]) {

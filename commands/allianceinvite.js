@@ -13,7 +13,10 @@ module.exports = {
     aliases: ['ai'],
     description: "Invite faction tag to alliance",
     permissions: ["SEND_MESSAGES"],
-    async execute(message, args, cmd, client, discord, mainGuild, guild, playerEco) {
+    async execute(req) {
+        const message = req.message;
+        const args = req.args;
+        const discord = req.discord;
         if (args[0] === undefined) return errorEmbed(message.channel, '**Invalid Argument**\nPlease enter an faction tag!');
         if (args[0].length >= 5) return errorEmbed(message.channel, '**Invalid Argument**\nFaction tag is too long.')
 
@@ -39,7 +42,7 @@ module.exports = {
             guildID: message.guild.id,
             factionTag: args[0]
         })
-        if(playerFactionDocs.length === 0) return errorEmbed(message.channel, 'There is nobody in this faction!')
+        if (playerFactionDocs.length === 0) return errorEmbed(message.channel, 'There is nobody in this faction!')
 
         const alliances = await allianceModel.find({
             guildID: message.guild.id
@@ -63,20 +66,20 @@ module.exports = {
         if (allowed === false) return errorEmbed(message.channel, 'You are not permitted to do this. You must be the alliance leader, or admin of the alliance to use this command.')
 
         allowed = true;
-        for(let i = 0; i < alliance.factionTags.length; i++) {
-            if(alliance.factionTags[i].factionTag === args[0]) {
+        for (let i = 0; i < alliance.factionTags.length; i++) {
+            if (alliance.factionTags[i].factionTag === args[0]) {
                 allowed = false
             }
         }
-        if(allowed === false) return errorEmbed(message.channel, 'This faction is already in your alliance.')
+        if (allowed === false) return errorEmbed(message.channel, 'This faction is already in your alliance.')
 
         allowed = true;
-        for(let i = 0; i < alliance.invitedFactionTags.length; i++) {
-            if(alliance.invitedFactionTags[i].factionTag === args[0]) {
+        for (let i = 0; i < alliance.invitedFactionTags.length; i++) {
+            if (alliance.invitedFactionTags[i].factionTag === args[0]) {
                 allowed = false
             }
         }
-        if(allowed === false) return errorEmbed(message.channel, 'This faction is already invited to your alliance.')
+        if (allowed === false) return errorEmbed(message.channel, 'This faction is already invited to your alliance.')
 
         alliance.invitedFactionTags.push({
             factionTag: args[0]

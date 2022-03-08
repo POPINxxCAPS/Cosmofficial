@@ -8,7 +8,12 @@ module.exports = {
     aliases: ['ehs'],
     description: "Edit the grid cleanup settings",
     permissions: ["ADMINISTRATOR"],
-    async execute(message, args, cmd, client, discord, mainGuild, guild) {
+    async execute(req) {
+        const message = req.message;
+        const args = req.args;
+        const discord = req.discord;
+        const mainGuild = req.mainGuild;
+        const guild = req.guild;
         const current_time = Date.now();
         const defaultCleanupInterval = 3600 * 1000;
         const defaultNextCleanup = current_time + defaultCleanupInterval;

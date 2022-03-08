@@ -6,9 +6,12 @@ const {
 module.exports = {
   name: 'planets',
   aliases: ['planets'],
-  description: "List planets and their locations", // OLD COMMAND DONT JUDGE THE CODE LOL
+  description: "List planets and their locations", // OLD COMMANDS DONT JUDGE THE CODE LOL
   permissions: ["ADMINISTRATOR"],
-  async execute(message, args, cmd, client, discord, mainGuild, guild) {
+  async execute(req) {
+    const message = req.message;
+    const discord = req.discord;
+    const guild = req.guild;
     let config = await remoteConfigModel.findOne({
       guildID: guild.id
     }) // Check if config already created, if true, return message to channel

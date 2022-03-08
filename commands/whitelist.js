@@ -7,7 +7,11 @@ module.exports = {
     aliases: ['wl'],
     description: "Views the current whitelist",
     permissions: ["ADMINISTRATOR"],
-    async execute(message, args, cmd, client, discord, mainGuild, guild) {
+    async execute(req) {
+        const message = req.message;
+        const args = req.args;
+        const discord = req.discord;
+        const guild = req.guild;
         let whitelistSettings = await whitelistSettingsModel.findOne({
             guildID: guild.id
         })

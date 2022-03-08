@@ -35,7 +35,12 @@ module.exports = {
     aliases: ['activate'],
     description: "Add a player to the whitelist",
     permissions: ["SEND_MESSAGES"],
-    async execute(message, args, cmd, client, discord, mainGuild, guild, playerEco) {
+    async execute(req) {
+        const message = req.message;
+        const args = req.args;
+        const discord = req.discord;
+        const guild = req.guild;
+        const playerEco = req.playerEco;
         //return message.channel.send('Awaiting recode. :(')
         if (message.guild.id !== '799685703910686720') return errorEmbed(message.channel, 'This command only works on the Cosmic PvPvAI server!')
         if (antennaNames.includes(args[0]) === false) {
@@ -117,7 +122,7 @@ module.exports = {
             guildID: message.guild.id,
             gridName: gridName
         })
-        if(spawnerDoc === null) {
+        if (spawnerDoc === null) {
             spawnerDoc = await spawnerModel.create({
                 guildID: message.guild.id,
                 gridName: gridName,
@@ -125,7 +130,7 @@ module.exports = {
             })
         }
         console.log(parseInt(spawnerDoc.expirationTime))
-        if(parseInt(spawnerDoc.expirationTime) > current_time) return errorEmbed(message.channel, 'Spawner is already activated!')
+        if (parseInt(spawnerDoc.expirationTime) > current_time) return errorEmbed(message.channel, 'Spawner is already activated!')
         spawnerDoc.expirationTime = current_time + (seconds * 1000);
 
         if (cancel === true) return errorEmbed(message.channel, 'Please wait 5m after the server restart before activating.')
@@ -225,8 +230,8 @@ module.exports = {
         };
         // End remote bridge initialization
 
-        if(playerEco.currency < price) {
-            if(playerEco.vault > price) {
+        if (playerEco.currency < price) {
+            if (playerEco.vault > price) {
                 return errorEmbed(message.channel, `Cannot activate **${gridName}**\nYou must withraw your ${currencyName} from the Vault.\nPrice: ${price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`);
             } else {
                 return errorEmbed(message.channel, `Cannot activate **${gridName}**\nYou do not have enough ${currencyName}.\nPrice: ${price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`);
@@ -253,7 +258,7 @@ module.exports = {
             .setDescription(`Successfully activated ${gridName} for 60 seconds!`)
         message.channel.send(embed);
 
-        
+
         setTimeout(async () => {
             await send('DELETE', `${sessionPath}/poweredGrids/${grid.entityID}`)
             console.log(`${gridName} Deactivated`)

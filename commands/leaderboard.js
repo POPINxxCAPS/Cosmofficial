@@ -5,7 +5,12 @@ module.exports = {
     aliases: ["lb"],
     permissions: ["SEND_MESSAGES"],
     description: "View top 10 balances",
-    async execute(message, args, cmd, client, discord, mainGuild, guild) {
+    async execute(req) {
+        const message = req.message;
+        const client = req.client;
+        const discord = req.discord;
+        const mainGuild = req.mainGuild;
+        const guild = req.guild;
         let guildOwner = mainGuild.members.cache.get(message.guild.owner.user.id);
         let economyPackage;
         if (guildOwner.roles.cache.has('854236270129971200') || guildOwner.roles.cache.has('883535930630213653') || guildOwner.roles.cache.has('883534965650882570')) {

@@ -5,7 +5,10 @@ module.exports = {
     aliases: ['setup'],
     description: "Attempt to create a setup config file",
     permissions: ["ADMINISTRATOR"],
-    async execute(message, args, cmd, client, discord, mainGuild, guild) {
+    async execute(req) {
+        const message = req.message;
+        const args = req.args;
+        const guild = req.guild;
         let configCheck = await remoteConfigModel.findOne({guildID: guild.id}) // Check if config already created, if true, return message to channel
         if(configCheck !== null) return message.channel.send('This discord already has a sever registered.\nUse (c!crs) c!checkremotesetup to view your current settings.\nUse c!editremotesetup <item> <newValue> to change your settings.');
         

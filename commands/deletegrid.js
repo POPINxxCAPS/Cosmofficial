@@ -20,7 +20,12 @@ module.exports = {
     aliases: ['dg'],
     description: "Delete a specific grid",
     permissions: ["SEND_MESSAGES"],
-    async execute(message, args, cmd, client, discord, mainGuild, guild) {
+    async execute(req) {
+        const message = req.message;
+        const args = req.args;
+        const discord = req.discord;
+        const mainGuild = req.mainGuild;
+        const guild = req.guild;
         let administrationPackage;
         let guildOwner = mainGuild.members.cache.get(guild.owner.user.id);
         if (!guildOwner) return; // If guild owner is no longer in Cosmofficial discord

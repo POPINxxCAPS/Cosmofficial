@@ -6,11 +6,15 @@ module.exports = {
   aliases: ['fo'],
   description: "List all floating objects",
   permissions: ["SEND_MESSAGES"],
-  async execute(message, args, cmd, client, discord, mainGuild, guild) {
-    let floatingObjectsData = await floatingObjectModel.find({guildID: message.guild.id});
+  async execute(req) {
+    const message = req.message;
+    const discord = req.discord;
+    let floatingObjectsData = await floatingObjectModel.find({
+      guildID: message.guild.id
+    });
     let floatingObjectsString = '';
     for (i = 0; i < floatingObjectsData.length; i++) {
-      if(floatingObjectsString.length > 950) {
+      if (floatingObjectsString.length > 950) {
         floatingObjectsString += `and ${floatingObjectsData.length - i} more...`
         break;
       }
@@ -18,7 +22,7 @@ module.exports = {
         floatingObjectsString += `${floatingObjectsData[i].name}\n`;
       }
     }
-    if(floatingObjectsString === '') {
+    if (floatingObjectsString === '') {
       floatingObjectsString = 'There are no floating objects to display.';
     }
 

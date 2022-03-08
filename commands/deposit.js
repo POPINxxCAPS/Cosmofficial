@@ -9,7 +9,12 @@ module.exports = {
     aliases: ['dep'],
     description: "Pay a user",
     permissions: ["SEND_MESSAGES"],
-    async execute(message, args, cmd, client, discord, mainGuild, guild, playerEco) {
+    async execute(req) {
+        const message = req.message;
+        const args = req.args;
+        const discord = req.discord;
+        const mainGuild = req.mainGuild;
+        const playerEco = req.playerEc
         let guildOwner = mainGuild.members.cache.get(message.guild.owner.user.id);
         if(!guildOwner) return message.channel.send('The owner of this discord must be in the Cosmofficial discord to enable usage of this command.');
 

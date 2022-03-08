@@ -76,7 +76,11 @@ module.exports = {
     aliases: ['ces'],
     description: "Edit this discord's settings file",
     permissions: ["ADMINISTRATOR"],
-    async execute(message, args, cmd, client, discord, mainGuild, guild) {
+    async execute(req) {
+        const message = req.message;
+        const discord = req.discord;
+        const mainGuild = req.mainGuild;
+        const guild = req.guild;
 
         let guildOwner = mainGuild.members.cache.get(message.guild.owner.user.id);
         if (!guildOwner || guildOwner === null || guildOwner === undefined) return message.channel.send('The owner of this discord must be in the Cosmofficial discord to enable usage of this command.');

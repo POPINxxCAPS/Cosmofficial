@@ -6,11 +6,15 @@ module.exports = {
     aliases: ['rwp'],
     description: "Removes a player from the whitelist",
     permissions: ["ADMINISTRATOR"],
-    async execute(message, args, cmd, client, discord, mainGuild, guild) {
+    async execute(req) {
+        const message = req.message;
+        const args = req.args;
+        const discord = req.discord;
+        const guild = req.guild;
         let whitelistSettings = await whitelistSettingsModel.findOne({
             guildID: guild.id
         })
-        if(whitelistSettings === null) {
+        if (whitelistSettings === null) {
             whitelistSettings = await whitelistSettingsModel.create({
                 guildID: guild.id,
                 enabled: false

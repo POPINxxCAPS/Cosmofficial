@@ -10,10 +10,15 @@ module.exports = {
     aliases: ["buyticket", "blt"],
     permissions: ["SEND_MESSAGES"],
     description: "Buys a lottery ticket",
-    async execute(message, args, cmd, client, discord, mainGuild, guild, playerEco) {  
-    
+    async execute(req) {
+        const message = req.message;
+        const args = req.args;
+        const discord = req.discord;
+        const mainGuild = req.mainGuild;
+        const playerEco = req.playerEco;
+
         let guildOwner = mainGuild.members.cache.get(message.guild.owner.user.id);
-        if(!guildOwner) return message.channel.send('The owner of this discord must be in the Cosmofficial discord to enable usage of this command.');
+        if (!guildOwner) return message.channel.send('The owner of this discord must be in the Cosmofficial discord to enable usage of this command.');
 
         let economyPackage;
         if (guildOwner.roles.cache.has('854236270129971200') || guildOwner.roles.cache.has('883535930630213653') || guildOwner.roles.cache.has('883534965650882570')) {
@@ -24,30 +29,30 @@ module.exports = {
         let ecoSettings = await economySettingsModel.findOne({
             guildID: message.guild.id,
         })
-        if(ecoSettings === null) {
+        if (ecoSettings === null) {
             return errorEmbed(message.channel, 'An admin must first setup economy with c!ces')
         }
         let ticketPrice = 10000;
         ecoSettings.settings.forEach(setting => {
-            if(setting.name === 'LotteryTicketPrice') {
+            if (setting.name === 'LotteryTicketPrice') {
                 ticketPrice = Math.round(Number(setting.value));
             }
         })
-        if(ticketPrice === NaN) return message.channel.send('Invalid ticket price. Ask an admin to check the lottery ticket price setting.');
+        if (ticketPrice === NaN) return message.channel.send('Invalid ticket price. Ask an admin to check the lottery ticket price setting.');
 
         let buyAmount = `${Math.round(args[0])}`;
-        if(buyAmount === 'NaN') {
+        if (buyAmount === 'NaN') {
             message.reply(`Invalid Argument One. Please enter the amount of tickets you would like to purchase after the command.\nPrice: ${ticketPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} / ticket`)
-            return 
+            return
         }
         let totalPrice = ticketPrice * parseInt(buyAmount);
-        if(playerEco.currency < totalPrice) { // If player does not have enough tokens
-            if(playerEco.vault < totalPrice) {
+        if (playerEco.currency < totalPrice) { // If player does not have enough tokens
+            if (playerEco.vault < totalPrice) {
                 message.reply(`You do not have enough tokens to purchase ${buyAmount} tickets. \nTotal Price: ${totalPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`)
-                return 
+                return
             } else {
                 message.reply(`Please withdraw your tokens from your vault to purchase ${buyAmount} tickets. \nTotal Price: ${totalPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`)
-                return 
+                return
             }
         }
         let potDoc = await lotteryPotModel.findOne({
@@ -58,7 +63,7 @@ module.exports = {
         playerEco.currency = parseInt(playerEco.currency) - totalPrice;
         playerEco.save();
         let iterations = parseInt(buyAmount)
-        for(let i = 0; i < iterations; i++) {
+        for (let i = 0; i < iterations; i++) {
             let ran1 = Math.floor(Math.random() * 9);
             let ran2 = Math.floor(Math.random() * 9);
             let ran3 = Math.floor(Math.random() * 9);
@@ -72,7 +77,7 @@ module.exports = {
             await create.save();
         }
         message.reply(`Successfully purchased ${buyAmount} tickets. Use c!tickets to view your current tickets and lucky numbers!`)
-        return 
+        return
 
 
     }

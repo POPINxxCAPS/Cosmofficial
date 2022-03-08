@@ -9,7 +9,12 @@ module.exports = {
     aliases: ['rob'],
     description: "Grants small amount of currency",
     permissions: ["SEND_MESSAGES"],
-    async execute(message, args, cmd, client, discord, mainGuild, guild, playerEco) {
+    async execute(req) {
+        const message = req.message;
+        const discord = req.discord;
+        const mainGuild = req.mainGuild;
+        const guild = req.guild;
+        const playerEco = req.playerEco;
         let guildOwner = mainGuild.members.cache.get(message.guild.owner.user.id);
         let economyPackage;
         if (guildOwner.roles.cache.has('854236270129971200') || guildOwner.roles.cache.has('883535930630213653') || guildOwner.roles.cache.has('883534965650882570')) {
@@ -19,12 +24,12 @@ module.exports = {
 
 
         const target = message.mentions.users.first();
-        if(!target) return errorEmbed(message.channel, 'You must mention a player to rob.')
+        if (!target) return errorEmbed(message.channel, 'You must mention a player to rob.')
         let targetDoc = await playerEcoModel.findOne({
             userID: target.id,
             guildID: message.guild.id
         })
-        if(targetDoc === null) return errorEmbed(message.channel, 'That user does not exist in the database.')
+        if (targetDoc === null) return errorEmbed(message.channel, 'That user does not exist in the database.')
 
         let ecoSettings = await economyModel.findOne({
             guildID: message.guild.id,
@@ -40,14 +45,14 @@ module.exports = {
             }
         })
 
-        
-        
+
+
         // Check for premium
         let bonusRobPercent = 0;
         let cooldownModifier = 1;
         const memberTarget = guild.members.cache.find(member => member.id === message.author.id);
         let memberTargetMainGuild = mainGuild.members.cache.find(member => member.id === message.author.id);
-        if(memberTargetMainGuild !== undefined) {
+        if (memberTargetMainGuild !== undefined) {
             if (memberTargetMainGuild.roles.cache.has('883564759541243925')) {
                 bonusRobPercent += 0.05
                 cooldownModifier -= 0.1
@@ -59,7 +64,7 @@ module.exports = {
             if (memberTargetMainGuild.roles.cache.has('883564396587147275')) {
                 bonusRobPercent += 0.15
                 cooldownModifier -= 0.3
-    
+
             }
             if (memberTargetMainGuild.roles.cache.has('889505618203918366')) {
                 bonusRobPercent += 0.3
@@ -70,11 +75,11 @@ module.exports = {
                 cooldownModifier -= 0.5
             }
         }
-        
-        
+
+
         cdInSec = cdInSec * cooldownModifier;
         const cooldown = await cooldownFunction.cd('rob', cdInSec, message)
-        if(cooldown !== undefined) return cooldownEmbed(message.channel, cooldown, 'Rob', message.author.id);
+        if (cooldown !== undefined) return cooldownEmbed(message.channel, cooldown, 'Rob', message.author.id);
         // Set reward Amount
         let robPerc = 0.1 + bonusRobPercent;
 

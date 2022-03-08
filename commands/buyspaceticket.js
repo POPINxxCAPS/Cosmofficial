@@ -15,7 +15,11 @@ module.exports = {
     aliases: ['bst'],
     description: "Buy a space ticket",
     permissions: ["SEND_MESSAGES"],
-    async execute(message, args, cmd, client, discord, mainGuild, guild, playerEco) {
+    async execute(req) {
+        const message = req.message;
+        const discord = req.discord;
+        const guild = req.guild;
+        const playerEco = req.playerEco;
         if (guild.id !== '799685703910686720') return;
         let verDoc = await verificationModel.findOne({
             userID: message.author.id

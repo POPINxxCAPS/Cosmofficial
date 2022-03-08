@@ -8,7 +8,11 @@ module.exports = {
   aliases: ['players'],
   description: "List online players",
   permissions: ["SEND_MESSAGES"],
-  async execute(message, args, cmd, client, discord, mainGuild, guild) {
+  async execute(req) {
+    const message = req.message;
+    const discord = req.discord;
+    const mainGuild = req.mainGuild;
+    const guild = req.guild;
     let current_time = Date.now();
 
     // Check if owner has adminstration package
@@ -54,7 +58,7 @@ module.exports = {
             value: `Faction: ${doc.factionName}\nFaction Tag: ${doc.factionTag}\nLogged in for: ${ms((current_time - parseInt(doc.lastLogin)))}\nAverage Playtime: ${ms(averageLogin)}`
           })
         })
-        if(playerDocs.length === 0) {
+        if (playerDocs.length === 0) {
           embed.setDescription('No players online!')
         }
       }

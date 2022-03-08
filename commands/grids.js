@@ -57,7 +57,11 @@ module.exports = {
     aliases: ['grids'],
     description: "Lookup top grids, optionally of a player",
     permissions: ["SEND_MESSAGES"],
-    async execute(message, args, cmd, client, discord, mainGuild, guild) {
+    async execute(req) {
+        const message = req.message;
+        const args = req.args;
+        const discord = req.discord;
+        const guild = req.guild;
         // Confirm server has been configured before attempting the command.
         let configCheck = await remoteConfigModel.findOne({
             guildID: guild.id

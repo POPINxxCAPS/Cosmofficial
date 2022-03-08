@@ -4,7 +4,9 @@ module.exports = {
     aliases: ['invite'],
     description: "List server chat messages",
     permissions: ["SEND_MESSAGES"],
-    async execute(message, args, cmd, client, discord, mainGuild, guild, playerEco) {
+    async execute(req) {
+        const message = req.message;
+        const discord = req.discord;
         const embed =  new discord.MessageEmbed()
         .setColor('#E02A6B')
         .setTitle(`Cosmofficial Invite Link`)

@@ -7,7 +7,10 @@ module.exports = {
     aliases: ["t", "ticket"],
     permissions: ["SEND_MESSAGES"],
     description: "Views your lottery tickets",
-    async execute(message, args, cmd, client, discord, mainGuild, guild, playerEco) {
+    async execute(req) {
+        const message = req.message;
+        const discord = req.discord;
+        const mainGuild = req.mainGuild;
         let guildOwner = mainGuild.members.cache.get(message.guild.owner.user.id);
         if (!guildOwner) return message.channel.send('The owner of this discord must be in the Cosmofficial discord to enable usage of this command.');
 

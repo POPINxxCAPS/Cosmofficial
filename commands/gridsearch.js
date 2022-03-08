@@ -7,7 +7,10 @@ module.exports = {
     aliases: ['gs'],
     description: "Check the database for a specific grid name",
     permissions: ["SEND_MESSAGES"],
-    async execute(message, args, cmd, client, discord, mainGuild, guild) {
+    async execute(req) {
+        const message = req.message;
+        const args = req.args;
+        const discord = req.discord;
         let searchTerm = args[0];
         for (let i = 1; i < args.length; i++) {
             searchTerm = searchTerm + ' ' + `${args[i]}`;
