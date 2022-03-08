@@ -1,8 +1,4 @@
-const {
-    filterBySearch
-} = require('../lib/modifiers');
 const serverPath = '/v1/server';
-
 
 const axios = require('axios');
 const crypto = require('crypto');
@@ -82,11 +78,10 @@ module.exports = async (config) => {
             });
     };
 
-    const info = () => send('GET', serverPath);
-    let data
-    await info().then(res => {
-        data = res
+    const info = async () => send('GET', serverPath);
+    let data;
+    await info().then(result => {
+        data = result
     })
-
     return data;
 }

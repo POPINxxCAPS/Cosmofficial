@@ -83,8 +83,8 @@ module.exports = async (client) => {
                 gridQueryDelay: gridQueryDelay,
                 characterDocsCache: characterDocs
             }
-            logStatus(req); // Specific Ordering. Do not await this one because it needs to be able to fail without causing issues for a var update
-            logFloatingObjs(req); // This doesn't need anything special
+            await logStatus(req); // Specific Ordering
+            await logFloatingObjs(req); // This doesn't need anything special
             await logChat(req);
             await logPlayers(req);
             await logCharacters(req);

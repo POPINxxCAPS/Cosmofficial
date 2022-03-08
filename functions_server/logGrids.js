@@ -47,6 +47,7 @@ module.exports = async (req) => {
     const guild = client.guilds.cache.get(guildID);
     const mainGuild = client.guilds.cache.get("853247020567101440");
 
+    if(guild.owner === null) return null;
     let guildOwner = mainGuild.members.cache.get(guild.owner.user.id);
     if (!guildOwner) return null; // If guild owner is no longer in Cosmofficial discord
 
@@ -60,7 +61,6 @@ module.exports = async (req) => {
     const expirationInSeconds = 3600;
     const expiration_time = current_time + (expirationInSeconds * 1000);
     let gridData = await queryGrids(config)
-
 
     let entityIDs = [];
     let factionTagCache = [];
