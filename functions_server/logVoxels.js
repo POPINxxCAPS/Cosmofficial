@@ -9,7 +9,7 @@ module.exports = async (req, res) => {
     const config = req.config;
     const settings = req.settings;
     if (settings.serverOnline === 'false' || settings.serverOnline === undefined || settings.serverOnline === false) return;
-    req.expirationInSeconds = req.voxelQueryDelay / 1000 || 600;
+    req.expirationInSeconds = (req.voxelQueryDelay * 10) / 1000 || 600;
     req.name = 'logVoxels'
     const timerCheck = await timerFunction(req)
     if (timerCheck === true) return null; // If there is a timer, cancel.

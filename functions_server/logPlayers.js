@@ -17,7 +17,7 @@ module.exports = async (req) => {
     const client = req.client;
     const verificationCache = req.verDocs
     if (settings.serverOnline === false || settings.serverOnline === undefined) return;
-    req.expirationInSeconds = 60;
+    req.expirationInSeconds = req.gridQueryDelay / 2 || 60;
     req.name = 'logPlayers'
     const timerCheck = await timerFunction(req)
     if (timerCheck === true) return; // If there is a timer, cancel.
@@ -200,7 +200,7 @@ module.exports = async (req) => {
                 if (playerEcoDoc === null) continue;
                 // If player eco doc found, update telemetry and reward with tokens
                 let rewardModifier = 1; // Future use with quests + alliance bonuses
-                let rewardAmount = Math.round(((onlinePlayerReward * 60) * rewardModifier))
+                let rewardAmount = Math.round(((onlinePlayerReward * req.expirationInSeconds) * rewardModifier))
                 console.log(`${verificationDoc.username} Given ${rewardAmount} with ${rewardModifier} reward modifier`)
 
                 let statFound = false;

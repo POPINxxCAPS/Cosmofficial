@@ -14,7 +14,7 @@ module.exports = async (req) => {
     let current_time = Date.now();
     const expirationInSeconds = 29;
     const expiration_time = current_time + (expirationInSeconds * 1000);
-    req.expirationInSeconds = 30;
+    req.expirationInSeconds = req.gridQueryDelay / 2 || 30;
     req.name = 'logCharacters'
     const timer = await timerFunction(req);
     if (timer === true) return null; // If there is a timer, cancel.
@@ -64,7 +64,6 @@ module.exports = async (req) => {
         }
     };
     await characterModel.insertMany(insertData);
-    await serverLogModel.insertMany(SLinsertData);
 
 
     // Clear expired (dead) characters
@@ -74,13 +73,17 @@ module.exports = async (req) => {
     characterDocs.forEach(async doc => {
         if (entityIDs.includes(doc.entityID) === false) {
             console.log(`${doc.name} died`)
-            await SLModel.create({
+            let SLdoc = {
                 guildID: guildID,
                 category: 'character',
                 string: `${doc.name} Died`
-            })
+            }
+            SLinsertData.push(SLdoc)
             doc.remove();
         }
     })
+
+    await serverLogModel.insertMany(SLinsertData);
+
     return;
 }
