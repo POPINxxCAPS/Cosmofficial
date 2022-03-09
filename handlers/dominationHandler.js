@@ -143,29 +143,6 @@ module.exports = async (client, discord) => {
                                 // If they are in the discord, check for any modifiers that need to be applied
                                 if (memberTarget !== null && memberTarget !== undefined) {
                                     let rewardModifier = 1 // Set reward Modifier
-                                    let patronCheck = await mainGuild.members.cache.get(verDoc.userID)
-                                    if (patronCheck !== undefined && patronCheck !== null) {
-                                        if (patronCheck.roles.cache.has('883564759541243925')) {
-                                            rewardModifier += .35
-                                            cooldownModifier -= .1
-                                        }
-                                        if (patronCheck.roles.cache.has('883563886815617025')) {
-                                            rewardModifier += .7
-                                            cooldownModifier -= .2
-                                        }
-                                        if (patronCheck.roles.cache.has('883564396587147275')) {
-                                            rewardModifier += 1.15
-                                            cooldownModifier -= .3
-                                        }
-                                        if (patronCheck.roles.cache.has('883564396587147275')) {
-                                            rewardModifier += 3
-                                            cooldownModifier -= .3
-                                        }
-                                        if (patronCheck.roles.cache.has('889505714815504405')) {
-                                            rewardModifier += 6.5
-                                        }
-                                    } // Check if patron, add reward modifier if true
-
                                     let playerEcoDoc = await playerEcoModel.findOne({ // Find playerEcoDoc using verification userID
                                         guildID: guildID,
                                         userID: verDoc.userID

@@ -15,7 +15,7 @@ module.exports = async (req) => {
     const expirationInSeconds = 29;
     const expiration_time = current_time + (expirationInSeconds * 1000);
     req.expirationInSeconds = (req.gridQueryDelay / 5) / 1000 || 20;
-    if(req.expirationInSeconds < 20) req.expirationInSeconds = 20;
+    if (req.expirationInSeconds < 20) req.expirationInSeconds = 20;
     req.name = 'logCharacters'
     const timer = await timerFunction(req);
     if (timer === true) return null; // If there is a timer, cancel.
@@ -25,35 +25,31 @@ module.exports = async (req) => {
     let entityIDs = [];
     for (let i = 0; i < characterData.length; i++) {
         let char = characterData[i];
-        if (char.DisplayName !== '') {
-            entityIDs.push(char.EntityId)
-        }
-        let doc = char.DisplayName === '' ? null : await characterModel.findOne({
+        entityIDs.push(char.EntityId)
+        let doc = await characterModel.findOne({
             guildID: guildID,
             entityID: char.EntityId
         })
         if (doc === null || doc === undefined) {
-            if (char.DisplayName !== '') {
-                console.log(`t${char.DisplayName}t`)
-                let doc = {
-                    guildID: guildID,
-                    name: char.DisplayName,
-                    mass: char.Mass,
-                    entityID: char.EntityId,
-                    expirationTime: expiration_time,
-                    x: char.Position.X,
-                    y: char.Position.Y,
-                    z: char.Position.Z
-                }
-                insertData.push(doc)
-                console.log(`${char.DisplayName} Spawned`)
-                let SLDoc = {
-                    guildID: guildID,
-                    category: 'character',
-                    string: `${char.DisplayName} Spawned`
-                }
-                SLinsertData.push(SLDoc);
+            if (char.DisplayName === '') continue;
+            let doc = {
+                guildID: guildID,
+                name: char.DisplayName,
+                mass: char.Mass,
+                entityID: char.EntityId,
+                expirationTime: expiration_time,
+                x: char.Position.X,
+                y: char.Position.Y,
+                z: char.Position.Z
             }
+            insertData.push(doc)
+            console.log(`${char.DisplayName} Spawned`)
+            let SLDoc = {
+                guildID: guildID,
+                category: 'character',
+                string: `${char.DisplayName} Spawned`
+            }
+            SLinsertData.push(SLDoc);
         } else {
             doc.mass = char.Mass;
             doc.entityID = char.EntityId;

@@ -9,7 +9,7 @@ async function createInvite(client, guildID) {
   maxAge: 600,
   maxUses: 5
 })
-   .then(inv => { invite = inv.code });
+   .then(inv => { invite = inv.code }).catch(err => {});
  return `https://discord.gg/${invite}`
 }
 

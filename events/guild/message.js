@@ -134,7 +134,7 @@ module.exports = async (discord, client, message) => {
     }
 
     // Making it more "restful"
-    const req = {}
+    let req = {};
     req.message = message;
     req.args = args;
     req.cmd = cmd;
@@ -144,7 +144,6 @@ module.exports = async (discord, client, message) => {
     req.guild = guild;
     req.playerEco = playerEco;
     command.execute(req); // Doing this will require recoding all commands, so disabling for now.
-    command.execute(message, args, cmd, client, discord, mainGuild, guild, playerEco);
   } catch (err) {
     message.reply("There was an error trying to execute this command!");
     console.log(err);

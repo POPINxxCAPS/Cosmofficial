@@ -14,7 +14,7 @@ module.exports = {
         const args = req.args;
         const discord = req.discord;
         const mainGuild = req.mainGuild;
-        const playerEco = req.playerEc
+        const playerEco = req.playerEco;
         let guildOwner = mainGuild.members.cache.get(message.guild.owner.user.id);
         if(!guildOwner) return message.channel.send('The owner of this discord must be in the Cosmofficial discord to enable usage of this command.');
 
