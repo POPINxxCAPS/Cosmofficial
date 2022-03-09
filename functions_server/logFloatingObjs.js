@@ -2,12 +2,12 @@ const floatingObjectModel = require('../models/floatingObjectSchema');
 const queryFloatingObjs = require("../functions_execution/queryFloatingObjs");
 const timerFunction = require('../functions_db/timerFunction');
 
-let entityIDs = [];
-let insertData = [];
 module.exports = async (req) => {
     const guildID = req.guildID;
     const config = req.config;
     const settings = req.settings;
+    let entityIDs = [];
+    let insertData = [];
     if (settings.serverOnline === false || settings.serverOnline === undefined) return;
 
 
@@ -15,7 +15,7 @@ module.exports = async (req) => {
     const expirationInSeconds = 59;
     const expiration_time = current_time + (expirationInSeconds * 1000);
     req.expirationInSeconds = (req.gridQueryDelay * 0.75) / 1000 || 30;
-    if(req.expirationInSeconds < 30) req.expirationInSeconds = 30;
+    if (req.expirationInSeconds < 30) req.expirationInSeconds = 30;
     req.name = 'logFloatingObjs'
     const timer = await timerFunction(req);
     if (timer === true) return null; // If there is a timer, cancel.

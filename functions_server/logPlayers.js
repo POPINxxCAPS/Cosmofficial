@@ -8,17 +8,17 @@ const serverLogModel = require('../models/serverLogSchema');
 const queryPlayers = require('../functions_execution/queryPlayers');
 const timerFunction = require('../functions_db/timerFunction')
 
-const insertData = [];
-const SLinsertData = [];
 module.exports = async (req) => {
     const guildID = req.guildID;
     const config = req.config;
     const settings = req.settings;
     const client = req.client;
     const verificationCache = req.verDocs
+    let insertData = [];
+    let SLinsertData = [];
     if (settings.serverOnline === false || settings.serverOnline === undefined) return;
     req.expirationInSeconds = (req.gridQueryDelay / 2) / 1000 || 30;
-    if(req.expirationInSeconds < 30) req.expirationInSeconds = 30;
+    if (req.expirationInSeconds < 30) req.expirationInSeconds = 30;
     req.name = 'logPlayers'
     const timerCheck = await timerFunction(req)
     if (timerCheck === true) return; // If there is a timer, cancel.
@@ -206,7 +206,7 @@ module.exports = async (req) => {
 
                 let statFound = false;
                 // Stat tracking stuff for future use. Ugly, but works
-                for(let s = 0; s < playerEcoDoc.statistics.length; s++) {
+                for (let s = 0; s < playerEcoDoc.statistics.length; s++) {
                     if (playerEcoDoc.statistics[s].name === 'OnlineRewardReceived') {
                         playerEcoDoc.statistics[s].value = Number(playerEcoDoc.statistics[s].value) + rewardAmount;
                         statFound = true;

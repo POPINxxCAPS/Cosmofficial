@@ -2,15 +2,16 @@ const asteroidModel = require('../models/asteroidSchema');
 const timerFunction = require('../functions_db/timerFunction');
 const queryVoxels = require('../functions_execution/queryVoxels')
 // "Asteroids" in the remote API path are actually modified voxel information.
-let entityIDs = []; // Holding variable for the document deletions
-let insertData = [];
+
 module.exports = async (req, res) => {
     const guildID = req.guildID;
     const config = req.config;
     const settings = req.settings;
+    let entityIDs = []; // Holding variable for the document deletions
+    let insertData = [];
     if (settings.serverOnline === 'false' || settings.serverOnline === undefined || settings.serverOnline === false) return;
     req.expirationInSeconds = (req.voxelQueryDelay * 10) / 1000 || 600;
-    if(req.expirationInSeconds < 600) req.expirationInSeconds = 600;
+    if (req.expirationInSeconds < 600) req.expirationInSeconds = 600;
     req.name = 'logVoxels'
     const timerCheck = await timerFunction(req)
     if (timerCheck === true) return null; // If there is a timer, cancel.

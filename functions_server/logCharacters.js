@@ -3,12 +3,12 @@ const serverLogModel = require('../models/serverLogSchema');
 const queryCharacters = require('../functions_execution/queryCharacters');
 const timerFunction = require('../functions_db/timerFunction');
 
-let insertData = [];
-let SLinsertData = [];
 module.exports = async (req) => {
     const guildID = req.guildID;
     const settings = req.settings;
     const config = req.config;
+    let insertData = [];
+    let SLinsertData = [];
 
     if (settings.serverOnline === false || settings.serverOnline === undefined) return;
     let current_time = Date.now();
@@ -30,6 +30,7 @@ module.exports = async (req) => {
             guildID: guildID,
             entityID: char.EntityId
         })
+        console.log(doc)
         if (doc === null || doc === undefined) {
             if (char.DisplayName === '') continue;
             let doc = {
@@ -60,6 +61,7 @@ module.exports = async (req) => {
             doc.save().catch(err => {});
         }
     };
+    console.log(insertData)
     await characterModel.insertMany(insertData);
 
 
