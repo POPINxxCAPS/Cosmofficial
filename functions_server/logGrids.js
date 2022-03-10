@@ -66,6 +66,7 @@ module.exports = async (req) => {
     let factionTagCache = [];
     if (gridData !== [] && gridData !== undefined && gridData.length !== 0) { // If queries are not broken, handle the data.
         for (let i = 0; i < gridData.length; i++) {
+            if(gridData[i] === undefined) continue;
             spawnerGridHandler(guildID, gridData[i]) // Spawner Grid Handler/checker/Exploit Prevention
             entityIDs.push(gridData[i].EntityId) // Add the grid's entity ID to the "existing" list
             const singleGrid = gridData[i];
