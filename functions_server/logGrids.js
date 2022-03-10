@@ -84,7 +84,11 @@ module.exports = async (req) => {
             let nearbyChars = await getNearbyCharacters(guildID, singleGrid.Position.X, singleGrid.Position.Y, singleGrid.Position.Z, factionTag, 15000, req.allianceCache, req.characterDocsCache);
             let nearbyGrids = await getNearbyGrids(guildID, singleGrid.Position.X, singleGrid.Position.Y, singleGrid.Position.Z, factionTag, 15000, gridDocsCache, req.allianceCache);
 
-            let gridDoc = gridDocsCache.find(doc => doc.entityID === singleGrid.EntityId)
+            let gridDoc;
+            try {
+              gridDoc = gridDocsCache.find(doc => doc.entityID === singleGrid.EntityId)
+            } catch(err) {}
+            if(gridDoc === undefined) continue;       
             let cacheIndex;
             if (gridDoc === null || gridDoc === undefined) { // Attempt to download doc if not in the cache
                 gridDoc = await gridModel.findOne({
