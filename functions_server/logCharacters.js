@@ -30,7 +30,6 @@ module.exports = async (req) => {
             guildID: guildID,
             entityID: char.EntityId
         })
-        console.log(doc)
         if (doc === null || doc === undefined) {
             if (char.DisplayName === '') continue;
             let doc = {
@@ -61,9 +60,7 @@ module.exports = async (req) => {
             doc.save().catch(err => {});
         }
     };
-    console.log(insertData)
     await characterModel.insertMany(insertData);
-
 
     // Clear expired (dead) characters
     let characterDocs = await characterModel.find({

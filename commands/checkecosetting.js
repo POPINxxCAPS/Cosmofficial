@@ -5,66 +5,36 @@ let settingArray = [{
     name: 'CurrencyName',
     value: `Name Not Set`,
     description: 'Sets your currency name.',
-    ecoRequired: true,
-    adminRequired: false,
-    mappingRequired: false,
-    eventRequired: false
 }, {
     name: 'StartingBalance',
     value: `50000`,
     description: 'Sets default starting balance.',
-    ecoRequired: true,
-    adminRequired: false,
-    mappingRequired: false,
-    eventRequired: false
 }, {
     name: 'OnlinePlayerReward',
     value: `1`,
     description: 'Sets value to give online players (per second)',
-    ecoRequired: true,
-    adminRequired: false,
-    mappingRequired: false,
-    eventRequired: false
 }, {
     name: 'TimelyReward',
     value: `5000`,
     description: 'Sets max timely reward.',
-    ecoRequired: true,
-    adminRequired: false,
-    mappingRequired: false,
-    eventRequired: false
 }, {
     name: 'TimelyCooldown',
     value: `3600`,
     description: 'Sets max timely cooldown (In seconds).',
-    ecoRequired: true,
-    adminRequired: false,
-    mappingRequired: false,
-    eventRequired: false
 }, {
     name: 'HotzoneReward',
     value: `500000`,
     description: 'Sets total/max amount of tokens to reward per zone.',
-    ecoRequired: true,
-    adminRequired: false,
-    mappingRequired: false,
-    eventRequired: true
 }, {
     name: 'LotteryTicketPrice',
     value: `10000`,
     description: 'Sets ticket price for lottery. 0.1% win chance per ticket.',
-    ecoRequired: true,
-    adminRequired: false,
-    mappingRequired: false,
-    eventRequired: false
+
 }, {
     name: 'LotteryChannel',
     value: `Not Set`,
     description: 'Sets the channel for the lottery system. Accepts a channel ID.',
-    ecoRequired: true,
-    adminRequired: false,
-    mappingRequired: false,
-    eventRequired: false
+
 }]
 
 
@@ -84,23 +54,6 @@ module.exports = {
 
         let guildOwner = mainGuild.members.cache.get(message.guild.owner.user.id);
         if (!guildOwner || guildOwner === null || guildOwner === undefined) return message.channel.send('The owner of this discord must be in the Cosmofficial discord to enable usage of this command.');
-        let pvpEventPackage;
-        let administrationPackage;
-        let mappingPackage;
-        let economyPackage;
-        if (guildOwner.roles.cache.has('883535682553929779') || guildOwner.roles.cache.has('883535930630213653') || guildOwner.roles.cache.has('883534965650882570')) {
-            administrationPackage = true;
-        }
-        if (guildOwner.roles.cache.has('854211115915149342') || guildOwner.roles.cache.has('883535930630213653') || guildOwner.roles.cache.has('883534965650882570')) {
-            pvpEventPackage = true;
-        }
-        if (guildOwner.roles.cache.has('883535470250831912') || guildOwner.roles.cache.has('883535930630213653') || guildOwner.roles.cache.has('883534965650882570')) {
-            mappingPackage = true;
-        }
-        if (guildOwner.roles.cache.has('854236270129971200') || guildOwner.roles.cache.has('883535930630213653') || guildOwner.roles.cache.has('883534965650882570')) {
-            economyPackage = true;
-        }
-
 
         let settings = await economySettings.findOne({
             guildID: guild.id
@@ -135,20 +88,6 @@ module.exports = {
             .setFooter('Cosmofficial by POPINxxCAPS');
 
         settings.settings.forEach(setting => {
-            let locked;
-            if (setting.adminRequired === true && administrationPackage === false) {
-                locked = true
-            }
-            if (setting.mappingRequired === true && mappingPackage === false) {
-                locked = true
-            }
-            if (setting.eventRequired === true && pvpEventPackage === false) {
-                locked = true
-            }
-            if (setting.ecoRequired === true && economyPackage === false) {
-                locked = true
-            }
-
             if (locked === true) {
                 embed.addFields({
                     name: `${setting.name}`,
