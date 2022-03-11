@@ -15,7 +15,8 @@ module.exports = async (guildID) => {
             description: 'Your Remote API IP Address.',
             category: 'remote',
             setting: 'ip',
-            value: 'Not Set'
+            value: 'Not Set',
+            valueType: 'string'
         })
     }
     config.push(ip);
@@ -32,7 +33,8 @@ module.exports = async (guildID) => {
             description: 'Your Remote API Port.',
             category: 'remote',
             setting: 'port',
-            value: 'Not Set'
+            value: 'Not Set',
+            valueType: 'number'
         })
     }
     config.push(port);
@@ -49,7 +51,8 @@ module.exports = async (guildID) => {
             description: 'Your Remote API Secret.',
             category: 'remote',
             setting: 'secret',
-            value: 'Not Set'
+            value: 'Not Set',
+            valueType: 'string'
         })
     }
     config.push(secret);

@@ -6,7 +6,8 @@ const newSettingSchema = new mongoose.Schema({
     category: { type: String },
     setting: { type: String },
     description: { type: String },
-    value: { type: String }
+    value: { type: String },
+    valueType: { type: String }
 });
 // End Main Schema
 

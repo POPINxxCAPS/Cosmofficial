@@ -8,33 +8,45 @@ module.exports = async (guildID) => {
     let settings = [];
     const remoteConfig = await getRemoteConfig(guildID);
     const remoteConfigObj = {
+        displayName: 'Remote API Setup',
         name: 'remote',
-        aliases: [],
-        settings: remoteConfig
+        description: `Edit your Remote API Connection information.`,
+        aliases: ['r'],
+        settings: remoteConfig,
+        guildOwnerOnly: true
     }
     settings.push(remoteConfigObj)
 
     const economySettings = await getEconomySettings(guildID);
     const economySettingsObj = {
+        displayName: 'Economy Settings',
         name: 'economy',
-        aliases: [],
-        settings: economySettings
+        description: 'Edit various economy settings.',
+        aliases: ['e'],
+        settings: economySettings,
+        patronReq: true,
     }
     settings.push(economySettingsObj)
     
     const lotterySettings = await getLotterySettings(guildID);
     const lotterySettingsObj = {
+        displayName: 'Lottery Settings',
         name: 'lottery',
-        aliases: [],
-        settings: lotterySettings
+        description: 'Edit settings for the lottery system.',
+        aliases: ['l'],
+        settings: lotterySettings,
+        patronReq: true
     }
     settings.push(lotterySettingsObj)
 
     const hotzoneSettings = await getHotzoneSettings(guildID);
     const hotzoneSettingsObj = {
+        displayName: 'Hotzone (KoTH) Settings',
         name: 'hotzone',
-        aliases: [],
-        settings: hotzoneSettings
+        description: 'Edit configuration for the Hotzone mini-game.',
+        aliases: ['h'],
+        settings: hotzoneSettings,
+        patronReq: true
     }
     settings.push(hotzoneSettingsObj)
 

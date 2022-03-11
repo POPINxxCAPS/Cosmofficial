@@ -15,7 +15,8 @@ module.exports = async (guildID) => {
             category: 'lottery',
             description: 'Price for one lottery ticket.\n(0.01% Win chance per unique ticket)',
             setting: 'ticketprice',
-            value: 'Not Set'
+            value: 'Not Set',
+            valueType: 'number'
         })
     }
     settings.push(ticketPrice);

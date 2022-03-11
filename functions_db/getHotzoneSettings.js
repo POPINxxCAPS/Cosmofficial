@@ -15,7 +15,8 @@ module.exports = async (guildID) => {
             category: 'hotzone',
             description: 'Is hotzone enabled, true/false.',
             setting: 'enabled',
-            value: 'false'
+            value: 'false',
+            valueType: 'boolean'
         })
     }
     settings.push(enabled);
@@ -33,7 +34,8 @@ module.exports = async (guildID) => {
             category: 'hotzone',
             description: 'How long between each zone. (4d, 2h, etc.)',
             setting: 'interval',
-            value: 'Not Set'
+            value: 'Not Set',
+            valueType: 'time'
         })
     }
     settings.push(interval);
@@ -51,7 +53,8 @@ module.exports = async (guildID) => {
             category: 'hotzone',
             description: 'How long each zone lasts. (4d, 2h, etc.)',
             setting: 'timer',
-            value: 'Not Set'
+            value: 'Not Set',
+            valueType: 'time'
         })
     }
     settings.push(timer);
@@ -69,7 +72,8 @@ module.exports = async (guildID) => {
             category: 'hotzone',
             description: 'Amount to reward (per-sec).',
             setting: 'reward',
-            value: 'Not Set'
+            value: 'Not Set',
+            valueType: 'number'
         })
     }
     settings.push(reward);
@@ -83,11 +87,12 @@ module.exports = async (guildID) => {
     if (bonus === null) {
         bonus = await settingsModel.create({
             guildID: guildID,
-            displayName: 'Hotzone Reward',
+            displayName: 'Hotzone Bonus',
             category: 'hotzone',
             description: 'Amount to reward as a bonus at the end of a zone timer.',
             setting: 'bonus',
-            value: 'Not Set'
+            value: 'Not Set',
+            valueType: 'number'
         })
     }
     settings.push(bonus);
@@ -105,7 +110,8 @@ module.exports = async (guildID) => {
             category: 'hotzone',
             description: 'Radius from the GPS players/grids should be detected. (Meters)',
             setting: 'radius',
-            value: 'Not Set'
+            value: 'Not Set',
+            valueType: 'number'
         })
     }
     settings.push(radius);
@@ -122,7 +128,8 @@ module.exports = async (guildID) => {
             category: 'hotzone',
             description: 'Radius from x0 y0 z0 the Hotzone can spawn. (Meters)',
             setting: 'range',
-            value: 'Not Set'
+            value: 'Not Set',
+            valueType: 'number'
         })
     }
     settings.push(range);

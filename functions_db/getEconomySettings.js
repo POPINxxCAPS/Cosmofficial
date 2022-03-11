@@ -13,9 +13,10 @@ module.exports = async (guildID) => {
             guildID: guildID,
             displayName: 'Currency Name',
             category: 'economy',
-            description: 'Sets your currency name (EX: Space Credits)',
+            description: 'Sets your currency name (EX: Space-Credits)\n*Use hyphen or underscore for multiple word names.*',
             setting: 'currencyname',
-            value: 'Not Set'
+            value: 'Not Set',
+            valueType: 'string'
         })
     }
     settings.push(currencyName);
@@ -33,7 +34,8 @@ module.exports = async (guildID) => {
             category: 'economy',
             description: 'Starting balance for new players.',
             setting: 'startingbal',
-            value: 'Not Set'
+            value: 'Not Set',
+            valueType: 'number'
         })
     }
     settings.push(startingBal);
@@ -51,7 +53,8 @@ module.exports = async (guildID) => {
             category: 'economy',
             description: 'Amount (per-second) to grant online+verified players.',
             setting: 'onlinereward',
-            value: 'Not Set'
+            value: 'Not Set',
+            valueType: 'number'
         })
     }
     settings.push(onlineReward);
@@ -69,7 +72,8 @@ module.exports = async (guildID) => {
             category: 'economy',
             description: 'Amount to reward for c!time (1hr cooldown)',
             setting: 'timelyreward',
-            value: 'Not Set'
+            value: 'Not Set',
+            valueType: 'number'
         })
     }
     settings.push(timelyReward);
