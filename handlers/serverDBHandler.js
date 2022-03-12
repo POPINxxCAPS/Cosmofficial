@@ -1,6 +1,6 @@
-// Database Model Stuff
-const remoteConfigModel = require('../models/remoteConfigSchema');
-const getDiscordServerSettings = require('../functions_db/getDiscordServerSettings');
+// Settings stuff
+const getAllSettings = require('../functions_db/getAllSettings');
+const makeConfigVar = require('../functions_misc/makeConfigVar');
 
 // Query Functions
 const logStatus = require('../functions_server/logStatus');
@@ -38,13 +38,11 @@ module.exports = async (client) => {
                 continue;
             }; // Ignore Cosmofficial Discord
             // Discord Channel Settings (needs COMPLETE remodel) - This is just prep
-            let settings = await getDiscordServerSettings(guildID);
-
-            // Get config
-            let config = await remoteConfigModel.findOne({
-                guildID: guildID
-            })
-            if (config === null || settings === null) {
+            const settings = await getAllSettings(guildID);
+            // Pull config from settings
+            let config = await makeConfigVar(guildID, settings);
+            console.log(config)
+            if (config === null) {
                 queryIsRunning = false;
                 continue;
             }

@@ -1,4 +1,4 @@
-const remoteConfigModel = require('../models/remoteConfigSchema');
+const makeConfigVar = require('../functions_misc/makeConfigVar');
  
 module.exports = {
     name: 'setup',
@@ -9,7 +9,7 @@ module.exports = {
         const message = req.message;
         const args = req.args;
         const guild = req.guild;
-        let configCheck = await remoteConfigModel.findOne({guildID: guild.id}) // Check if config already created, if true, return message to channel
+        let configCheck = await makeConfigVar(guild.id) // Check if config already created, if true, return message to channel
         if(configCheck !== null) return message.channel.send('This discord already has a sever registered.\nUse (c!crs) c!checkremotesetup to view your current settings.\nUse c!editremotesetup <item> <newValue> to change your settings.');
         
         /*let sender = mainGuild.members.cache.get(message.author.id);

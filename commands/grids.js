@@ -1,4 +1,4 @@
-const remoteConfigModel = require('../models/remoteConfigSchema');
+const makeConfigVar = require('../functions_misc/makeConfigVar');
 const gridModel = require('../models/gridSchema');
 const verificationModel = require('../models/verificationSchema');
 const lockedEmbed = require('../functions_discord/lockedEmbed');
@@ -63,9 +63,7 @@ module.exports = {
         const discord = req.discord;
         const guild = req.guild;
         // Confirm server has been configured before attempting the command.
-        let configCheck = await remoteConfigModel.findOne({
-            guildID: guild.id
-        }) // Check if config already created, if true, return message to channel
+        let configCheck = await makeConfigVar(guild.id) // Check if config already created, if true, return message to channel
         if (configCheck === null) return errorEmbed(message.channel, 'This discord does not have a server registered.\nUse c!setup to add your remote configuration.');
 
         let gridData;

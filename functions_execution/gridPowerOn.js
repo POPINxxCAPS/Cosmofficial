@@ -1,4 +1,4 @@
-const remoteConfigModel = require('../models/remoteConfigSchema');
+const makeConfigVar = require('../functions_misc/makeConfigVar');
 const sessionPath = '/v1/session';
 const axios = require('axios');
 const crypto = require('crypto');
@@ -11,9 +11,7 @@ const querystring = require('querystring');
 
 
 module.exports = async (guildID, entityID) => {
-    const config = await remoteConfigModel.findOne({
-        guildID: guildID
-    })
+    const config = await makeConfigVar(guildID)
     if(config === null) return;
 
     const baseUrl = config.baseURL;

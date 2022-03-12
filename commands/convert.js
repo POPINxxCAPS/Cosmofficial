@@ -128,9 +128,7 @@ module.exports = {
         spawnerDoc.expirationTime = current_time + (seconds * 1000);
 
 
-        let config = await remoteConfigModel.findOne({
-            guildID: guild.id
-        }) // Check if config already created, if true, return message to channel
+        let config = await makeConfigVar(guild.id) // Check if config already created, if true, return message to channel
         if (config === null) return message.channel.send('This discord does not have a server registered.\nUse c!setup to add your remote configuration.');
 
         let ecoSettings = await economyModel.findOne({

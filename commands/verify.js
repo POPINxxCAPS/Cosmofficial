@@ -1,4 +1,4 @@
-const remoteConfigModel = require('../models/remoteConfigSchema');
+const makeConfigVar = require('../functions_misc/makeConfigVar');
 const verificationModel = require('../models/verificationSchema');
 const playerModel = require('../models/playerSchema');
 const errorEmbed = require('../functions_discord/errorEmbed');

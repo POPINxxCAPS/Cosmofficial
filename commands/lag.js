@@ -1,4 +1,4 @@
-const remoteConfigModel = require('../models/remoteConfigSchema');
+const makeConfigVar = require('../functions_misc/makeConfigVar');
 const statusModel = require('../models/statusSchema');
 const chartSimSpeed = require('../functions_db/chartSimSpeed');
 const ms = require('ms');
@@ -15,9 +15,7 @@ module.exports = {
     const guild = req.guild;
     const current_time = Date.now();
     // Check if command should be ran
-    let configCheck = await remoteConfigModel.findOne({
-      guildID: guild.id
-    }) // Check if config already created, if true, return message to channel
+    let configCheck = await makeConfigVar(guild.id) // Check if config already created, if true, return message to channel
     if (configCheck === null) return message.channel.send('This discord does not have a server registered.\nUse c!setup to add your remote configuration.');
 
     // End remote server info initialization

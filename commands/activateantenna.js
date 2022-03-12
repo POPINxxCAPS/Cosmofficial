@@ -135,9 +135,7 @@ module.exports = {
 
         if (cancel === true) return errorEmbed(message.channel, 'Please wait 5m after the server restart before activating.')
 
-        let config = await remoteConfigModel.findOne({
-            guildID: guild.id
-        }) // Check if config already created, if true, return message to channel
+        let config = await makeConfigVar(guild.id) // Check if config already created, if true, return message to channel
         if (config === null) return message.channel.send('This discord does not have a server registered.\nUse c!setup to add your remote configuration.');
 
         let ecoSettings = await economyModel.findOne({

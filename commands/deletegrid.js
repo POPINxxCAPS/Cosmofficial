@@ -1,7 +1,7 @@
 const verificationModel = require('../models/verificationSchema');
 const gridModel = require('../models/gridSchema');
 const errorEmbed = require('../functions_discord/errorEmbed');
-const remoteConfigModel = require('../models/remoteConfigSchema');
+const makeConfigVar = require('../functions_misc/makeConfigVar');
 
 const sessionPath = '/v1/session';
 const gridPath = `${sessionPath}/grids`;
@@ -35,9 +35,7 @@ module.exports = {
         }
         if (administrationPackage !== true) return errorEmbed(message.channel, 'This feature is locked.\nc!patreon');
 
-        let config = await remoteConfigModel.findOne({
-            guildID: message.guild.id
-        })
+        let config = await makeConfigVar(message.guild.id)
         const current_time = Date.now();
         const baseUrl = config.baseURL;
         const port = config.port;

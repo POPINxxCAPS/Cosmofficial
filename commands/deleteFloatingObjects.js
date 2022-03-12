@@ -1,4 +1,4 @@
-const remoteConfigModel = require('../models/remoteConfigSchema');
+const makeConfigVar = require('../functions_misc/makeConfigVar');
 const {demotePlayer, banPlayer, kickPlayer, promotePlayer} = require('../lib/admin');
 const sessionPath = '/v1/session';
 const {filterBySearch} = require('../lib/modifiers');
@@ -12,7 +12,7 @@ module.exports = {
     async execute(req) {
         const message = req.message;
         const guild = req.guild;
-        let config = await remoteConfigModel.findOne({guildID: guild.id}) // Check if config already created, if true, return message to channel
+        let config = await makeConfigVar(guild.id) // Check if config already created, if true, return message to channel
         if(config === null) return message.channel.send('This discord does not have a server registered.\nUse c!setup to add your remote configuration.');
 
 
