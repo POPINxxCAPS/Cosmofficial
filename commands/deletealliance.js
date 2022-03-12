@@ -1,12 +1,5 @@
-const lockedEmbed = require('../functions_discord/lockedEmbed');
 const errorEmbed = require('../functions_discord/errorEmbed');
-const gridModel = require('../models/gridSchema');
-const remoteConfigModel = require('../models/remoteConfigSchema')
-const chatModel = require('../models/chatSchema');
-const economyModel = require('../models/economySettingSchema');
 const allianceModel = require('../models/allianceSchema');
-const playerModel = require('../models/playerSchema');
-const verificationModel = require('../models/verificationSchema');
 
 module.exports = {
     name: 'deletealliance',

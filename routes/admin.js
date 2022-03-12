@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const statusModel = require('../models/statusSchema');
-const economySettingModel = require('../models/economySettingSchema');
 const getUser = require('../functions_oAuth/getUser');
 const verifyKey = require('../functions_oAuth/verifyKey');
 const checkPatron = require('../functions_misc/checkPatron');
+const makeEcoSettingVar = require('../functions_misc/makeEcoSettingVar');
 
 
 
@@ -14,9 +14,7 @@ router.get('/:guildID', getGuildID, verifyKey, async (req, res) => {
     const disClient = req.app.get('disClient')
 
     //let guild = await disClient.guilds.cache.get(res.server.guildID);
-    const economySettings = await economySettingModel.find({
-        guildID: res.server.guildID
-    })
+    const economySettings = await makeEcoSettingVar(req.server.guildID);
     const user = await getUser(req.cookies['doaKey'])
     const patron = await checkPatron(disClient, user._id, res.server.guildID)
 

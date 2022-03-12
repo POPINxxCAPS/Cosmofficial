@@ -1,9 +1,4 @@
-const playerEcoModel = require('../models/playerEcoSchema');
 const lockedEmbed = require('../functions_discord/lockedEmbed');
-const economyModel = require('../models/economySettingSchema');
-const {
-    VirtualType
-} = require('mongoose');
 module.exports = {
     name: 'deposit',
     aliases: ['dep'],
@@ -15,33 +10,8 @@ module.exports = {
         const discord = req.discord;
         const mainGuild = req.mainGuild;
         const playerEco = req.playerEco;
-        let guildOwner = mainGuild.members.cache.get(message.guild.owner.user.id);
-        if(!guildOwner) return message.channel.send('The owner of this discord must be in the Cosmofficial discord to enable usage of this command.');
-
-        let economyPackage;
-        if (guildOwner.roles.cache.has('854236270129971200') || guildOwner.roles.cache.has('883535930630213653') || guildOwner.roles.cache.has('883534965650882570')) {
-            economyPackage = true;
-        }
-        if (economyPackage !== true) return lockedEmbed(message.channel, discord);
-
-        let ecoSettings = await economyModel.findOne({
-            guildID: message.guild.id,
-        })
-        if(ecoSettings === null) {
-            return errorEmbed(message.channel, 'An admin must first setup economy with c!ces')
-        }
-        let currencyName;
-        ecoSettings.settings.forEach(setting => {
-            if(setting.name === 'CurrencyName') {
-                currencyName = setting.value;
-            }
-        })
-
-
-
-
-
-
+        const ecoSettings = req.ecoSettings;
+        const currencyName = ecoSettings.currencyName;
 
         let amount;
         if (args[0] === 'all') {

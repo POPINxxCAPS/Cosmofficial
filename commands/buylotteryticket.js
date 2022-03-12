@@ -1,9 +1,5 @@
-const playerEcoModel = require("../models/playerEcoSchema");
 const lotteryTicketModel = require('../models/lotteryTicketSchema');
 const lotteryPotModel = require('../models/lotteryPotSchema');
-const economySettingsModel = require('../models/economySettingSchema');
-
-const lockedEmbed = require('../functions_discord/lockedEmbed')
 
 module.exports = {
     name: "buylotteryticket",
@@ -16,28 +12,10 @@ module.exports = {
         const discord = req.discord;
         const mainGuild = req.mainGuild;
         const playerEco = req.playerEco;
+        const lotterySettings = req.lotterySettings;
 
-        let guildOwner = mainGuild.members.cache.get(message.guild.owner.user.id);
-        if (!guildOwner) return message.channel.send('The owner of this discord must be in the Cosmofficial discord to enable usage of this command.');
-
-        let economyPackage;
-        if (guildOwner.roles.cache.has('854236270129971200') || guildOwner.roles.cache.has('883535930630213653') || guildOwner.roles.cache.has('883534965650882570')) {
-            economyPackage = true;
-        }
-        if (economyPackage !== true) return lockedEmbed(message.channel, discord);
-
-        let ecoSettings = await economySettingsModel.findOne({
-            guildID: message.guild.id,
-        })
-        if (ecoSettings === null) {
-            return errorEmbed(message.channel, 'An admin must first setup economy with c!ces')
-        }
-        let ticketPrice = 10000;
-        ecoSettings.settings.forEach(setting => {
-            if (setting.name === 'LotteryTicketPrice') {
-                ticketPrice = Math.round(Number(setting.value));
-            }
-        })
+        let ticketPrice = lotterySettings.ticketPrice;
+        ticketPrice = Math.round(Number(ticketPrice));
         if (ticketPrice === NaN) return message.channel.send('Invalid ticket price. Ask an admin to check the lottery ticket price setting.');
 
         let buyAmount = `${Math.round(args[0])}`;
@@ -63,19 +41,21 @@ module.exports = {
         playerEco.currency = parseInt(playerEco.currency) - totalPrice;
         playerEco.save();
         let iterations = parseInt(buyAmount)
+        let createTickets = [];
         for (let i = 0; i < iterations; i++) {
-            let ran1 = Math.floor(Math.random() * 9);
-            let ran2 = Math.floor(Math.random() * 9);
-            let ran3 = Math.floor(Math.random() * 9);
-            let create = await lotteryTicketModel.create({
+            const ran1 = Math.floor(Math.random() * 9);
+            const ran2 = Math.floor(Math.random() * 9);
+            const ran3 = Math.floor(Math.random() * 9);
+            const create = {
                 guildID: message.guild.id,
                 userID: message.author.id,
                 num1: ran1,
                 num2: ran2,
                 num3: ran3
-            });
-            await create.save();
+            };
+            createTickets.push(create);
         }
+        await lotteryTicketModel.insertMany(createTickets); // Much better for performance :p
         message.reply(`Successfully purchased ${buyAmount} tickets. Use c!tickets to view your current tickets and lucky numbers!`)
         return
 

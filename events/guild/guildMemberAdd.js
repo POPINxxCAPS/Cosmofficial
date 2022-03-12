@@ -1,30 +1,21 @@
 const playerEcoModel = require('../../models/playerEcoSchema');
-const economySettingModel = require('../../models/economySettingSchema');
+const makeEcoSettingVar = require('../../functions_misc/makeEcoSettingVar');
 
 module.exports = async (discord, client, member) => {
   const mainGuild = client.guilds.cache.get("853247020567101440");
-  if(member.guild.owner === null) return;
+  if (member.guild.owner === null) return;
   let guildOwner = mainGuild.members.cache.get(member.guild.owner.user.id);
   let patron;
-  if(guildOwner !== undefined) {
+  if (guildOwner !== undefined) {
     if (guildOwner.roles.cache.has('854236270129971200') || guildOwner.roles.cache.has('883535930630213653') || guildOwner.roles.cache.has('883534965650882570')) {
       patron = true;
     }
   }
-  let defaultStartingBalance = 0;
 
-  if (patron === true) {
-    let ecoSettings = await economySettingModel.findOne({
-      guildID: member.guild.id
-    })
-    if (ecoSettings !== null) {
-      ecoSettings.settings.forEach(setting => {
-        if (setting.name === 'StartingBalance') {
-          defaultStartingBalance = Number(setting.value);
-        }
-      })
-    }
-  }
+  const ecoSettings = await makeEcoSettingVar(guildID);
+  let startingBal = ecoSetting.startingBal;
+  if(startingBal === "Not Set")
+  startingBal = 0;
 
 
   let playerEco = await playerEcoModel.findOne({
@@ -35,7 +26,7 @@ module.exports = async (discord, client, member) => {
     await playerEcoModel.create({
       guildID: member.guild.id,
       userID: member.id,
-      currency: defaultStartingBalance,
+      currency: startingBal,
       vault: '0',
       statistics: []
     })

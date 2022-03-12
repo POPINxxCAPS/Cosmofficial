@@ -2,13 +2,17 @@ const lotteryTicketModel = require('../models/lotteryTicketSchema');
 const lotteryPotModel = require('../models/lotteryPotSchema');
 const playerEcoModel = require('../models/playerEcoSchema');
 const ms = require('ms');
-const economySettingModel = require('../models/economySettingSchema');
 const discordServerSettingModel = require('../models/discordServerSettingsSchema');
 
 const dailyInterestRate = 0.1;
+
+// Needs complete recode
 module.exports = async (client, discord) => {
     const guildIDs = await client.guilds.cache.map(guild => guild.id);
     const mainGuild = client.guilds.cache.get("853247020567101440");
+    const ecoSettings = req.ecoSettings;
+    const channelSettings = req.channels;
+    const currencyName = ecoSettings.currencyName;
 
     setInterval(async () => {
         guildIDs.forEach(async guildID => {
@@ -16,32 +20,8 @@ module.exports = async (client, discord) => {
             if (guild === undefined || guild === null) return; // If bot is no longer in guild
             let current_time = Date.now();
 
-            let economyPackage;
-            if(guild.owner === null) return; // Redundancy Check
-            let guildOwner = mainGuild.members.cache.get(guild.owner.user.id);
-            if (!guildOwner) return; // If guild owner is no longer in Cosmofficial discord
+            let channelID = channelSettings.lottery;
 
-            if (guildOwner.roles.cache.has('854236270129971200') || guildOwner.roles.cache.has('883535930630213653') || guildOwner.roles.cache.has('883534965650882570')) {
-                economyPackage = true;
-            }
-            let channelID;
-            let currencyName;
-
-            if (economyPackage === true) {
-                let ecoSettings = await economySettingModel.findOne({
-                    guildID: guildID
-                })
-                if (ecoSettings !== null) {
-                    ecoSettings.settings.forEach(setting => {
-                        if (setting.name === 'LotteryChannel') {
-                            channelID = setting.value
-                        }
-                        if (setting.name === 'CurrencyName') {
-                            currencyName = setting.value
-                        }
-                    })
-                }
-            }
             if (channelID === undefined || channelID === 'Not Set') return;
 
 
@@ -98,7 +78,7 @@ module.exports = async (client, discord) => {
 
                     try {
                         await channel.bulkDelete(1);
-                    channel.send(embed);
+                        channel.send(embed);
 
                     } catch (err) {}
 

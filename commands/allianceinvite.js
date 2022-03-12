@@ -1,13 +1,10 @@
 const lockedEmbed = require('../functions_discord/lockedEmbed');
 const errorEmbed = require('../functions_discord/errorEmbed');
-const gridModel = require('../models/gridSchema');
-const remoteConfigModel = require('../models/remoteConfigSchema')
-const chatModel = require('../models/chatSchema');
-const economyModel = require('../models/economySettingSchema');
 const allianceModel = require('../models/allianceSchema');
 const playerModel = require('../models/playerSchema');
 const verificationModel = require('../models/verificationSchema');
 
+// Entire alliance system needs a recode, it was very botched
 module.exports = {
     name: 'allianceinvite',
     aliases: ['ai'],
@@ -20,11 +17,7 @@ module.exports = {
         if (args[0] === undefined) return errorEmbed(message.channel, '**Invalid Argument**\nPlease enter an faction tag!');
         if (args[0].length >= 5) return errorEmbed(message.channel, '**Invalid Argument**\nFaction tag is too long.')
 
-
-
-        let factionTag = args[0] // May want to @ a player instead
-
-
+        let factionTag = args[0] // May want to @ a player instead (stuff to worry about later)
 
         const verDoc = await verificationModel.findOne({
             userID: message.author.id

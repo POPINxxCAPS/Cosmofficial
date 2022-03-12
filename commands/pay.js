@@ -1,6 +1,5 @@
 const playerEcoModel = require('../models/playerEcoSchema');
 const lockedEmbed = require('../functions_discord/lockedEmbed');
-const economyModel = require('../models/economySettingSchema');
 module.exports = {
     name: 'pay',
     aliases: ['pay'],
@@ -12,27 +11,14 @@ module.exports = {
         const discord = req.discord;
         const mainGuild = req.mainGuild;
         const playerEco = req.playerEco;
+        const ecoSettings = req.ecoSettings;
+        const currencyName = ecoSettings.currencyName;
         let guildOwner = mainGuild.members.cache.get(message.guild.owner.user.id);
         let economyPackage;
         if (guildOwner.roles.cache.has('854236270129971200') || guildOwner.roles.cache.has('883535930630213653') || guildOwner.roles.cache.has('883534965650882570')) {
             economyPackage = true;
         }
         if (economyPackage !== true) return lockedEmbed(message.channel, discord);
-
-        let ecoSettings = await economyModel.findOne({
-            guildID: message.guild.id,
-        })
-        if(ecoSettings === null) {
-            return errorEmbed(message.channel, 'An admin must first setup economy with c!ces')
-        }
-        let currencyName;
-        ecoSettings.settings.forEach(setting => {
-            if(setting.name === 'CurrencyName') {
-                currencyName = setting.value;
-            }
-        })
-
-
 
         if (!args.length) return message.reply("You need to mention he player you want to pay.");
         const amount = parseInt(args[1], 10);
@@ -66,13 +52,5 @@ module.exports = {
         } catch (err) {
             console.log(err)
         }
-
-
-
-
-
-
-
-
     }
 }

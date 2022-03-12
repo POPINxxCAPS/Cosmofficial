@@ -1,5 +1,4 @@
 const playerEcoModel = require('../models/playerEcoSchema');
-const economySettingModel = require('../models/economySettingSchema');
 const errorEmbed = require('../functions_discord/errorEmbed');
 module.exports = {
     name: "taketokens",
@@ -10,30 +9,9 @@ module.exports = {
         const message = req.message;
         const args = req.args;
         const discord = req.discord;
-        const mainGuild = req.mainGuild;
         const guild = req.guild;
-        let guildOwner = mainGuild.members.cache.get(message.guild.owner.user.id);
-        let economyPackage;
-        if (guildOwner.roles.cache.has('854236270129971200') || guildOwner.roles.cache.has('883535930630213653') || guildOwner.roles.cache.has('883534965650882570')) {
-            economyPackage = true;
-        }
-        if (economyPackage !== true) return lockedEmbed(message.channel, discord);
-
-        let ecoSettings = await economySettingModel.findOne({
-            guildID: message.guild.id,
-        })
-        if (ecoSettings === null) {
-            return errorEmbed(message.channel, 'An admin must first setup economy with c!ces')
-        }
-        let currencyName;
-        await ecoSettings.settings.forEach(setting => {
-            if (setting.name === 'CurrencyName') {
-                currencyName = setting.value;
-            }
-        })
-
-
-
+        const ecoSettings = req.ecoSettings;
+        const currencyName = ecoSettings.currencyName;
 
         if (!args.length) return errorEmbed(message.channel, 'You must mention a player to give them tokens.')
         const amount = args[1];

@@ -3,10 +3,13 @@ const errorEmbed = require('../functions_discord/errorEmbed');
 const antennaNames = ['ice', 'iron', 'silicon', 'nickel', 'cobalt', 'gold', 'magnesium', 'platinum', 'uranium', 'zonechip', 'powerkit']
 const sessionPath = '/v1/session';
 const gridModel = require('../models/gridSchema');
-const remoteConfigModel = require('../models/remoteConfigSchema')
 const chatModel = require('../models/chatSchema');
-const economyModel = require('../models/economySettingSchema');
 const spawnerModel = require('../models/spawnerSchema');
+const gridPowerOff = require('../functions_execution/gridPowerOff');
+const gridPowerOn = require('../functions_execution/gridPowerOn');
+
+
+// Price modifiers, scaling with iron ore. Developed using values from harvesting / refining rates
 let ironOre = 0.25;
 let ice = ironOre;
 let siliconOre = 1.71 * ironOre;
@@ -30,6 +33,9 @@ let zoneChip = 44444
 let powerkit = 25000
 let oreModifier = 25000;
 let timeModifier = 30;
+// Price modifiers end
+
+
 module.exports = {
     name: 'activateantenna',
     aliases: ['activate'],
@@ -41,7 +47,8 @@ module.exports = {
         const discord = req.discord;
         const guild = req.guild;
         const playerEco = req.playerEco;
-        //return message.channel.send('Awaiting recode. :(')
+        const ecoSettings = req.ecoSettings;
+        const currencyName = ecoSettings.currencyName;
         if (message.guild.id !== '799685703910686720') return errorEmbed(message.channel, 'This command only works on the Cosmic PvPvAI server!')
         if (antennaNames.includes(args[0]) === false) {
             let validString = '';
@@ -69,6 +76,8 @@ module.exports = {
         let gridName;
         let seconds = 60;
         let price = 0;
+
+        // Ugly, needs rework, but not right now
         if (args[0] === 'zonechip') {
             gridName = 'Zone Chip Spawner'
             price = zoneChip * timeModifier
@@ -129,7 +138,6 @@ module.exports = {
                 expirationTime: '0'
             })
         }
-        console.log(parseInt(spawnerDoc.expirationTime))
         if (parseInt(spawnerDoc.expirationTime) > current_time) return errorEmbed(message.channel, 'Spawner is already activated!')
         spawnerDoc.expirationTime = current_time + (seconds * 1000);
 
@@ -138,95 +146,6 @@ module.exports = {
         let config = await makeConfigVar(guild.id) // Check if config already created, if true, return message to channel
         if (config === null) return message.channel.send('This discord does not have a server registered.\nUse c!setup to add your remote configuration.');
 
-        let ecoSettings = await economyModel.findOne({
-            guildID: message.guild.id,
-        })
-        if (ecoSettings === null) {
-            return errorEmbed(message.channel, 'An admin must first setup economy with c!ces')
-        }
-        let currencyName;
-        await ecoSettings.settings.forEach(setting => {
-            if (setting.name === 'CurrencyName') {
-                currencyName = setting.value;
-            }
-        })
-
-        // Initiate Remote Bridge
-        const axios = require('axios');
-        const crypto = require('crypto');
-        const JSONBI = require('json-bigint')({
-            storeAsString: true,
-            useNativeBigInt: true
-        });
-        const querystring = require('querystring');
-
-        const baseUrl = config.baseURL;
-        const port = config.port;
-        const prefix = config.prefix;
-        const secret = config.secret;
-
-        const getNonce = () => crypto.randomBytes(20).toString('base64');
-        const getUtcDate = () => new Date().toUTCString();
-
-        const opts = (method, api, {
-            body,
-            qs
-        } = {}) => {
-            const url = `${baseUrl}:${port}${prefix}${api}`;
-            const nonce = getNonce();
-            const date = getUtcDate();
-            const query = qs ? `?${querystring.stringify(qs)}` : '';
-
-            const key = Buffer.from(secret, 'base64');
-            const message = `${prefix}${api}${query}\r\n${nonce}\r\n${date}\r\n`;
-            const hash = crypto.createHmac('sha1', key).update(Buffer.from(message)).digest('base64');
-
-            return {
-                url: url + query,
-                headers: {
-                    Authorization: `${nonce}:${hash}`,
-                    Date: date
-                },
-                transformRequest(data) {
-                    return JSONBI.stringify(data);
-                },
-                transformResponse(data) {
-                    return JSONBI.parse(data);
-                },
-                json: true,
-                body,
-                method
-            };
-        };
-
-        const send = (method, path, {
-            body,
-            qs,
-            log = false
-        } = {}) => {
-            if (log) {
-                console.log(`${method}: ${opts(method, path).url}`)
-            }
-
-            return axios(opts(method, path, {
-                    body,
-                    qs
-                }))
-                .then((result) => {
-                    if (log) {
-                        console.log(result);
-                    }
-
-                    const {
-                        data: {
-                            data
-                        }
-                    } = result;
-                    return data || {};
-                })
-                .catch(e => console.error(`${e.statusCode}: ${e.statusMessage}`));
-        };
-        // End remote bridge initialization
 
         if (playerEco.currency < price) {
             if (playerEco.vault > price) {
@@ -247,18 +166,18 @@ module.exports = {
         playerEco.currency = parseInt(playerEco.currency) - price;
         playerEco.save();
         spawnerDoc.save();
-        await send('POST', `${sessionPath}/poweredGrids/${grid.entityID}`)
+        await gridPowerOn(guildID, entityID)
         const embed = new discord.MessageEmbed()
             .setColor('#E02A6B')
             .setTitle(`Antenna Activation`)
             .setURL('https://cosmofficial.herokuapp.com/')
             .setFooter('Cosmofficial by POPINxxCAPS')
-            .setDescription(`Successfully activated ${gridName} for 60 seconds!`)
+            .setDescription(`Successfully activated ${gridName} for ${seconds} seconds!`)
         message.channel.send(embed);
 
 
         setTimeout(async () => {
-            await send('DELETE', `${sessionPath}/poweredGrids/${grid.entityID}`)
+            await gridPowerOff(guildID, entityID)
             console.log(`${gridName} Deactivated`)
         }, 60000)
     }

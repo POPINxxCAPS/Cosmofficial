@@ -1,7 +1,5 @@
 const playerModel = require('../models/playerSchema');
 const playerEcoModel = require('../models/playerEcoSchema');
-const economySettingModel = require('../models/economySettingSchema');
-const verificationModel = require('../models/verificationSchema');
 const whitelistModel = require('../models/whitelistSchema');
 const whitelistSettingModel = require('../models/whitelistSettingSchema');
 const serverLogModel = require('../models/serverLogSchema');
@@ -14,6 +12,9 @@ module.exports = async (req) => {
     const settings = req.settings;
     const client = req.client;
     const verificationCache = req.verDocs
+    const ecoSettings = req.ecoSettings;
+    const currencyName = ecoSettings.currencyName;
+    const onlinePlayerReward = ecoSettings.onlineReward;
     let insertData = [];
     let SLinsertData = [];
     if (settings.serverOnline === false || settings.serverOnline === undefined) return;
@@ -33,20 +34,6 @@ module.exports = async (req) => {
 
     if (guildOwner.roles.cache.has('883535930630213653') || guildOwner.roles.cache.has('883534965650882570')) {
         patron = true;
-    }
-    let onlinePlayerReward = 0;
-
-    if (patron === true) {
-        let ecoSettings = await economySettingModel.findOne({
-            guildID: guildID
-        })
-        if (ecoSettings !== null) {
-            ecoSettings.settings.forEach(setting => {
-                if (setting.name === 'OnlinePlayerReward') {
-                    onlinePlayerReward = Math.round(parseFloat(setting.value));
-                }
-            })
-        }
     }
 
     const playerData = await queryPlayers(config)
@@ -191,38 +178,36 @@ module.exports = async (req) => {
         }
 
         // Start of online player reward system
-        if (patron === true) {
-            let verificationDoc = verificationCache.find(cache => cache.username === player.DisplayName)
-            if (verificationDoc !== null && verificationDoc !== undefined) {
-                let playerEcoDoc = await playerEcoModel.findOne({
-                    guildID: guildID,
-                    userID: verificationDoc.userID
-                })
-                if (playerEcoDoc === null) continue;
-                // If player eco doc found, update telemetry and reward with tokens
-                let rewardModifier = 1; // Future use with quests + alliance bonuses
-                let rewardAmount = Math.round(((onlinePlayerReward * req.expirationInSeconds) * rewardModifier))
-                console.log(`${verificationDoc.username} Given ${rewardAmount} with ${rewardModifier} reward modifier`)
+        let verificationDoc = verificationCache.find(cache => cache.username === player.DisplayName)
+        if (verificationDoc !== null && verificationDoc !== undefined) {
+            let playerEcoDoc = await playerEcoModel.findOne({
+                guildID: guildID,
+                userID: verificationDoc.userID
+            })
+            if (playerEcoDoc === null) continue;
+            // If player eco doc found, update telemetry and reward with tokens
+            let rewardModifier = 1; // Future use with quests + alliance bonuses
+            let rewardAmount = Math.round(((onlinePlayerReward * req.expirationInSeconds) * rewardModifier))
+            console.log(`${verificationDoc.username} Given ${rewardAmount} with ${rewardModifier} reward modifier`)
 
-                let statFound = false;
-                // Stat tracking stuff for future use. Ugly, but works
-                for (let s = 0; s < playerEcoDoc.statistics.length; s++) {
-                    if (playerEcoDoc.statistics[s].name === 'OnlineRewardReceived') {
-                        playerEcoDoc.statistics[s].value = Number(playerEcoDoc.statistics[s].value) + rewardAmount;
-                        statFound = true;
-                    }
+            let statFound = false;
+            // Stat tracking stuff for future use. Ugly, but works
+            for (let s = 0; s < playerEcoDoc.statistics.length; s++) {
+                if (playerEcoDoc.statistics[s].name === 'OnlineRewardReceived') {
+                    playerEcoDoc.statistics[s].value = Number(playerEcoDoc.statistics[s].value) + rewardAmount;
+                    statFound = true;
                 }
-                if (statFound === false) {
-                    playerEcoDoc.statistics.push({
-                        name: 'OnlineRewardReceived',
-                        value: `${rewardAmount}`
-                    })
-                }
-                playerEcoDoc.currency = Math.round(Number(playerEcoDoc.currency) + Math.round((onlinePlayerReward * rewardModifier * 60)));
-                playerEcoDoc.save();
-
-
             }
+            if (statFound === false) {
+                playerEcoDoc.statistics.push({
+                    name: 'OnlineRewardReceived',
+                    value: `${rewardAmount}`
+                })
+            }
+            playerEcoDoc.currency = Math.round(Number(playerEcoDoc.currency) + Math.round((onlinePlayerReward * rewardModifier * 60)));
+            playerEcoDoc.save();
+
+
         }
     }
     await playerModel.insertMany(insertData);

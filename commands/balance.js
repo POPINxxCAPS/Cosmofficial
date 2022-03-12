@@ -1,8 +1,8 @@
 const chatModel = require('../models/chatSchema');
 const lockedEmbed = require('../functions_discord/lockedEmbed');
-const economySettings = require('../models/economySettingSchema');
 const playerEcoModel = require('../models/playerEcoSchema');
 const errorEmbed = require('../functions_discord/errorEmbed');
+const makeEcoSettingVar = require('../functions_misc/makeEcoSettingVar');
 module.exports = {
     name: 'balance',
     aliases: ['bal'],
@@ -15,24 +15,9 @@ module.exports = {
         const mainGuild = req.mainGuild;
         const playerEco = req.playerEco;
         let guildOwner = mainGuild.members.cache.get(message.guild.owner.user.id);
-        let economyPackage;
-        if (guildOwner.roles.cache.has('854236270129971200') || guildOwner.roles.cache.has('883535930630213653') || guildOwner.roles.cache.has('883534965650882570')) {
-            economyPackage = true;
-        }
-        if (economyPackage !== true) return lockedEmbed(message.channel, discord);
 
-        let ecoSettings = await economySettings.findOne({
-            guildID: message.guild.id,
-        })
-        if (ecoSettings === null) {
-            return errorEmbed(message.channel, 'An admin must first setup economy with c!ces')
-        }
-        let currencyName;
-        ecoSettings.settings.forEach(setting => {
-            if (setting.name === 'CurrencyName') {
-                currencyName = setting.value;
-            }
-        })
+        const ecoSettings = req.ecoSettings;
+        const currencyName = ecoSettings.currencyName;
 
         if (args.length) {
             const target = message.mentions.users.first();

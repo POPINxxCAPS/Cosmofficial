@@ -3,7 +3,6 @@ const errorEmbed = require('../functions_discord/errorEmbed');
 const gridModel = require('../models/gridSchema');
 const remoteConfigModel = require('../models/remoteConfigSchema')
 const chatModel = require('../models/chatSchema');
-const economyModel = require('../models/economySettingSchema');
 const spawnerModel = require('../models/spawnerSchema');
 const characterModel = require('../models/characterSchema');
 const verificationModel = require('../models/verificationSchema');
@@ -22,6 +21,8 @@ module.exports = {
         const mainGuild = req.mainGuild;
         const guild = req.guild;
         const playerEco = req.playerEco;
+        const ecoSettings = req.ecoSettings;
+        const currencyName = ecoSettings.currencyName;
         let guildOwner = mainGuild.members.cache.get(message.guild.owner.user.id);
         if (!guildOwner || guildOwner === null || guildOwner === undefined) return message.channel.send('The owner of this discord must be in the Cosmofficial discord to enable usage of this command.');
         let patron = false;
@@ -130,19 +131,6 @@ module.exports = {
 
         let config = await makeConfigVar(guild.id) // Check if config already created, if true, return message to channel
         if (config === null) return message.channel.send('This discord does not have a server registered.\nUse c!setup to add your remote configuration.');
-
-        let ecoSettings = await economyModel.findOne({
-            guildID: message.guild.id,
-        })
-        if (ecoSettings === null) {
-            return errorEmbed(message.channel, 'An admin must first setup economy with c!ces')
-        }
-        let currencyName;
-        await ecoSettings.settings.forEach(setting => {
-            if (setting.name === 'CurrencyName') {
-                currencyName = setting.value;
-            }
-        })
 
         // Grid name and price setting
         let price = seconds * 10000;

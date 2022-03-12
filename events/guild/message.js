@@ -1,34 +1,27 @@
 const cooldowns = new Map();
-const discordServerSettingsModel = require('../../models/discordServerSettingsSchema')
-const playerEcoModel = require('../../models/playerEcoSchema');
-const economySettingModel = require('../../models/economySettingSchema');
+const getAllSettings = require('../../functions_db/getAllSettings');
+const makeChannelsVar = require('../../functions_misc/makeChannelsVar');
+const makeEcoSettingVar = require('../../functions_misc/makeEcoSettingVar');
+const makeLotterySettingVar = require('../../functions_misc/makeLotterySettingVar');
+const getPlayerEco = require('../../functions_db/getPlayerEco');
+const errorEmbed = require('../../functions_discord/errorEmbed');
 
 module.exports = async (discord, client, message) => {
   const prefix = 'c!'
   const guild = message.guild;
   const mainGuild = client.guilds.cache.get("853247020567101440");
+  const settings = await getAllSettings(guildID);
+  const channels = await makeChannelsVar(guildID, settings);
   
   if (!message.content.startsWith(prefix) || message.author.bot) return;
   if(message.guild === null) return; // Redundancy Crash Fix
-  let discordSettings = await discordServerSettingsModel.findOne({
-    guildID: message.guild.id
-  })
-  if (discordSettings === null) {
-    await discordServerSettingsModel.create({
-      guildID: message.guild.id,
-      serverLogChannel: 'None',
-      hotzoneChannel: 'None',
-      chatRelayChannel: 'None',
-      botCommandChannel: 'None'
-    })
-    discordSettings = await discordServerSettingsModel.findOne({
-      guildID: message.guild.id
-    })
-  }
 
-  if (discordSettings.botCommandChannel !== 'None') {
+  const commandChannel = channels.commands;
+
+  if (commandChannel !== 'Not Set' && commandChannel !== undefined && commandChannel !== null) { // If a command channel is defined, compare
     if (message.member.hasPermission('ADMINISTRATOR')) {} else {
-      if (message.channel.id !== discordSettings.botCommandChannel) return;
+      const channelTest = client.channels.cache.get(args[1]); // Verify the channel exists still before cancelling.
+      if (message.channel.id !== discordSettings.botCommandChannel && channelTest !== undefined && channelTest !== null) return;
     }
   }
   const args = message.content.slice(prefix.length).split(/ +/);
@@ -87,51 +80,20 @@ module.exports = async (discord, client, message) => {
       return message.reply(`You do not have sufficient permissions to execute this command. \nMissing Permissions: \`${invalidPerms}\``);
     }
   }
-  // Finish Permissions Setup
-  try {
-    let economyPackage;
-    let guildOwner = mainGuild.members.cache.get(message.guild.owner.user.id);
-  
-    if (guildOwner.roles.cache.has('854236270129971200') || guildOwner.roles.cache.has('883535930630213653') || guildOwner.roles.cache.has('883534965650882570')) {
-      economyPackage = true;
-    }
-  
-  
-    if (economyPackage === true) {
-      let ecoSettings = await economySettingModel.findOne({
-        guildID: guild.id
-      })
-      if (ecoSettings !== null) {
-        ecoSettings.settings.forEach(setting => {
-          if (setting.name === 'StartingBalance') {
-            defaultStartingBalance = Number(setting.value);
-          }
-        })
-      }
-    }
-  } catch(err) {
-  }
-  
-  let defaultStartingBalance = 0;
+  // Finished Permissions Setup
 
+  // Setting up all potentially needed request information
   try {
-    let playerEco = await playerEcoModel.findOne({
-      guildID: guild.id,
-      userID: message.author.id
-    })
-    if (playerEco === null) {
-      await playerEcoModel.create({
-        guildID: guild.id,
-        userID: message.author.id,
-        currency: defaultStartingBalance,
-        vault: '0',
-        statistics: []
-      })
-      playerEco = await playerEcoModel.findOne({
-        guildID: guild.id,
-        userID: message.author.id
-      })
+    let patron = false;
+    const guildOwner = mainGuild.members.cache.get(message.guild.owner.user.id);
+    if(!guildOwner || guildOwner === undefined || guildOwner === null) return errorEmbed(message.channel, 'The owner of this discord must be in the Cosmofficial discord to enable functionality of the bot.\nhttps://discord.gg/BfFc8cfp3n');
+    if(guildOwner.roles.cache.has('883535930630213653') || guildOwner.roles.cache.has('883564396587147275')) {
+      patron = true;
     }
+
+    const playerEco = await getPlayerEco(guildID, userID, settings);
+    const ecoSettings = await makeEcoSettingVar(guildID, settings);
+    const lotterySettings = await makeLotterySettingVar(guildID, settings);
 
     // Making it more "restful"
     let req = {};
@@ -143,9 +105,14 @@ module.exports = async (discord, client, message) => {
     req.mainGuild = mainGuild;
     req.guild = guild;
     req.playerEco = playerEco;
+    req.patron = patron;
+    req.settings = settings;
+    req.channels = channels;
+    req.ecoSettings = ecoSettings;
+    req.lotterySettings = lotterySettings;
     command.execute(req); // Doing this will require recoding all commands, so disabling for now.
   } catch (err) {
-    message.reply("There was an error trying to execute this command!");
     console.log(err);
+    return errorEmbed(message.channel, 'There was an error trying to execute this command.')
   }
 }

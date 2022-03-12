@@ -1,6 +1,5 @@
 const lotteryTicketModel = require('../models/lotteryTicketSchema');
 const lotteryPotModel = require('../models/lotteryPotSchema');
-const economySettingsModel = require('../models/economySettingSchema');
 const errorEmbed = require('../functions_discord/errorEmbed');
 module.exports = {
     name: "tickets",
@@ -10,22 +9,7 @@ module.exports = {
     async execute(req) {
         const message = req.message;
         const discord = req.discord;
-        const mainGuild = req.mainGuild;
-        let guildOwner = mainGuild.members.cache.get(message.guild.owner.user.id);
-        if (!guildOwner) return message.channel.send('The owner of this discord must be in the Cosmofficial discord to enable usage of this command.');
-
-        let economyPackage;
-        if (guildOwner.roles.cache.has('854236270129971200') || guildOwner.roles.cache.has('883535930630213653') || guildOwner.roles.cache.has('883534965650882570')) {
-            economyPackage = true;
-        }
-        if (economyPackage !== true) return lockedEmbed(message.channel, discord);
-
-        let ecoSettings = await economySettingsModel.findOne({
-            guildID: message.guild.id,
-        })
-        if (ecoSettings === null) {
-            return errorEmbed(message.channel, 'An admin must first setup economy with c!ces')
-        }
+        
         let ticketString = '';
         let ticketDocs = await lotteryTicketModel.find({
             guildID: message.guild.id,

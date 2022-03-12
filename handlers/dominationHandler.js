@@ -8,11 +8,16 @@ const ms = require('ms');
 const dominationSettingModel = require('../models/dominationSettingSchema');
 const dominationScoreModel = require('../models/dominationScoreSchema');
 const discordServerSettingModel = require('../models/discordServerSettingsSchema');
-const economySettingModel = require('../models/economySettingSchema');
 const statusModel = require('../models/statusSchema');
 const interval = 60000;
 
-module.exports = async (client, discord) => {
+
+// Complete recode needed
+module.exports = async (req) => {
+    const client = req.client;
+    const discord = req.discord;
+    const ecoSettings = req.ecoSettings;
+    const currencyName = ecoSettings.currencyName;
     let guildIDs = await client.guilds.cache.map(guild => guild.id);
     setInterval(async () => {
         guildIDs = await client.guilds.cache.map(guild => guild.id);
@@ -47,22 +52,6 @@ module.exports = async (client, discord) => {
             })
             if (discordSettings === null) return;
             if (discordSettings.serverOnline === false || discordSettings.serverOnline === undefined) return;
-
-
-
-            let ecoSettings = await economySettingModel.findOne({
-                guildID: guildID,
-            })
-            if (ecoSettings === null) {
-                return errorEmbed(message.channel, 'An admin must first setup economy with c!ces')
-            }
-            let currencyName;
-            await ecoSettings.settings.forEach(setting => {
-                if (setting.name === 'CurrencyName') {
-                    currencyName = setting.value;
-                }
-            })
-
 
 
             let dominationSettings = await dominationSettingModel.findOne({
@@ -150,7 +139,7 @@ module.exports = async (client, discord) => {
                                     let rewardAmount;
                                     console.log(factionTag)
                                     console.log(scoreArray[0].factionTag)
-                                    if(factionTag === scoreArray[0].factionTag) {
+                                    if (factionTag === scoreArray[0].factionTag) {
                                         rewardAmount = rewardModifier * ((parseInt(dominationSettings.rewardPerPoint) * (score / playerDocs.length)) + (winBonus / playerDocs.length)) // Divide by number of rewarded players
                                     } else {
                                         rewardAmount = rewardModifier * (parseInt(dominationSettings.rewardPerPoint) * (score / playerDocs.length)) // Divide by number of rewarded players
@@ -165,7 +154,7 @@ module.exports = async (client, discord) => {
                                     // If the player was rewarded, dm them the final score of the last match
                                     try {
                                         memberTarget.send(`>>> This message was sent because your faction particpated in the last Domination match on ${serverName}.\n\nYou were awarded with ${rewardAmount} ${currencyName}.\nFinal Scores:\n${finalScoreString}`);
-                                    } catch(err) {}
+                                    } catch (err) {}
                                 }
                             }
                         })
@@ -221,7 +210,7 @@ module.exports = async (client, discord) => {
                         if (distance < objective.pointRadius) {
                             let verDoc;
                             verificationCache.forEach(item => {
-                                if(item === null) return;
+                                if (item === null) return;
                                 if (item.username === character.name) {
                                     verDoc = item;
                                 }
@@ -453,7 +442,7 @@ module.exports = async (client, discord) => {
             dominationSettings.save();
 
 
-            if(topScoreString === '>>> ') {
+            if (topScoreString === '>>> ') {
                 topScoreString === 'N/A'
             }
             try {

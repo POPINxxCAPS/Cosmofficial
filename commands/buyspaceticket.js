@@ -2,7 +2,6 @@ const spaceTicketModel = require('../models/spaceTicketSchema');
 const verificationModel = require('../models/verificationSchema');
 const playerModel = require('../models/playerSchema');
 const errorEmbed = require('../functions_discord/errorEmbed');
-const economySettingsModel = require('../models/economySettingSchema');
 const ms = require('ms')
 
 
@@ -20,26 +19,13 @@ module.exports = {
         const discord = req.discord;
         const guild = req.guild;
         const playerEco = req.playerEco;
+        const ecoSettings = req.ecoSettings;
+        const currencyName = ecoSettings.currencyName;
         if (guild.id !== '799685703910686720') return;
         let verDoc = await verificationModel.findOne({
             userID: message.author.id
         })
         if (verDoc === null) return errorEmbed(message.channel, 'You must be verified to purchase this!')
-
-
-
-        let ecoSettings = await economySettingsModel.findOne({
-            guildID: message.guild.id,
-        })
-        if (ecoSettings === null) {
-            return errorEmbed(message.channel, 'An admin must first setup economy with c!ces')
-        }
-        let currencyName;
-        ecoSettings.settings.forEach(setting => {
-            if (setting.name === 'CurrencyName') {
-                currencyName = setting.value;
-            }
-        })
 
         let totalPlayerBal = parseInt(playerEco.currency) + parseInt(playerEco.vault);
         if (parseInt(playerEco.currency) < price) {
