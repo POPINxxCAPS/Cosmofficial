@@ -4,6 +4,7 @@ const getRemoteConfig = require('../functions_db/getRemoteConfig');
 const getEconomySettings = require('../functions_db/getEconomySettings');
 const getLotterySettings = require('../functions_db/getLotterySettings');
 const getHotzoneSettings = require('../functions_db/getHotzoneSettings');
+const getChannelSettings = require('../functions_db/getChannelSettings');
 module.exports = async (guildID) => {
     let settings = [];
     const remoteConfig = await getRemoteConfig(guildID);
@@ -16,6 +17,16 @@ module.exports = async (guildID) => {
         guildOwnerOnly: true
     }
     settings.push(remoteConfigObj)
+
+    const channelSettings = await getChannelSettings(guildID);
+    const channelSettingsObj = {
+        displayName: 'Channel Settings',
+        name: 'channels',
+        description: 'Edit used discord channels. Also check out c!settings serverlog.',
+        aliases: ['c'],
+        settings: channelSettings,
+    }
+    settings.push(channelSettingsObj)
 
     const economySettings = await getEconomySettings(guildID);
     const economySettingsObj = {

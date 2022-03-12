@@ -63,12 +63,12 @@ const updateChannelTickers = require('./functions_discord/updateChannelTickers')
 
 
 client.on('ready', () => {
-  statusDocCleanup();
+  statusDocCleanup(); // Only need to run this once per bot deploy
 
   //hotzoneHandler(client, discord); // Disabled until complete recode, noob code causing performancing problems
   serverDBHandler(client);
   //hooverHandler(client);
-  dominationHandler(client, discord);
+  //dominationHandler(client, discord);
 
   //TDMQueue(client); // Stuff for a TDM server nobody played, was shut down.
   //TDMServerHandler(client);
@@ -76,8 +76,8 @@ client.on('ready', () => {
   //TDMDeathCounter(client);
 
 
-  lotteryHandler(client, discord)
-  serverLogHandler(client, discord);
+  //lotteryHandler(client, discord)
+  //serverLogHandler(client, discord);
   //liveMapHandler(client)
 
 

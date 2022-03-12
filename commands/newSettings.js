@@ -35,12 +35,7 @@ module.exports = {
         }
 
         // If there is a category defined
-        let categorySearch;
-        for (let i = 0; i < settings.length; i++) {
-            if (settings[i].aliases.includes(category) === true || settings[i].name === category) {
-                categorySearch = settings[i];
-            }
-        }
+        let categorySearch = settings.find(cat => cat.aliases.includes(category) === true || cat.name === category)
 
         if (categorySearch === undefined) return errorEmbed(message.channel, 'Category was not found. Please check your spelling and try again.')
         if (categorySearch.guildOwnerOnly === true) { // Confirm it's the guild owner running the command.
@@ -57,15 +52,9 @@ module.exports = {
         }
 
         // If there is a setting defined
-        let settingSearch;
-        for (let i = 0; i < categorySearch.settings.length; i++) {
-            if (categorySearch.settings[i].setting === setting) {
-                settingSearch = categorySearch.settings[i];
-            }
-        }
+        let settingSearch = categorySearch.settings.find(set => set.setting === setting);
 
         if (settingSearch === undefined) return errorEmbed(message.channel, 'Setting name was not found. Please check your spelling and try again.')
-
         // If setting was found
         if (value === undefined) return errorEmbed(message.channel, 'Missing a value after setting name. Please include a value.');
 
@@ -105,7 +94,6 @@ module.exports = {
         if (errorString !== undefined) return errorEmbed(message.channel, errorString);
         if (testVar === undefined) return errorEmbed(message.channel, 'An unknown error occurred. Contact the bot owner.');
 
-        console.log(testVar)
         settingSearch.value = testVar;
         settingSearch.save();
 
