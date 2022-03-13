@@ -54,7 +54,6 @@ const TDMDeathCounter = require('./counters/TDMDeathCounter');
 
 const autoRoleCosmic = require('./cosmicOnly/autoRoleFunction');
 const gridDeletionQueue = require('./cosmicOnly/hooverDeletionQueue');
-const cleanupTimer = require('./cosmicOnly/cleanupTimer');
 const liveMapHandler = require('./cosmicOnly/liveMapHandler');
 const spaceTicketEnforcer = require('./cosmicOnly/spaceTicketEnforcer')
 const cosmicCharts = require('./cosmicOnly/charts')

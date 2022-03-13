@@ -1,4 +1,4 @@
-const settingsModel = require('../models/newSettingModel');
+const settingsModel = require('../models/settingSchema');
 
 module.exports = async (guildID) => {
     if(guildID === undefined) return;

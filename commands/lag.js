@@ -1,6 +1,7 @@
 const makeConfigVar = require('../functions_misc/makeConfigVar');
 const statusModel = require('../models/statusSchema');
 const chartSimSpeed = require('../functions_db/chartSimSpeed');
+const errorEmbed = require('../functions_discord/errorEmbed');
 const ms = require('ms');
 
 module.exports = {
@@ -22,7 +23,7 @@ module.exports = {
     let infoData = await statusModel.findOne({
       guildID: message.guild.id
     })
-    if (infoData === null) return message.channel.send('Unknown Error Occurred. Try again in 30 seconds.');
+    if (infoData === null) return errorEmbed(message.channel, `There was no server status document found for this server.\nJust connected your server? Allow up to 5 minutes for connection to be established.`)
 
     if (infoData.online === false) {
       const embed = new discord.MessageEmbed()

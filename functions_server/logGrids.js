@@ -5,7 +5,6 @@ const discordSettingsModel = require('../models/discordServerSettingsSchema')
 const hooverSettingModel = require('../models/hooverSettingSchema');
 const verificationModel = require('../models/verificationSchema');
 const serverLogModel = require('../models/serverLogSchema');
-const NPCDeathRewarder = require('../functions_execution/NPCDeathRewarder');
 const ms = require('ms')
 
 
@@ -207,8 +206,13 @@ module.exports = async (req) => {
             gridDoc.save().then(savedDoc => {
                 gridDoc = savedDoc;
                 gridDocsCache[cacheIndex] = gridDoc;
-            }).catch((err) => {
-                console.log('Error Caught')
+            }).catch(async (err) => {
+                gridDoc = await gridModel.findOne({
+                    guildID: guildID,
+                    entityID: singleGrid.EntityId
+                })
+                gridDocsCache[cacheIndex] = gridDoc;
+                console.log('Error Caught + Fixed')
             }); // Await this save so it stores the updated doc version information
         }
 
