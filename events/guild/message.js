@@ -10,8 +10,8 @@ module.exports = async (discord, client, message) => {
   const prefix = 'c!'
   const guild = message.guild;
   const mainGuild = client.guilds.cache.get("853247020567101440");
-  const settings = await getAllSettings(guildID);
-  const channels = await makeChannelsVar(guildID, settings);
+  const settings = await getAllSettings(guild.id);
+  const channels = await makeChannelsVar(guild.id, settings);
   
   if (!message.content.startsWith(prefix) || message.author.bot) return;
   if(message.guild === null) return; // Redundancy Crash Fix
@@ -91,9 +91,9 @@ module.exports = async (discord, client, message) => {
       patron = true;
     }
 
-    const playerEco = await getPlayerEco(guildID, userID, settings);
-    const ecoSettings = await makeEcoSettingVar(guildID, settings);
-    const lotterySettings = await makeLotterySettingVar(guildID, settings);
+    const playerEco = await getPlayerEco(guild.id, message.author.id, settings);
+    const ecoSettings = await makeEcoSettingVar(guild.id, settings);
+    const lotterySettings = await makeLotterySettingVar(guild.id, settings);
 
     // Making it more "restful"
     let req = {};

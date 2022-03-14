@@ -1,9 +1,9 @@
 const mongoose = require("mongoose");
 // Main Schema
 const newSettingSchema = new mongoose.Schema({
-    guildID: { type: String },
+    guildID: { type: String, index: true },
     displayName: { type: String },
-    category: { type: String },
+    category: { type: String, index: true },
     setting: { type: String },
     description: { type: String },
     value: { type: String },

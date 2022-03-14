@@ -1,6 +1,7 @@
 // Settings stuff
 const getAllSettings = require('../functions_db/getAllSettings');
 const makeConfigVar = require('../functions_misc/makeConfigVar');
+const makeEcoSettingVar = require('../functions_misc/makeEcoSettingVar');
 
 // Query Functions
 const logStatus = require('../functions_server/logStatus');
@@ -14,6 +15,7 @@ const verificationModel = require('../models/verificationSchema');
 const allianceModel = require('../models/allianceSchema');
 const gridModel = require('../models/gridSchema');
 const characterModel = require('../models/characterSchema');
+const statusModel = require('../models/statusSchema');
 
 let fullGridDocsCache = []; // Caching all grid docs so it doesn't have to keep downloading them.
 module.exports = async (client) => {
@@ -37,12 +39,20 @@ module.exports = async (client) => {
                 queryIsRunning = false;
                 continue;
             }; // Ignore Cosmofficial Discord
-            // Discord Channel Settings (needs COMPLETE remodel) - This is just prep
+
+            // Get server status document
+            const statusDoc = await statusModel.findOne({
+                guildID: guildID
+            })
+
+            // Pull all settings
             const settings = await getAllSettings(guildID);
             // Pull config from settings
-            let config = await makeConfigVar(guildID, settings);
-            console.log(config)
-            if (config === null) {
+            const config = await makeConfigVar(guildID, settings);
+
+            // Pull Economy Settings
+            const ecoSettings = await makeEcoSettingVar(guildID, settings);
+            if (config === null || config.ip === 'Not Set' || config.port === 'Not Set' || config.secret === 'Not Set') { // Double check
                 queryIsRunning = false;
                 continue;
             }
@@ -73,7 +83,9 @@ module.exports = async (client) => {
             const req = {
                 guildID: guildID,
                 config: config,
+                statusDoc: statusDoc,
                 settings: settings,
+                ecoSettings: ecoSettings,
                 client: client,
                 verDocs: verDocs,
                 allianceCache: allianceDocs,

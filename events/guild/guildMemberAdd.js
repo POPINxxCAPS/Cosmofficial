@@ -12,8 +12,8 @@ module.exports = async (discord, client, member) => {
     }
   }
 
-  const ecoSettings = await makeEcoSettingVar(guildID);
-  let startingBal = ecoSetting.startingBal;
+  const ecoSettings = await makeEcoSettingVar(member.guild.id);
+  let startingBal = ecoSettings.startingBal;
   if(startingBal === "Not Set")
   startingBal = 0;
 

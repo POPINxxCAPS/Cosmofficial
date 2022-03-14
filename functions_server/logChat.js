@@ -9,7 +9,8 @@ module.exports = async (req) => {
     const config = req.config;
     const settings = req.settings;
     const client = req.client;
-    if (settings.serverOnline === false || settings.serverOnline === undefined) return;
+    const statusDoc = req.statusDoc; // Confirm server is being reported as online before attempting query
+    if (statusDoc === null || statusDoc.serverOnline === false || statusDoc.serverOnline === undefined) return null;
     req.expirationInSeconds = (req.gridQueryDelay * 0.75) / 1000 || 30;
     if(req.expirationInSeconds < 30) req.expirationInSeconds = 30;
     req.name = 'logChat'

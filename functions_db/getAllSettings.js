@@ -5,6 +5,7 @@ const getEconomySettings = require('../functions_db/getEconomySettings');
 const getLotterySettings = require('../functions_db/getLotterySettings');
 const getHotzoneSettings = require('../functions_db/getHotzoneSettings');
 const getChannelSettings = require('../functions_db/getChannelSettings');
+const getHooverSettings = require('../functions_db/getHooverSettings');
 module.exports = async (guildID) => {
     let settings = [];
     const remoteConfig = await getRemoteConfig(guildID);
@@ -27,6 +28,17 @@ module.exports = async (guildID) => {
         settings: channelSettings,
     }
     settings.push(channelSettingsObj)
+
+    const hooverSettings = await getHooverSettings(guildID);
+    const hooverSettingsObj = {
+        displayName: 'Hoover Settings',
+        name: 'hoover',
+        description: 'Edit the hoover, great for performance!',
+        aliases: ['hoo'],
+        settings: hooverSettings,
+        patronReq: true,
+    }
+    settings.push(hooverSettingsObj)
 
     const economySettings = await getEconomySettings(guildID);
     const economySettingsObj = {
@@ -55,7 +67,7 @@ module.exports = async (guildID) => {
         displayName: 'Hotzone (KoTH) Settings',
         name: 'hotzone',
         description: 'Edit configuration for the Hotzone mini-game.',
-        aliases: ['h'],
+        aliases: ['hot'],
         settings: hotzoneSettings,
         patronReq: true
     }

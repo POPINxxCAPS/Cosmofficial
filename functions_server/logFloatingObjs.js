@@ -8,7 +8,8 @@ module.exports = async (req) => {
     const settings = req.settings;
     let entityIDs = [];
     let insertData = [];
-    if (settings.serverOnline === false || settings.serverOnline === undefined) return;
+    const statusDoc = req.statusDoc; // Confirm server is being reported as online before attempting query
+    if (statusDoc === null || statusDoc.serverOnline === false || statusDoc.serverOnline === undefined) return null;
 
 
     let current_time = Date.now();

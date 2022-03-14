@@ -25,11 +25,13 @@ module.exports = async (req) => {
     const config = req.config;
     const settings = req.settings;
     const client = req.client;
+
     const verificationCache = req.verDocs;
     let gridDocsCache = req.gridDocsCache;
     if (gridDocsCache === undefined) return console.log('Fix me') // lol
-    if (settings.serverOnline === false || settings.serverOnline === undefined) return null;
 
+    const statusDoc = req.statusDoc; // Confirm server is being reported as online before attempting query
+    if (statusDoc === null || statusDoc.serverOnline === false || statusDoc.serverOnline === undefined) return null;
 
     const current_time = Date.now();
     if (req.gridQueryDelay === undefined) {

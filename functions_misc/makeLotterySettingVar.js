@@ -5,7 +5,7 @@ module.exports = async (guildID, settings) => {
         settings = await getAllSettings(guildID);
     }
     const lottery = settings.find(set => set.name === 'economy')
-    let ecoSettings = {};
+    let lotterySettings = {};
     try { // .find() Causes crashes, so I need to do it this way.
         lotterySettings.ticketPrice = lottery.settings.find(set => set.setting === 'ticketprice').value;
     } catch (err) {

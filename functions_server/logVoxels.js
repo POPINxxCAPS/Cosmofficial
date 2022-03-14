@@ -9,7 +9,8 @@ module.exports = async (req, res) => {
     const settings = req.settings;
     let entityIDs = []; // Holding variable for the document deletions
     let insertData = [];
-    if (settings.serverOnline === 'false' || settings.serverOnline === undefined || settings.serverOnline === false) return;
+    const statusDoc = req.statusDoc; // Confirm server is being reported as online before attempting query
+    if (statusDoc === null || statusDoc.serverOnline === false || statusDoc.serverOnline === undefined) return null;
     req.expirationInSeconds = (req.voxelQueryDelay * 10) / 1000 || 600;
     if (req.expirationInSeconds < 600) req.expirationInSeconds = 600;
     req.name = 'logVoxels'

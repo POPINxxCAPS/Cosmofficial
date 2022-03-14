@@ -23,4 +23,6 @@ module.exports = async (guildID, userID, settings) => {
             statistics: []
           })
     }
+
+    return playerEcoDoc;
 }

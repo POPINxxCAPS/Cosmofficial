@@ -10,7 +10,8 @@ module.exports = async (req) => {
     let insertData = [];
     let SLinsertData = [];
 
-    if (settings.serverOnline === false || settings.serverOnline === undefined) return;
+    const statusDoc = req.statusDoc; // Confirm server is being reported as online before attempting query
+    if (statusDoc === null || statusDoc.serverOnline === false || statusDoc.serverOnline === undefined) return null;
     let current_time = Date.now();
     const expirationInSeconds = 29;
     const expiration_time = current_time + (expirationInSeconds * 1000);

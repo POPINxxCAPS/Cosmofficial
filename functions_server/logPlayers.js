@@ -17,7 +17,8 @@ module.exports = async (req) => {
     const onlinePlayerReward = ecoSettings.onlineReward;
     let insertData = [];
     let SLinsertData = [];
-    if (settings.serverOnline === false || settings.serverOnline === undefined) return;
+    const statusDoc = req.statusDoc; // Confirm server is being reported as online before attempting query
+    if (statusDoc === null || statusDoc.serverOnline === false || statusDoc.serverOnline === undefined) return null;
     req.expirationInSeconds = (req.gridQueryDelay / 2) / 1000 || 30;
     if (req.expirationInSeconds < 30) req.expirationInSeconds = 30;
     req.name = 'logPlayers'

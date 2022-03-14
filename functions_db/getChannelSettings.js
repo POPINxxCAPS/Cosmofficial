@@ -80,8 +80,8 @@ module.exports = async (guildID) => {
         category: 'channels',
         setting: 'lottery'
     })
-    if (hotzoneChannel === null) {
-        chatRelayChannel = await settingsModel.create({
+    if (lotteryChannel === null) {
+        lotteryChannel = await settingsModel.create({
             guildID: guildID,
             displayName: 'Lottery Channel',
             category: 'channels',

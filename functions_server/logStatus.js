@@ -28,7 +28,7 @@ module.exports = async (req) => {
         settings.save();
     }
 
-    let servInfoDoc = await statusModel.findOne({
+    let servInfoDoc = req.statusDoc !== null ? req.statuDoc : await statusModel.findOne({
         guildID: guildID,
     });
     if (servInfoDoc === null || servInfoDoc === undefined) { // If no status document, create one
