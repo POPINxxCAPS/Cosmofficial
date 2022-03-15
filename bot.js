@@ -80,7 +80,7 @@ client.on('ready', () => {
   //liveMapHandler(client)
 
 
-  setInterval(cooldownHandler, 20000);
+  setInterval(cooldownHandler, 20000); // Just a cooldown wiping function for cooldowns created by commands.
 
 
   // Bot activity/channel tickers
@@ -91,8 +91,7 @@ client.on('ready', () => {
 
 
   autoRoleCosmic(client);
-  //cleanupTimer(client); // No longer needed
-  //gridDeletionQueue(client, discord)
-  //spaceTicketEnforcer(client)
-  //cosmicCharts(client, discord);
+  //gridDeletionQueue(client, discord) // Will create this for all
+  //spaceTicketEnforcer(client) // Cosmic Network Only
+  //cosmicCharts(client, discord); // Testing function for me, creates 3d scatter plot map of the server
 })

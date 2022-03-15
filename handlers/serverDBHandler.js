@@ -11,6 +11,7 @@ const logCharacters = require('../functions_server/logCharacters');
 const logChat = require('../functions_server/logChat');
 const logFloatingObjs = require('../functions_server/logFloatingObjs');
 const logVoxels = require('../functions_server/logVoxels');
+const lotteryHandler = require('../handlers/lotteryHandler');
 const verificationModel = require('../models/verificationSchema');
 const allianceModel = require('../models/allianceSchema');
 const gridModel = require('../models/gridSchema');
@@ -49,13 +50,12 @@ module.exports = async (client) => {
             const settings = await getAllSettings(guildID);
             // Pull config from settings
             const config = await makeConfigVar(guildID, settings);
-
             // Pull Economy Settings
             const ecoSettings = await makeEcoSettingVar(guildID, settings);
             if (config === null || config.ip === 'Not Set' || config.port === 'Not Set' || config.secret === 'Not Set') { // Double check
                 queryIsRunning = false;
                 continue;
-            }
+            } // Cancel if server isn't configured
             const allianceDocs = await allianceModel.find({
                 guildID: guildID
             })
@@ -93,6 +93,8 @@ module.exports = async (client) => {
                 gridQueryDelay: gridQueryDelay,
                 characterDocsCache: characterDocs
             }
+
+            lotteryHandler(req);
             await logStatus(req); // Specific Ordering
             await logFloatingObjs(req); // This doesn't need anything special
             await logChat(req);
