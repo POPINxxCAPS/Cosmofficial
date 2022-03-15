@@ -21,5 +21,58 @@ module.exports = async (guildID) => {
     }
     settings.push(ticketPrice);
 
+    let drawTime = await settingsModel.findOne({
+        guildID: guildID,
+        category: 'lottery',
+        setting: 'drawtime'
+    })
+    if (drawTime === null) {
+        drawTime = await settingsModel.create({
+            guildID: guildID,
+            displayName: 'Draw Time',
+            category: 'lottery',
+            description: 'Amount of time between each ticket drawing.',
+            setting: 'drawtime',
+            value: 'Not Set',
+            valueType: 'time'
+        })
+    }
+    settings.push(drawTime);
+
+    let updateInterval = await settingsModel.findOne({
+        guildID: guildID,
+        category: 'lottery',
+        setting: 'updateinterval'
+    })
+    if (updateInterval === null) {
+        updateInterval = await settingsModel.create({
+            guildID: guildID,
+            displayName: 'Channel Update Interval',
+            category: 'lottery',
+            description: 'Time between updates to the lottery channel.',
+            setting: 'updateinterval',
+            value: 'Not Set',
+            valueType: 'time'
+        })
+    }
+    settings.push(updateInterval);
+
+    let dailyInterest = await settingsModel.findOne({
+        guildID: guildID,
+        category: 'lottery',
+        setting: 'ticketprice'
+    })
+    if (dailyInterest === null) {
+        dailyInterest = await settingsModel.create({
+            guildID: guildID,
+            displayName: 'Daily Interest',
+            category: 'lottery',
+            description: 'Interest percentage amount to add to the lottery pot every day.',
+            setting: 'ticketprice',
+            value: 'Not Set',
+            valueType: 'number'
+        })
+    }
+    settings.push(dailyInterest);
     return settings
 }
