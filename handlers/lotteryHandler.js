@@ -1,26 +1,26 @@
+const discord = require('discord.js')
 const lotteryTicketModel = require('../models/lotteryTicketSchema');
 const lotteryPotModel = require('../models/lotteryPotSchema');
 const getPlayerEco = require('../functions_db/getPlayerEco')
 const makeLotterySettingVar = require('../functions_misc/makeLotterySettingVar');
+const makeChannelSettingVar = require('../functions_misc/makeChannelSettingVar')
 const timerFunction = require('../functions_db/timerFunction');
 const ms = require('ms');
 
 module.exports = async (req) => {
     const current_time = Date.now();
     const client = req.client;
-    const discord = req.discord;
     const guildID = req.guildID;
     const guild = client.guilds.cache.get(guildID);
-    const channelSettings = req.channels;
+    const channelSettings = await makeChannelSettingVar(guildID, req.settings);
     const lotterySettings = await makeLotterySettingVar(guildID, req.settings);
     const drawTimeMS = lotterySettings.drawTime === undefined || lotterySettings.drawTime === 'Not Set' ? 3600000 : lotterySettings.drawTime
     const drawTime = current_time + (drawTimeMS) // Set draw time to 1hr from now
     const dailyInterestRate = lotterySettings.dailyInterestRate === undefined || lotterySettings.dailyInterestRate === 'Not Set' ? 0.01 : lotterySettings.dailyInterestRate / 100;
-    req.expirationInSeconds = lotterySettings.updateInterval === undefined || lotterySettings.updateInterval === 'Not Set' ? 300 : lotterySettings.updateInterval
+    req.expirationInSeconds = lotterySettings.updateInterval === undefined || lotterySettings.updateInterval === 'Not Set' ? 30 : lotterySettings.updateInterval
     req.name = 'lotteryHandler'
     const timerCheck = await timerFunction(req) // Delay for updating lottery channel
     if (timerCheck === true) return; // If there is a timer, cancel.
-
     const ecoSettings = req.ecoSettings;
     const currencyName = ecoSettings.currencyName;
 
@@ -33,7 +33,7 @@ module.exports = async (req) => {
 
     const channelID = channelSettings.lottery;
     if (channelID === undefined || channelID === 'Not Set') return;
-    const channel = await client.channels.cache.get(channelID);
+    const channel = guild.channels.cache.get(channelID);
     if (channel === undefined || channel === null) return;
 
     const tickets = await lotteryTicketModel.find({

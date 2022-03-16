@@ -12,15 +12,13 @@ module.exports = {
         const args = req.args;
         const guild = req.guild;
         const discord = req.discord;
+        let settings = req.settings
 
         const embed = new discord.MessageEmbed()
             .setColor('#E02A6B')
             .setTitle(`Settings Manager`)
             .setURL('https://cosmofficial.herokuapp.com/')
             .setFooter('Cosmofficial by POPINxxCAPS');
-
-        let settings = await getAllSettings(guild.id);
-
         const category = args[0];
         const setting = args[1];
         const value = args[2];
@@ -39,7 +37,7 @@ module.exports = {
 
         if (categorySearch === undefined) return errorEmbed(message.channel, 'Category was not found. Please check your spelling and try again.')
         if (categorySearch.guildOwnerOnly === true) { // Confirm it's the guild owner running the command.
-            if(message.author.id !== message.guild.owner.user.id) return errorEmbed(message.channel, 'Only the discord owner may edit settings in this category.');
+            if (message.author.id !== message.guild.owner.user.id) return errorEmbed(message.channel, 'Only the discord owner may edit settings in this category.');
         }
 
         if (setting === undefined) { // If setting is undefined, list available settings within that category.
@@ -61,11 +59,11 @@ module.exports = {
         // And value is described
         let testVar;
         let errorString;
-        console.log(settingSearch)
         if (settingSearch.valueType === 'time') {
             // Attempt to get time value
             try {
                 testVar = ms(value)
+                embed.setDescription(`${settingSearch.displayName} Successfully changed to ${settingSearch.value}`);
             } catch (err) {
                 errorString = 'Invalid Setting Value.\nValid: 1d, 4h, 30m, etc.'
             }
@@ -76,6 +74,8 @@ module.exports = {
                 errorString = 'Invalid Setting Value.\nValid: Any whole number.';
             } else {
                 testVar = value;
+                embed.setDescription(`${settingSearch.displayName} Successfully changed to ${value}`);
+
             }
         }
         if (settingSearch.valueType === 'boolean') {
@@ -84,11 +84,21 @@ module.exports = {
                 errorString = 'Invalid Setting Value.\nValid: true/false.'
             } else {
                 testVar = value;
+                embed.setDescription(`${settingSearch.displayName} Successfully changed to ${value}`);
+
             }
         }
         if (settingSearch.valueType === 'string') {
             testVar = value; // No checks really needed for this one.
             // Might need to set it up to allow more than 1word? Not really needed though.
+            embed.setDescription(`${settingSearch.displayName} Successfully changed to ${value}`);
+        }
+        if (settingSearch.valueType === 'channel') {
+            // Confirm channel actually exists
+            const channel = message.guild.channels.cache.get(value)
+            if (channel === undefined) errorString = 'Not a valid channel ID. Please enter a valid channel ID.';
+            testVar = value;
+            embed.setDescription(`${settingSearch.displayName} Successfully changed to <#${value}>`);
         }
 
         if (errorString !== undefined) return errorEmbed(message.channel, errorString);
@@ -96,8 +106,6 @@ module.exports = {
 
         settingSearch.value = testVar;
         settingSearch.save();
-
-        embed.setDescription(`${settingSearch.displayName} Successfully changed to ${settingSearch.value}`);
         return message.channel.send(embed);
     }
 }

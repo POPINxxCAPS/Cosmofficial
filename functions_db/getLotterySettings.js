@@ -60,7 +60,7 @@ module.exports = async (guildID) => {
     let dailyInterest = await settingsModel.findOne({
         guildID: guildID,
         category: 'lottery',
-        setting: 'ticketprice'
+        setting: 'dailyinterest'
     })
     if (dailyInterest === null) {
         dailyInterest = await settingsModel.create({
@@ -68,7 +68,7 @@ module.exports = async (guildID) => {
             displayName: 'Daily Interest',
             category: 'lottery',
             description: 'Interest percentage amount to add to the lottery pot every day.',
-            setting: 'ticketprice',
+            setting: 'dailyinterest',
             value: 'Not Set',
             valueType: 'number'
         })

@@ -1,6 +1,6 @@
 const cooldowns = new Map();
 const getAllSettings = require('../../functions_db/getAllSettings');
-const makeChannelsVar = require('../../functions_misc/makeChannelsVar');
+const makeChannelsVar = require('../../functions_misc/makeChannelSettingVar');
 const makeEcoSettingVar = require('../../functions_misc/makeEcoSettingVar');
 const makeLotterySettingVar = require('../../functions_misc/makeLotterySettingVar');
 const getPlayerEco = require('../../functions_db/getPlayerEco');
