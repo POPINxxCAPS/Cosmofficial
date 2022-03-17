@@ -1,4 +1,4 @@
-module.exports = async (client, userID, guildID) => {
+module.exports = async (client, userID) => {
     let patron = false
     let mainGuild = await client.guilds.cache.get("853247020567101440");
     let guildOwner = mainGuild.members.cache.get(userID);

@@ -6,12 +6,13 @@ module.exports = {
     aliases: ["buyticket", "blt"],
     permissions: ["SEND_MESSAGES"],
     description: "Buys a lottery ticket",
+    category: "Economy",
     async execute(req) {
         const message = req.message;
         const args = req.args;
         const discord = req.discord;
         const mainGuild = req.mainGuild;
-        const playerEco = req.playerEco;
+        let playerEco = req.playerEco;
         const lotterySettings = req.lotterySettings;
 
         let ticketPrice = lotterySettings.ticketPrice;

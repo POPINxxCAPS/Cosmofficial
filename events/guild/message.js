@@ -16,17 +16,19 @@ module.exports = async (discord, client, message) => {
   if (!message.content.startsWith(prefix) || message.author.bot) return;
   if(message.guild === null) return; // Redundancy Crash Fix
 
+  
+  const args = message.content.slice(prefix.length).split(/ +/);
+  const cmd = args.shift().toLowerCase();
+  const command = await client.commands.get(cmd) || client.commands.find(a => a.aliases && a.aliases.includes(cmd));
+
   const commandChannel = channels.commands;
 
   if (commandChannel !== 'Not Set' && commandChannel !== undefined && commandChannel !== null) { // If a command channel is defined, compare
     if (message.member.hasPermission('ADMINISTRATOR')) {} else {
       const channelTest = client.channels.cache.get(args[1]); // Verify the channel exists still before cancelling.
-      if (message.channel.id !== discordSettings.botCommandChannel && channelTest !== undefined && channelTest !== null) return;
+      if (message.channel.id !== channels.commands && channelTest !== undefined && channelTest !== null) return;
     }
   }
-  const args = message.content.slice(prefix.length).split(/ +/);
-  const cmd = args.shift().toLowerCase();
-  const command = await client.commands.get(cmd) || client.commands.find(a => a.aliases && a.aliases.includes(cmd));
 
   // Start permissions setup
   const validPermissions = [
@@ -91,7 +93,7 @@ module.exports = async (discord, client, message) => {
       patron = true;
     }
 
-    const playerEco = await getPlayerEco(guild.id, message.author.id, settings);
+    let playerEco = await getPlayerEco(guild.id, message.author.id, settings);
     const ecoSettings = await makeEcoSettingVar(guild.id, settings);
     const lotterySettings = await makeLotterySettingVar(guild.id, settings);
 

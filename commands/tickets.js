@@ -6,6 +6,7 @@ module.exports = {
     aliases: ["t", "ticket"],
     permissions: ["SEND_MESSAGES"],
     description: "Views your lottery tickets",
+    category: "Economy",
     async execute(req) {
         const message = req.message;
         const discord = req.discord;

@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const statusModel = require('../models/statusSchema');
 const playerModel = require('../models/playerSchema');
-const playerEcoModel = require('../models/playerEcoSchema');
+let playerEcoModel = require('../models/playerEcoSchema');
 const verificationModel = require('../models/verificationSchema');
 
 // Get one server

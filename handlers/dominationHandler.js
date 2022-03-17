@@ -1,6 +1,6 @@
 const checkGridForFaction = require('../functions_db/checkGridForFaction');
 const verificationModel = require('../models/verificationSchema');
-const playerEcoModel = require('../models/playerEcoSchema');
+let playerEcoModel = require('../models/playerEcoSchema');
 const gridModel = require('../models/gridSchema');
 const playerModel = require('../models/playerSchema');
 const characterModel = require('../models/characterSchema');

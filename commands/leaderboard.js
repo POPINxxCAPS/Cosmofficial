@@ -1,13 +1,13 @@
-const playerEcoModel = require("../models/playerEcoSchema");
+let playerEcoModel = require("../models/playerEcoSchema");
 module.exports = {
     name: "leaderboard",
     aliases: ["lb"],
     permissions: ["SEND_MESSAGES"],
-    description: "View top 10 balances",
+    description: "View top 10 bot economy balances.",
+    category: "Economy",
     async execute(req) {
         const message = req.message;
         const client = req.client;
-        const discord = req.discord;
         const mainGuild = req.mainGuild;
         const guild = req.guild;
         const ecoSettings = req.ecoSettings;

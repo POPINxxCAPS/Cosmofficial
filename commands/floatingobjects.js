@@ -6,6 +6,7 @@ module.exports = {
   aliases: ['fo'],
   description: "List all floating objects",
   permissions: ["SEND_MESSAGES"],
+  category: "General",
   async execute(req) {
     const message = req.message;
     const discord = req.discord;

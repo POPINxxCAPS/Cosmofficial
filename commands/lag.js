@@ -7,8 +7,9 @@ const ms = require('ms');
 module.exports = {
   name: 'lag',
   aliases: ['lag'],
-  description: "Check this discords SE server information",
+  description: "Check this discords SE server status.",
   permissions: ["SEND_MESSAGES"],
+  category: "General",
   async execute(req) {
     const message = req.message;
     const discord = req.discord;
@@ -87,15 +88,6 @@ module.exports = {
 
     try {
       message.channel.send(embed)
-      let patron;
-      if (guild.owner === null) return; // Redundancy Check
-      let guildOwner = mainGuild.members.cache.get(guild.owner.user.id);
-      if (!guildOwner) return; // If guild owner is no longer in Cosmofficial discord
-
-      if (guildOwner.roles.cache.has('883534965650882570') || guildOwner.roles.cache.has('883535930630213653')) {
-        patron = true;
-      }
-      if (patron === undefined) return;
       chartSimSpeed(discord, guild, message.channel);
       return;
     } catch (err) {}

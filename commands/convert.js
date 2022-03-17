@@ -14,23 +14,16 @@ module.exports = {
     aliases: [],
     description: "Add a player to the whitelist",
     permissions: ["SEND_MESSAGES"],
+    category: "Economy",
     async execute(req) {
         const message = req.message;
         const args = req.args;
         const discord = req.discord;
         const mainGuild = req.mainGuild;
         const guild = req.guild;
-        const playerEco = req.playerEco;
+        let playerEco = req.playerEco;
         const ecoSettings = req.ecoSettings;
         const currencyName = ecoSettings.currencyName;
-        let guildOwner = mainGuild.members.cache.get(message.guild.owner.user.id);
-        if (!guildOwner || guildOwner === null || guildOwner === undefined) return message.channel.send('The owner of this discord must be in the Cosmofficial discord to enable usage of this command.');
-        let patron = false;
-        if (guildOwner.roles.cache.has('883535930630213653') || guildOwner.roles.cache.has('883564396587147275')) {
-            patron = true;
-        }
-        if (patron === false) return lockedEmbed(message.channel, discord);
-
 
         // Confirm that there isn't a restart in the next 15 minutes
         let cancel = false;

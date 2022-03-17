@@ -2,7 +2,8 @@ module.exports = {
   name: "bulkdelete",
   aliases: ['bd'],
   permissions: ["ADMINISTRATOR"],
-  description: "Delete x messages from channel",
+  description: "Delete x messages from channel.\nDoes not work for messages 7+ days old.",
+  category: "Administration",
   async execute(req) {
     const message = req.message;
     const args = req.args;

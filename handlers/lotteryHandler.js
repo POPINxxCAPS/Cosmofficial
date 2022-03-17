@@ -17,7 +17,7 @@ module.exports = async (req) => {
     const drawTimeMS = lotterySettings.drawTime === undefined || lotterySettings.drawTime === 'Not Set' ? 3600000 : lotterySettings.drawTime
     const drawTime = current_time + (drawTimeMS) // Set draw time to 1hr from now
     const dailyInterestRate = lotterySettings.dailyInterestRate === undefined || lotterySettings.dailyInterestRate === 'Not Set' ? 0.01 : lotterySettings.dailyInterestRate / 100;
-    req.expirationInSeconds = lotterySettings.updateInterval === undefined || lotterySettings.updateInterval === 'Not Set' ? 30 : lotterySettings.updateInterval
+    req.expirationInSeconds = lotterySettings.updateInterval === undefined || lotterySettings.updateInterval === 'Not Set' ? 300 : lotterySettings.updateInterval
     req.name = 'lotteryHandler'
     const timerCheck = await timerFunction(req) // Delay for updating lottery channel
     if (timerCheck === true) return; // If there is a timer, cancel.
@@ -139,7 +139,7 @@ module.exports = async (req) => {
     }
 
     for (let t = 0; t < winners.length; t++) { // Reward each winner based on their weight (Winning ticket count)
-        const playerEcoDoc = await getPlayerEco(guildID, userID, req.settings)
+        let playerEcoDoc = await getPlayerEco(guildID, userID, req.settings)
         const memberTarget = await guild.members.cache.find(member => member.id === verDoc.userID)
         const rewardAmount = (winners[t].weight / totalWeight) * (parseInt(potDoc.potAmount) * 0.8);
         playerEcoDoc.vault = parseInt(playerEcoDoc.vault) + rewardAmount;

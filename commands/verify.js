@@ -8,8 +8,9 @@ const verify = require('../functions_commands/verify');
 module.exports = {
     name: 'verify',
     aliases: ['verify'],
-    description: "Link player username to discord",
+    description: "Links player username to discord user ID.\nEnables the bot to recognize you for certain features.",
     permissions: ["SEND_MESSAGES"],
+    category: "General",
     async execute(req) {
         const message = req.message;
         const args = req.args;

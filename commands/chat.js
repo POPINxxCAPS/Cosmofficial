@@ -5,17 +5,13 @@ module.exports = {
   aliases: ['chat'],
   description: "List server chat messages",
   permissions: ["SEND_MESSAGES"],
+  category: "General",
   async execute(req) {
     const message = req.message;
     const args = req.args;
     const discord = req.discord;
-    const mainGuild = req.mainGuild;
     let messageCount = 10;
     let index;
-    let patronCheck = mainGuild.members.cache.get(message.guild.owner.user.id);
-    if (!patronCheck) return message.channel.send('The owner of this discord must be in the Cosmofficial discord to enable usage of this command.');
-
-
 
     let chatDoc = await chatModel.findOne({
       guildID: message.guild.id

@@ -3,3 +3,4 @@ env
 middleware_templates
 functions_server/crapStorage
 lib
+crapstorage

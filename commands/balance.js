@@ -1,20 +1,17 @@
-const chatModel = require('../models/chatSchema');
-const lockedEmbed = require('../functions_discord/lockedEmbed');
-const playerEcoModel = require('../models/playerEcoSchema');
+let playerEcoModel = require('../models/playerEcoSchema');
 const errorEmbed = require('../functions_discord/errorEmbed');
-const makeEcoSettingVar = require('../functions_misc/makeEcoSettingVar');
 module.exports = {
     name: 'balance',
     aliases: ['bal'],
-    description: "List server chat messages",
+    description: "Check your economy balances.\mOr, *c!bal @player* to check their balances.",
     permissions: ["SEND_MESSAGES"],
+    category: "Economy",
     async execute(req) {
         const message = req.message;
         const args = req.args;
         const discord = req.discord;
         const mainGuild = req.mainGuild;
-        const playerEco = req.playerEco;
-        let guildOwner = mainGuild.members.cache.get(message.guild.owner.user.id);
+        let playerEco = req.playerEco;
 
         const ecoSettings = req.ecoSettings;
         const currencyName = ecoSettings.currencyName;

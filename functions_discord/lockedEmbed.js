@@ -3,7 +3,7 @@ module.exports = async (channel, discord) => {
         .setColor('#E02A6B')
         .setTitle('Feature Locked')
         .setURL('https://cosmofficial.herokuapp.com/')
-        .setDescription('The discord owner must be subscribed to the Patreon.\nFeature is currently locked.')
+        .setDescription('This is a patron only feature. The owner of the discord must be a patron to use this. Please consider supporting future development of the bot to unlock everything available.')
         .addFields({
             name: 'Patreon Link',
             value: `c!patreon`

@@ -1,13 +1,16 @@
-const getAllSettings = require('../functions_db/getAllSettings.js');
+const checkPatron = require('../functions_misc/checkPatron');
 const errorEmbed = require('../functions_discord/errorEmbed');
+const lockedEmbed = require('../functions_discord/lockedEmbed');
 const ms = require('ms');
 module.exports = {
     name: 'settings',
     aliases: ['set'],
-    description: "Edit bot settings. This includes events, economy settings, channel tickers, and more.",
+    description: "Edit bot settings. This includes almost all bot configuration.",
     permissions: ["ADMINISTRATOR"],
+    category: "Administration",
     async execute(req) {
         // New Settings Command Format: c!settings {category} {setting} {value}
+        const client = req.client;
         const message = req.message;
         const args = req.args;
         const guild = req.guild;
@@ -38,6 +41,10 @@ module.exports = {
         if (categorySearch === undefined) return errorEmbed(message.channel, 'Category was not found. Please check your spelling and try again.')
         if (categorySearch.guildOwnerOnly === true) { // Confirm it's the guild owner running the command.
             if (message.author.id !== message.guild.owner.user.id) return errorEmbed(message.channel, 'Only the discord owner may edit settings in this category.');
+        }
+        if(categorySearch.patronReq === true) {
+            const patron = await checkPatron(client, message.guild.owner.user.id)
+            if(patron === false) return lockedEmbed(message.channel, discord)
         }
 
         if (setting === undefined) { // If setting is undefined, list available settings within that category.

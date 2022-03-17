@@ -1,10 +1,11 @@
-const playerEcoModel = require('../models/playerEcoSchema');
+let playerEcoModel = require('../models/playerEcoSchema');
 const errorEmbed = require('../functions_discord/errorEmbed');
 module.exports = {
     name: "taketokens",
     aliases: ['take'],
     permissions: ["ADMINISTRATOR"],
-    description: "Gives Cosmic Tokens to the targetted player.",
+    description: "Takes currency from the targetted player.",
+    category: "Administration",
     async execute(req) {
         const message = req.message;
         const args = req.args;
@@ -13,7 +14,7 @@ module.exports = {
         const ecoSettings = req.ecoSettings;
         const currencyName = ecoSettings.currencyName;
 
-        if (!args.length) return errorEmbed(message.channel, 'You must mention a player to give them tokens.')
+        if (!args.length) return errorEmbed(message.channel, 'You must mention a player to remove their tokens.')
         const amount = args[1];
         const target = message.mentions.users.first();
         if (!target) return errorEmbed(message.channel, 'User does not exist.');

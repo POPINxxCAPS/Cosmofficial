@@ -3,12 +3,13 @@ const cooldownFunction = require('../functions_db/cooldownFunction');
 module.exports = {
     name: 'timely',
     aliases: ['time'],
-    description: "Grants small amount of currency",
+    description: "Grants small amount of currency.",
     permissions: ["SEND_MESSAGES"],
+    category: "Economy",
     async execute(req) {
         const message = req.message;
         const discord = req.discord;
-        const playerEco = req.playerEco;
+        let playerEco = req.playerEco;
         const ecoSettings = req.ecoSettings;
         const currencyName = ecoSettings.currencyName;
         const cdInSec = 60

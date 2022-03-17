@@ -32,8 +32,9 @@ let commands = [{
 module.exports = {
     name: 'help',
     aliases: ['help'],
-    description: "List server chat messages",
+    description: "List all commands and helpful information.",
     permissions: ["SEND_MESSAGES"],
+    category: "General",
     async execute(req) {
         const message = req.message;
         const args = req.args;

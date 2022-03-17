@@ -9,6 +9,7 @@ module.exports = {
     aliases: ['dfo'],
     description: "List all floating objects",
     permissions: ["ADMINISTRATOR"],
+    category: "Administration",
     async execute(req) {
         const message = req.message;
         const guild = req.guild;

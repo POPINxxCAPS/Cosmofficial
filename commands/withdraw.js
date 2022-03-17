@@ -1,16 +1,17 @@
-const playerEcoModel = require('../models/playerEcoSchema');
+let playerEcoModel = require('../models/playerEcoSchema');
 const lockedEmbed = require('../functions_discord/lockedEmbed');
 module.exports = {
     name: 'withdraw',
     aliases: ['with'],
-    description: "Pay a user",
+    description: "Withdraw currency from your vault.",
     permissions: ["SEND_MESSAGES"],
+    category: "Economy",
     async execute(req) {
         const message = req.message;
         const args = req.args;
         const discord = req.discord;
         const mainGuild = req.mainGuild;
-        const playerEco = req.playerEco;
+        let playerEco = req.playerEco;
         const ecoSettings = req.ecoSettings;
         const currencyName = ecoSettings.currencyName;
 

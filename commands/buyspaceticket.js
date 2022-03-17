@@ -14,11 +14,12 @@ module.exports = {
     aliases: ['bst'],
     description: "Buy a space ticket",
     permissions: ["SEND_MESSAGES"],
+    category: "Cosmic",
     async execute(req) {
         const message = req.message;
         const discord = req.discord;
         const guild = req.guild;
-        const playerEco = req.playerEco;
+        let playerEco = req.playerEco;
         const ecoSettings = req.ecoSettings;
         const currencyName = ecoSettings.currencyName;
         if (guild.id !== '799685703910686720') return;

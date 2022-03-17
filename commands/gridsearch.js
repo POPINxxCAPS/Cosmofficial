@@ -5,8 +5,9 @@ const errorEmbed = require('../functions_discord/errorEmbed');
 module.exports = {
     name: 'gridsearch',
     aliases: ['gs'],
-    description: "Check the database for a specific grid name",
+    description: "Check the database for a specific grid name.\nIf owner of the grid or admin, dms the location.",
     permissions: ["SEND_MESSAGES"],
+    category: "General",
     async execute(req) {
         const message = req.message;
         const args = req.args;

@@ -5,6 +5,7 @@ module.exports = {
     aliases: ['serversave'],
     description: "Execute a server save",
     permissions: ["ADMINISTRATOR"],
+    category: "Administration",
     async execute(req) {
       const message = req.message;
       const guild = req.guild;

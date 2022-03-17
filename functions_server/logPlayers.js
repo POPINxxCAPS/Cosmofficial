@@ -1,5 +1,5 @@
 const playerModel = require('../models/playerSchema');
-const playerEcoModel = require('../models/playerEcoSchema');
+let playerEcoModel = require('../models/playerEcoSchema');
 const whitelistModel = require('../models/whitelistSchema');
 const whitelistSettingModel = require('../models/whitelistSettingSchema');
 const serverLogModel = require('../models/serverLogSchema');

@@ -8,6 +8,7 @@ module.exports = {
   aliases: ['planets'],
   description: "List planets and their locations", // OLD COMMANDS DONT JUDGE THE CODE LOL
   permissions: ["ADMINISTRATOR"],
+  category: "Administration",
   async execute(req) {
     const message = req.message;
     const discord = req.discord;

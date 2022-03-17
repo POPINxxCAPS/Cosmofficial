@@ -2,8 +2,9 @@
 module.exports = {
     name: 'patreon',
     aliases: ['patron'],
-    description: "List server chat messages",
+    description: "Cosmofficial Patreon Link",
     permissions: ["SEND_MESSAGES"],
+    category: "Support",
     async execute(req) {
         const message = req.message;
         const discord = req.discord;
@@ -11,7 +12,7 @@ module.exports = {
         .setColor('#E02A6B')
         .setTitle(`Cosmofficial Patreon Link`)
         .setURL('https://cosmofficial.herokuapp.com/')
-        .setDescription(`https://cosmofficial.herokuapp.com/`)
+        .setDescription(`Like the bot? Support it's development!\nMore support = more motivation. Thanks!\nhttps://cosmofficial.herokuapp.com/`)
         .setFooter('Cosmofficial by POPINxxCAPS');
         message.channel.send(embed)
     }

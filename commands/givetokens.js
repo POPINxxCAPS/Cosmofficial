@@ -1,10 +1,11 @@
-const playerEcoModel = require('../models/playerEcoSchema');
+let playerEcoModel = require('../models/playerEcoSchema');
 const errorEmbed = require('../functions_discord/errorEmbed');
 module.exports = {
     name: "givetokens",
     aliases: ['give'],
     permissions: ["ADMINISTRATOR"],
-    description: "Gives Cosmic Tokens to the targetted player.",
+    description: "Grants currency to the targetted player.",
+    category: "Administration",
     async execute(req) {
         const message = req.message;
         const args = req.args;

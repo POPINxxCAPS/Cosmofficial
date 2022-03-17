@@ -1,4 +1,4 @@
-const playerEcoModel = require('../../models/playerEcoSchema');
+let playerEcoModel = require('../../models/playerEcoSchema');
 const makeEcoSettingVar = require('../../functions_misc/makeEcoSettingVar');
 
 module.exports = async (discord, client, member) => {

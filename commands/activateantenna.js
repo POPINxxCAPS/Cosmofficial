@@ -39,14 +39,16 @@ let timeModifier = 30;
 module.exports = {
     name: 'activateantenna',
     aliases: ['activate'],
-    description: "Add a player to the whitelist",
+    description: "Activate a spawner antenna on the server for a price.\nRequired additional admin setup to be used.\nInformation can be found in the Cosmofficial discord.",
     permissions: ["SEND_MESSAGES"],
+    category: 'Conversion',
+    patronReq: true,
     async execute(req) {
         const message = req.message;
         const args = req.args;
         const discord = req.discord;
         const guild = req.guild;
-        const playerEco = req.playerEco;
+        let playerEco = req.playerEco;
         const ecoSettings = req.ecoSettings;
         const currencyName = ecoSettings.currencyName;
         if (message.guild.id !== '799685703910686720') return errorEmbed(message.channel, 'This command only works on the Cosmic PvPvAI server!')

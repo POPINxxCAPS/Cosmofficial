@@ -6,7 +6,7 @@ const statistic = new mongoose.Schema({
     value: { type: String, require: true }
 })
 // Main Schema
-const playerEcoSchema = new mongoose.Schema({
+let playerEcoSchema = new mongoose.Schema({
     guildID: { type: String, require: true, index: true },
     userID: { type: String, require: true, index: true },
     currency: { type: String, require: true, index: true },
