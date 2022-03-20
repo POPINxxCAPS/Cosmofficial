@@ -9,6 +9,7 @@ module.exports = {
     description: "Delete a specific grid. Accepts an EntityID or Grid Name.",
     permissions: ["SEND_MESSAGES"],
     category: "Administration",
+    categoryAliases: ['administration', 'admin'],
     async execute(req) {
         const message = req.message;
         const args = req.args;

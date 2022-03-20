@@ -15,6 +15,7 @@ module.exports = {
     description: "Add a player to the whitelist",
     permissions: ["SEND_MESSAGES"],
     category: "Economy",
+    categoryAliases: ['economy', 'eco'],
     async execute(req) {
         const message = req.message;
         const args = req.args;

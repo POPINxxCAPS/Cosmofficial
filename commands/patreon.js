@@ -5,6 +5,7 @@ module.exports = {
     description: "Cosmofficial Patreon Link",
     permissions: ["SEND_MESSAGES"],
     category: "Support",
+    categoryAliases: ['support'],
     async execute(req) {
         const message = req.message;
         const discord = req.discord;

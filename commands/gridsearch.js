@@ -8,6 +8,7 @@ module.exports = {
     description: "Check the database for a specific grid name.\nIf owner of the grid or admin, dms the location.",
     permissions: ["SEND_MESSAGES"],
     category: "General",
+    categoryAliases: ['general'],
     async execute(req) {
         const message = req.message;
         const args = req.args;

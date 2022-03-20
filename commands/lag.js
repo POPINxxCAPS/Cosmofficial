@@ -10,6 +10,7 @@ module.exports = {
   description: "Check this discords SE server status.",
   permissions: ["SEND_MESSAGES"],
   category: "General",
+    categoryAliases: ['general'],
   async execute(req) {
     const message = req.message;
     const discord = req.discord;

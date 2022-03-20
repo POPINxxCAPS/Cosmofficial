@@ -7,7 +7,8 @@ module.exports = {
     aliases: ['wl'],
     description: "View and manage the current whitelist.",
     permissions: ["ADMINISTRATOR"],
-    category: "Admininstration",
+    category: "Administration",
+    categoryAliases: ['administration', 'admin'],
     async execute(req) {
         const message = req.message;
         const args = req.args;

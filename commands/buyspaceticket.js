@@ -12,9 +12,10 @@ const price = 750000
 module.exports = {
     name: 'buyspaceticket',
     aliases: ['bst'],
-    description: "Buy a space ticket",
+    description: "Buy a space ticket.",
     permissions: ["SEND_MESSAGES"],
     category: "Cosmic",
+    categoryAliases: ['cosmic'],
     async execute(req) {
         const message = req.message;
         const discord = req.discord;

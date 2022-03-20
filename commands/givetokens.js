@@ -6,6 +6,7 @@ module.exports = {
     permissions: ["ADMINISTRATOR"],
     description: "Grants currency to the targetted player.",
     category: "Administration",
+    categoryAliases: ['administration', 'admin'],
     async execute(req) {
         const message = req.message;
         const args = req.args;

@@ -6,6 +6,7 @@ module.exports = {
     description: "Grants small amount of currency.",
     permissions: ["SEND_MESSAGES"],
     category: "Economy",
+    categoryAliases: ['economy', 'eco'],
     async execute(req) {
         const message = req.message;
         const discord = req.discord;

@@ -5,6 +5,7 @@ module.exports = {
     description: "Deposit currency into your vault.",
     permissions: ["SEND_MESSAGES"],
     category: "Economy",
+    categoryAliases: ['economy', 'eco'],
     async execute(req) {
         const message = req.message;
         const args = req.args;

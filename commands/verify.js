@@ -11,6 +11,7 @@ module.exports = {
     description: "Links player username to discord user ID.\nEnables the bot to recognize you for certain features.",
     permissions: ["SEND_MESSAGES"],
     category: "General",
+    categoryAliases: ['general'],
     async execute(req) {
         const message = req.message;
         const args = req.args;

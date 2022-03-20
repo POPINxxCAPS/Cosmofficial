@@ -6,6 +6,7 @@ module.exports = {
     description: "Check your economy balances.\mOr, *c!bal @player* to check their balances.",
     permissions: ["SEND_MESSAGES"],
     category: "Economy",
+    categoryAliases: ['economy', 'eco'],
     async execute(req) {
         const message = req.message;
         const args = req.args;

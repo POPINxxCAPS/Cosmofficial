@@ -6,6 +6,7 @@ module.exports = {
   description: "List server chat messages",
   permissions: ["SEND_MESSAGES"],
   category: "General",
+    categoryAliases: ['general'],
   async execute(req) {
     const message = req.message;
     const args = req.args;

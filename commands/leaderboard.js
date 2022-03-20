@@ -5,6 +5,7 @@ module.exports = {
     permissions: ["SEND_MESSAGES"],
     description: "View top 10 bot economy balances.",
     category: "Economy",
+    categoryAliases: ['economy', 'eco'],
     async execute(req) {
         const message = req.message;
         const client = req.client;

@@ -4,6 +4,7 @@ module.exports = {
   permissions: ["ADMINISTRATOR"],
   description: "Delete x messages from channel.\nDoes not work for messages 7+ days old.",
   category: "Administration",
+    categoryAliases: ['administration', 'admin'],
   async execute(req) {
     const message = req.message;
     const args = req.args;

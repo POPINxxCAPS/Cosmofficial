@@ -9,6 +9,7 @@ module.exports = {
     description: "Rob a % of another player's un-vaulted currency.",
     permissions: ["SEND_MESSAGES"],
     category: "Economy",
+    categoryAliases: ['economy', 'eco'],
     async execute(req) {
         const message = req.message;
         const discord = req.discord;

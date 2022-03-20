@@ -6,6 +6,7 @@ module.exports = {
     description: "Execute a server save",
     permissions: ["ADMINISTRATOR"],
     category: "Administration",
+    categoryAliases: ['administration', 'admin'],
     async execute(req) {
       const message = req.message;
       const guild = req.guild;

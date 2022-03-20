@@ -8,6 +8,7 @@ module.exports = {
     description: "Edit bot settings. This includes almost all bot configuration.",
     permissions: ["ADMINISTRATOR"],
     category: "Administration",
+    categoryAliases: ['administration', 'admin'],
     async execute(req) {
         // New Settings Command Format: c!settings {category} {setting} {value}
         const client = req.client;

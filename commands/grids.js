@@ -58,6 +58,7 @@ module.exports = {
     description: "Lookup top 10 grids.",
     permissions: ["SEND_MESSAGES"],
     category: "General",
+    categoryAliases: ['general'],
     async execute(req) {
         const message = req.message;
         const args = req.args;

@@ -5,6 +5,7 @@ module.exports = {
     description: "Invite link to the Cosmofficial Bot Discord.",
     permissions: ["SEND_MESSAGES"],
     category: "Support",
+    categoryAliases: ['support'],
     async execute(req) {
         const message = req.message;
         const discord = req.discord;

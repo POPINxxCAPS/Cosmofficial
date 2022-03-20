@@ -6,6 +6,7 @@ module.exports = {
     description: "Pay a user. Currency must be un-vaulted to pay.",
     permissions: ["SEND_MESSAGES"],
     category: "Economy",
+    categoryAliases: ['economy', 'eco'],
     async execute(req) {
         const message = req.message;
         const args = req.args;

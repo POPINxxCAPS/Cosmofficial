@@ -2,6 +2,7 @@ const chatModel = require('../../models/chatSchema');
 const playerModel = require('../../models/playerSchema');
 const queryChat = require('../execution/queryChat');
 const timerFunction = require('../database/timerFunction');
+const makeChannelSettingVar = require('../misc/makeChannelSettingVar');
 let loggedChats = [];
 
 module.exports = async (req) => {
@@ -12,7 +13,7 @@ module.exports = async (req) => {
     const statusDoc = req.statusDoc; // Confirm server is being reported as online before attempting query
     if (statusDoc === null || statusDoc.serverOnline === false || statusDoc.serverOnline === undefined) return null;
     req.expirationInSeconds = (req.gridQueryDelay * 0.75) / 1000 || 30;
-    if(req.expirationInSeconds < 30) req.expirationInSeconds = 30;
+    if (req.expirationInSeconds < 30) req.expirationInSeconds = 30;
     req.name = 'logChat'
     const timerCheck = await timerFunction(req)
     if (timerCheck === true) return; // If there is a timer, cancel.
@@ -59,8 +60,11 @@ module.exports = async (req) => {
                         factionTag = `[${playerDoc.factionTag}] `
                     }
                 }
-                const channel = client.channels.cache.get(settings.chatRelayChannel);
-                if (channel === null || channel === undefined) {} else {
+
+
+                const channelSettings = await makeChannelSettingVar(guildID, settings)
+                const channel = client.channels.cache.get(channelSettings.chatRelay);
+                if (channel !== null && channel !== undefined) {
                     const obscured = 'Message obscured due to GPS';
                     if (singleChat.Content.includes('GPS') || singleChat.Content.includes('Gps')) {
                         channel.send(`**${factionTag} ${singleChat.DisplayName}:** ${obscured}`);

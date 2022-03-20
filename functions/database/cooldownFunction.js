@@ -6,7 +6,7 @@ async function cd(cdString, cdTime, message) {
     const cooldown_amount = (cooldown) * 1000;
     const expiration_time = current_time + cooldown_amount;
     // Require cooldown model
-    const cooldownModel = require("../models/cooldownSchema");
+    const cooldownModel = require("../../models/cooldownSchema");
     try {
         // Try to find cooldown data in database
         cooldownData = await cooldownModel.findOne({

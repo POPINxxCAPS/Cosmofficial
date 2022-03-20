@@ -9,6 +9,7 @@ module.exports = {
   description: "List online players and information about them.",
   permissions: ["SEND_MESSAGES"],
   category: "General",
+    categoryAliases: ['general'],
   async execute(req) {
     const message = req.message;
     const discord = req.discord;

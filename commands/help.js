@@ -1,9 +1,8 @@
 const chatModel = require('../models/chatSchema');
 const lockedEmbed = require('../functions/discord/lockedEmbed');
-const helpData = require('../data/helpCommand/route')
 // More crap that needs recoding
 
-let commands = [{
+/*let commands = [{
     aliases: ['general'],
     commands: helpData.general,
 }, {
@@ -27,7 +26,9 @@ let commands = [{
 }, {
     aliases: ['faq'],
     commands: helpData.faq
-}, ]
+}, ]*/
+
+// Completely redoing this to auto-update as I make the commands :)
 
 module.exports = {
     name: 'help',
@@ -35,10 +36,13 @@ module.exports = {
     description: "List all commands and helpful information.",
     permissions: ["SEND_MESSAGES"],
     category: "General",
+    categoryAliases: ['general'],
     async execute(req) {
         const message = req.message;
         const args = req.args;
         const discord = req.discord;
+        const client = req.client;
+        const commands = client.commands;
         const embed = new discord.MessageEmbed()
             .setColor('#E02A6B')
             .setTitle(`Cosmofficial Help`)
@@ -46,28 +50,39 @@ module.exports = {
             .setDescription(`Command format: c!help {category/command} [page]\n{} = Required\n[] = Optional`)
         // Main embed set-up
 
+        let categories = [];
+        for (const command of commands) {
+            if (categories.includes(command[1].category) === false) categories.push(command[1].category);
+        }
+        let categoryString = '';
         if (args[0] === undefined) { // If no category defined, list available categories
+            console.log(commands.length)
+
+            categories.sort((a, b) => ((a) > (b)) ? 1 : -1) // Alphabetical sorting for display
+            for (let a = 0; a < categories.length; a++) {
+                categoryString += `${categories[a]}\n`
+            }
             embed.addFields({
                     name: 'Categories',
-                    value: `Adminstration\nGeneral\nEconomy\nEvents\nCombat\nMapping\nSupport\nFAQ\nAlliance`
+                    value: categoryString
                 }, )
                 .setFooter('Cosmofficial by POPINxxCAPS');
             return message.channel.send(embed);
         }
 
-        let category;
+        let helpSearch = [];
         let searchTerm = args[0].toLowerCase();
-        for (let a = 0; a < commands.length; a++) {
-            let categoryArray = commands[a]
-            if (categoryArray.aliases.includes(searchTerm)) {
-                category = categoryArray
+        for (const command of commands) {
+            if(command[1].category === 'Cosmic' )
+            if (command[1].category === searchTerm || command[1].aliases.includes(searchTerm) === true || command[1].name === searchTerm || command[1].categoryAliases.includes(searchTerm) === true) {
+                helpSearch.push(command)
             }
-        }
+        };
 
-        if (category === undefined) { // Return an error message (unfinished)
+        if (helpSearch.length === 0) { // Return an error message (unfinished)
             embed.addFields({
                 name: 'Invalid Format',
-                value: 'Category not found.'
+                value: 'Category/Command not found.'
             })
             return message.channel.send(embed);
         };
@@ -85,38 +100,39 @@ module.exports = {
             }
         }
         let startingPoint = page * 10;
-        if (startingPoint > category.commands.length) {
-            startingPoint = category.commands.length - 10;
+        if (startingPoint > helpSearch.length) {
+            startingPoint = helpSearch.length - 10;
         }
-        if (startingPoint < 0) { // Redundancy crash checks
-            startingPoint = 0;
-        }
+        if (startingPoint < 0) startingPoint = 0; // Redundancy crash check
         let endingPoint = (startingPoint + 10);
+        if (endingPoint < helpSearch.length) endingPoint = helpSearch.length;
+
         for (let i = startingPoint; i < endingPoint; i++) {
-            if (category.commands[i] !== undefined) {
-                if (category.commands[i].cosmicOnly === undefined) {
-                    let embedValue = `${category.commands[i].description}`
-                    if (category.commands[i].format !== '') {
-                        embedValue += `\nFormat: ${category.commands[i].format}`
-                    }
-                    embed.addFields({
-                        name: `${category.commands[i].name}`,
-                        value: embedValue
-                    })
+            const command = helpSearch[i];
+            console.log(command)
+            if (command === undefined) continue;
+            if (command[1].cosmicOnly === false || command[1].cosmicOnly === undefined) {
+                let embedValue = `${command[1].description}`
+                if (command[1].format !== '' && command[1].format !== undefined) {
+                    embedValue += `\nFormat: ${command[1].format}`
                 }
-                if (category.commands[i].cosmicOnly === true && message.guild.id === '799685703910686720') {
-                    let embedValue = `${category.commands[i].description}`
-                    if (category.commands[i].format !== '') {
-                        embedValue += `\nFormat: ${category.commands[i].format}`
-                    }
-                    embed.addFields({
-                        name: `${category.commands[i].name}`,
-                        value: embedValue
-                    })
+                embed.addFields({
+                    name: `${command[1].name}`,
+                    value: embedValue
+                })
+            }
+            if (command[1].cosmicOnly === true && message.guild.id === '799685703910686720') {
+                let embedValue = `${command[1].description}`
+                if (command[1].cosmicOnly === false || command[1].cosmicOnly === undefined) {
+                    embedValue += `\nFormat: ${command[1].format}`
                 }
+                embed.addFields({
+                    name: `${command[1].name}`,
+                    value: embedValue
+                })
             }
         }
-        if (endingPoint < category.commands.length) {
+        if (endingPoint < helpSearch.length) {
             embed.setFooter(`c!help ${category.aliases[0]} ${page + 2}\nCosmofficial by POPINxxCAPS`);
         }
         return message.channel.send(embed);

@@ -7,6 +7,7 @@ module.exports = {
     permissions: ["SEND_MESSAGES"],
     description: "Views your lottery tickets",
     category: "Economy",
+    categoryAliases: ['economy', 'eco'],
     async execute(req) {
         const message = req.message;
         const discord = req.discord;

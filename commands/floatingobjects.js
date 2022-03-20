@@ -7,6 +7,7 @@ module.exports = {
   description: "List all floating objects",
   permissions: ["SEND_MESSAGES"],
   category: "General",
+    categoryAliases: ['general'],
   async execute(req) {
     const message = req.message;
     const discord = req.discord;

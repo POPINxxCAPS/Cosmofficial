@@ -7,6 +7,7 @@ module.exports = {
     permissions: ["SEND_MESSAGES"],
     description: "Buys a lottery ticket",
     category: "Economy",
+    categoryAliases: ['economy', 'eco'],
     async execute(req) {
         const message = req.message;
         const args = req.args;

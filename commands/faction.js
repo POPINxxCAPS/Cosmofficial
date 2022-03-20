@@ -8,6 +8,7 @@ module.exports = {
     description: "List players in a faction.",
     permissions: ["SEND_MESSAGES"],
     category: "General",
+    categoryAliases: ['general'],
     async execute(req) {
         const message = req.message;
         const args = req.args;
