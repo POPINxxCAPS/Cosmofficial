@@ -52,12 +52,11 @@ module.exports = {
 
         let categories = [];
         for (const command of commands) {
+            if(command[1].category === 'Cosmic' && message.guild.id !== '799685703910686720') continue; // If not running on cosmic, do not include cosmic categories/commands.
             if (categories.includes(command[1].category) === false) categories.push(command[1].category);
         }
         let categoryString = '';
         if (args[0] === undefined) { // If no category defined, list available categories
-            console.log(commands.length)
-
             categories.sort((a, b) => ((a) > (b)) ? 1 : -1) // Alphabetical sorting for display
             for (let a = 0; a < categories.length; a++) {
                 categoryString += `${categories[a]}\n`
@@ -73,7 +72,9 @@ module.exports = {
         let helpSearch = [];
         let searchTerm = args[0].toLowerCase();
         for (const command of commands) {
-            if(command[1].category === 'Cosmic' )
+            if(command[1].category === 'Cosmic' && message.guild.id !== '799685703910686720') continue; // If not running on cosmic, do not include cosmic categories/commands.
+            console.log(command[1].category === 'Cosmic')
+            console.log(message.guild.id !== '799685703910686720')
             if (command[1].category === searchTerm || command[1].aliases.includes(searchTerm) === true || command[1].name === searchTerm || command[1].categoryAliases.includes(searchTerm) === true) {
                 helpSearch.push(command)
             }
