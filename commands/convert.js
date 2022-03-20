@@ -1,13 +1,13 @@
-const lockedEmbed = require('../functions_discord/lockedEmbed');
-const errorEmbed = require('../functions_discord/errorEmbed');
+const lockedEmbed = require('../functions/discord/lockedEmbed');
+const errorEmbed = require('../functions/discord/errorEmbed');
 const gridModel = require('../models/gridSchema');
 const remoteConfigModel = require('../models/remoteConfigSchema')
 const chatModel = require('../models/chatSchema');
 const spawnerModel = require('../models/spawnerSchema');
 const characterModel = require('../models/characterSchema');
 const verificationModel = require('../models/verificationSchema');
-const gridPowerOn = require('../functions_execution/gridPowerOn')
-const gridPowerOff = require('../functions_execution/gridPowerOff')
+const gridPowerOn = require('../functions/execution/gridPowerOn')
+const gridPowerOff = require('../functions/execution/gridPowerOff')
 
 module.exports = {
     name: 'convert',

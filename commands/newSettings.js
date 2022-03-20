@@ -1,6 +1,6 @@
-const checkPatron = require('../functions_misc/checkPatron');
-const errorEmbed = require('../functions_discord/errorEmbed');
-const lockedEmbed = require('../functions_discord/lockedEmbed');
+const checkPatron = require('../functions/misc/checkPatron');
+const errorEmbed = require('../functions/discord/errorEmbed');
+const lockedEmbed = require('../functions/discord/lockedEmbed');
 const ms = require('ms');
 module.exports = {
     name: 'settings',

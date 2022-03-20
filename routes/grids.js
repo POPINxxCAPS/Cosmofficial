@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const statusModel = require('../models/statusSchema');
-const gridCount = require('../functions_misc/gridCount');
-const getGrids = require('../functions_db/getGrids');
+const gridCount = require('../functions/misc/gridCount');
+const getGrids = require('../functions/database/getGrids');
 
 // Get all servers - No longer needed, index.js now handles main route
 /*

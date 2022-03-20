@@ -1,10 +1,10 @@
 const cooldowns = new Map();
-const getAllSettings = require('../../functions_db/getAllSettings');
-const makeChannelsVar = require('../../functions_misc/makeChannelSettingVar');
-const makeEcoSettingVar = require('../../functions_misc/makeEcoSettingVar');
-const makeLotterySettingVar = require('../../functions_misc/makeLotterySettingVar');
-const getPlayerEco = require('../../functions_db/getPlayerEco');
-const errorEmbed = require('../../functions_discord/errorEmbed');
+const getAllSettings = require('../../functions/database/getAllSettings');
+const makeChannelsVar = require('../../functions/misc/makeChannelSettingVar');
+const makeEcoSettingVar = require('../../functions/misc/makeEcoSettingVar');
+const makeLotterySettingVar = require('../../functions/misc/makeLotterySettingVar');
+const getPlayerEco = require('../../functions/database/getPlayerEco');
+const errorEmbed = require('../../functions/discord/errorEmbed');
 
 module.exports = async (discord, client, message) => {
   const prefix = 'c!'

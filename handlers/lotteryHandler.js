@@ -1,10 +1,10 @@
 const discord = require('discord.js')
 const lotteryTicketModel = require('../models/lotteryTicketSchema');
 const lotteryPotModel = require('../models/lotteryPotSchema');
-const getPlayerEco = require('../functions_db/getPlayerEco')
-const makeLotterySettingVar = require('../functions_misc/makeLotterySettingVar');
-const makeChannelSettingVar = require('../functions_misc/makeChannelSettingVar')
-const timerFunction = require('../functions_db/timerFunction');
+const getPlayerEco = require('../functions/database/getPlayerEco')
+const makeLotterySettingVar = require('../functions/misc/makeLotterySettingVar');
+const makeChannelSettingVar = require('../functions/misc/makeChannelSettingVar')
+const timerFunction = require('../functions/database/timerFunction');
 const ms = require('ms');
 
 module.exports = async (req) => {

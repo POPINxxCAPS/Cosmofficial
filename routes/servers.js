@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const statusModel = require('../models/statusSchema');
-const gridCount = require('../functions_misc/gridCount');
+const gridCount = require('../functions/misc/gridCount');
 const verifyKey = require('../functions_oAuth/verifyKey');
 
 // Get one server

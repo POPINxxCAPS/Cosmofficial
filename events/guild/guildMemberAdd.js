@@ -1,5 +1,5 @@
 let playerEcoModel = require('../../models/playerEcoSchema');
-const makeEcoSettingVar = require('../../functions_misc/makeEcoSettingVar');
+const makeEcoSettingVar = require('../../functions/misc/makeEcoSettingVar');
 
 module.exports = async (discord, client, member) => {
   const mainGuild = client.guilds.cache.get("853247020567101440");

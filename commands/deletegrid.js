@@ -1,7 +1,7 @@
 const gridModel = require('../models/gridSchema');
-const errorEmbed = require('../functions_discord/errorEmbed');
-const makeConfigVar = require('../functions_misc/makeConfigVar');
-const gridDelete = require('../functions_execution/gridDelete');
+const errorEmbed = require('../functions/discord/errorEmbed');
+const makeConfigVar = require('../functions/misc/makeConfigVar');
+const gridDelete = require('../functions/execution/gridDelete');
 
 module.exports = {
     name: 'deletegrid',

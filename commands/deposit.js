@@ -1,4 +1,4 @@
-const lockedEmbed = require('../functions_discord/lockedEmbed');
+const lockedEmbed = require('../functions/discord/lockedEmbed');
 module.exports = {
     name: 'deposit',
     aliases: ['dep'],

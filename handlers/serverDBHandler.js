@@ -1,16 +1,16 @@
 // Settings stuff
-const getAllSettings = require('../functions_db/getAllSettings');
-const makeConfigVar = require('../functions_misc/makeConfigVar');
-const makeEcoSettingVar = require('../functions_misc/makeEcoSettingVar');
+const getAllSettings = require('../functions/database/getAllSettings');
+const makeConfigVar = require('../functions/misc/makeConfigVar');
+const makeEcoSettingVar = require('../functions/misc/makeEcoSettingVar');
 
 // Query Functions
-const logStatus = require('../functions_server/logStatus');
-const logGrids = require('../functions_server/logGrids');
-const logPlayers = require('../functions_server/logPlayers');
-const logCharacters = require('../functions_server/logCharacters');
-const logChat = require('../functions_server/logChat');
-const logFloatingObjs = require('../functions_server/logFloatingObjs');
-const logVoxels = require('../functions_server/logVoxels');
+const logStatus = require('../functions/server/logStatus');
+const logGrids = require('../functions/server/logGrids');
+const logPlayers = require('../functions/server/logPlayers');
+const logCharacters = require('../functions/server/logCharacters');
+const logChat = require('../functions/server/logChat');
+const logFloatingObjs = require('../functions/server/logFloatingObjs');
+const logVoxels = require('../functions/server/logVoxels');
 const lotteryHandler = require('../handlers/lotteryHandler');
 const verificationModel = require('../models/verificationSchema');
 const allianceModel = require('../models/allianceSchema');

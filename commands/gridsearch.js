@@ -1,6 +1,6 @@
 const verificationModel = require('../models/verificationSchema');
 const gridModel = require('../models/gridSchema');
-const errorEmbed = require('../functions_discord/errorEmbed');
+const errorEmbed = require('../functions/discord/errorEmbed');
 
 module.exports = {
     name: 'gridsearch',

@@ -1,5 +1,5 @@
-const lockedEmbed = require('../functions_discord/lockedEmbed');
-const errorEmbed = require('../functions_discord/errorEmbed');
+const lockedEmbed = require('../functions/discord/lockedEmbed');
+const errorEmbed = require('../functions/discord/errorEmbed');
 const whitelistModel = require('../models/whitelistSchema');
 const whitelistSettingsModel = require('../models/whitelistSettingSchema');
 module.exports = {

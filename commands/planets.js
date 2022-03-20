@@ -1,4 +1,4 @@
-const makeConfigVar = require('../functions_misc/makeConfigVar');
+const makeConfigVar = require('../functions/misc/makeConfigVar');
 const sessionPath = '/v1/session';
 const {
   filterBySearch

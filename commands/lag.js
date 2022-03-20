@@ -1,7 +1,7 @@
-const makeConfigVar = require('../functions_misc/makeConfigVar');
+const makeConfigVar = require('../functions/misc/makeConfigVar');
 const statusModel = require('../models/statusSchema');
-const chartSimSpeed = require('../functions_db/chartSimSpeed');
-const errorEmbed = require('../functions_discord/errorEmbed');
+const chartSimSpeed = require('../functions/database/chartSimSpeed');
+const errorEmbed = require('../functions/discord/errorEmbed');
 const ms = require('ms');
 
 module.exports = {

@@ -1,8 +1,8 @@
-const makeConfigVar = require('../functions_misc/makeConfigVar');
+const makeConfigVar = require('../functions/misc/makeConfigVar');
 const verificationModel = require('../models/verificationSchema');
 const playerModel = require('../models/playerSchema');
-const errorEmbed = require('../functions_discord/errorEmbed');
-const verify = require('../functions_commands/verify');
+const errorEmbed = require('../functions/discord/errorEmbed');
+const verify = require('../functions/commands/verify');
 
 // Noob code redo time
 module.exports = {

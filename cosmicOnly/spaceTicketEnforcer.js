@@ -1,6 +1,6 @@
 const spaceTicketModel = require('../models/spaceTicketSchema');
 const gridModel = require('../models/gridSchema');
-const gridDelete = require('../functions_execution/gridDelete');
+const gridDelete = require('../functions/execution/gridDelete');
 const verificationModel = require('../models/verificationSchema');
 
 

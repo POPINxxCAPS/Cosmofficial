@@ -1,5 +1,5 @@
-const cooldownEmbed = require('../functions_discord/cooldownEmbed');
-const cooldownFunction = require('../functions_db/cooldownFunction');
+const cooldownEmbed = require('../functions/discord/cooldownEmbed');
+const cooldownFunction = require('../functions/database/cooldownFunction');
 module.exports = {
     name: 'timely',
     aliases: ['time'],
@@ -14,6 +14,7 @@ module.exports = {
         const currencyName = ecoSettings.currencyName;
         const cdInSec = 60
         let maxTimelyReward = ecoSettings.timelyReward;
+        if(maxTimelyReward === "Not Set") maxTimelyReward = 5000; 
 
         // Check for bonuses (for future feature use)
         let rewardModifier = 1;

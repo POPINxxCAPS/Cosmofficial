@@ -39,15 +39,13 @@ client.login(token);
 // Start bot functions
 const gridModel = require('./models/gridSchema');
 const serverDBHandler = require('./handlers/serverDBHandler');
-const hooverHandler = require('./handlers/hooverHandler');
 const cooldownHandler = require('./handlers/cooldownHandler');
 
-const lotteryHandler = require('./handlers/lotteryHandler');
 const serverLogHandler = require('./handlers/serverLogHandler');
 const hotzoneHandler = require('./handlers/hotzoneHandler');
 const dominationHandler = require('./handlers/dominationHandler');
 
-const TDMQueue = require('./functions_discord/TDMQueue');
+const TDMQueue = require('./crapstorage/TDMQueue');
 const TDMServerHandler = require('./handlers/TDMServerHandler');
 const TDMMatchHandler = require('./handlers/TDMMatchHandler');
 const TDMDeathCounter = require('./counters/TDMDeathCounter');
@@ -57,8 +55,8 @@ const gridDeletionQueue = require('./cosmicOnly/hooverDeletionQueue');
 const liveMapHandler = require('./cosmicOnly/liveMapHandler');
 const spaceTicketEnforcer = require('./cosmicOnly/spaceTicketEnforcer')
 const cosmicCharts = require('./cosmicOnly/charts')
-const statusDocCleanup = require('./functions_misc/statusDocCleanup');
-const updateChannelTickers = require('./functions_discord/updateChannelTickers');
+const statusDocCleanup = require('./functions/misc/statusDocCleanup');
+const updateChannelTickers = require('./functions/discord/updateChannelTickers');
 
 
 client.on('ready', () => {
@@ -66,7 +64,6 @@ client.on('ready', () => {
 
   //hotzoneHandler(client, discord); // Disabled until complete recode, noob code causing performancing problems
   serverDBHandler(client);
-  //hooverHandler(client);
   //dominationHandler(client, discord);
 
   //TDMQueue(client); // Stuff for a TDM server nobody played, was shut down.
@@ -75,7 +72,6 @@ client.on('ready', () => {
   //TDMDeathCounter(client);
 
 
-  //lotteryHandler(client, discord)
   //serverLogHandler(client, discord);
   //liveMapHandler(client)
 

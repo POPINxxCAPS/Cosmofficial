@@ -1,5 +1,5 @@
 const chatModel = require('../models/chatSchema');
-const lockedEmbed = require('../functions_discord/lockedEmbed');
+const lockedEmbed = require('../functions/discord/lockedEmbed');
 const helpData = require('../data/helpCommand/route')
 // More crap that needs recoding
 

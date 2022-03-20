@@ -1,8 +1,8 @@
 let playerEcoModel = require('../models/playerEcoSchema');
-const lockedEmbed = require('../functions_discord/lockedEmbed');
-const cooldownEmbed = require('../functions_discord/cooldownEmbed');
-const cooldownFunction = require('../functions_db/cooldownFunction');
-const errorEmbed = require('../functions_discord/errorEmbed');
+const lockedEmbed = require('../functions/discord/lockedEmbed');
+const cooldownEmbed = require('../functions/discord/cooldownEmbed');
+const cooldownFunction = require('../functions/database/cooldownFunction');
+const errorEmbed = require('../functions/discord/errorEmbed');
 module.exports = {
     name: 'rob',
     aliases: ['rob'],

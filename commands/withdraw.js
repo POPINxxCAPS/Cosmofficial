@@ -1,5 +1,5 @@
 let playerEcoModel = require('../models/playerEcoSchema');
-const lockedEmbed = require('../functions_discord/lockedEmbed');
+const lockedEmbed = require('../functions/discord/lockedEmbed');
 module.exports = {
     name: 'withdraw',
     aliases: ['with'],

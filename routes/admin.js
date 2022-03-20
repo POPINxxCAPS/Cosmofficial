@@ -3,8 +3,8 @@ const router = express.Router();
 const statusModel = require('../models/statusSchema');
 const getUser = require('../functions_oAuth/getUser');
 const verifyKey = require('../functions_oAuth/verifyKey');
-const checkPatron = require('../functions_misc/checkPatron');
-const makeEcoSettingVar = require('../functions_misc/makeEcoSettingVar');
+const checkPatron = require('../functions/misc/checkPatron');
+const makeEcoSettingVar = require('../functions/misc/makeEcoSettingVar');
 
 
 

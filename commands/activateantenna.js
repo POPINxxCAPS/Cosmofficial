@@ -1,12 +1,12 @@
-const lockedEmbed = require('../functions_discord/lockedEmbed');
-const errorEmbed = require('../functions_discord/errorEmbed');
+const lockedEmbed = require('../functions/discord/lockedEmbed');
+const errorEmbed = require('../functions/discord/errorEmbed');
 const antennaNames = ['ice', 'iron', 'silicon', 'nickel', 'cobalt', 'gold', 'magnesium', 'platinum', 'uranium', 'zonechip', 'powerkit']
 const sessionPath = '/v1/session';
 const gridModel = require('../models/gridSchema');
 const chatModel = require('../models/chatSchema');
 const spawnerModel = require('../models/spawnerSchema');
-const gridPowerOff = require('../functions_execution/gridPowerOff');
-const gridPowerOn = require('../functions_execution/gridPowerOn');
+const gridPowerOff = require('../functions/execution/gridPowerOff');
+const gridPowerOn = require('../functions/execution/gridPowerOn');
 
 
 // Price modifiers, scaling with iron ore. Developed using values from harvesting / refining rates

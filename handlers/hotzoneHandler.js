@@ -1,4 +1,4 @@
-const checkGridForFaction = require('../functions_db/checkGridForFaction');
+const checkGridForFaction = require('../functions/database/checkGridForFaction');
 const verificationModel = require('../models/verificationSchema');
 let playerEcoModel = require('../models/playerEcoSchema');
 const gridModel = require('../models/gridSchema');

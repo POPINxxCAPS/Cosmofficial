@@ -1,6 +1,6 @@
 const lotteryTicketModel = require('../models/lotteryTicketSchema');
 const lotteryPotModel = require('../models/lotteryPotSchema');
-const errorEmbed = require('../functions_discord/errorEmbed');
+const errorEmbed = require('../functions/discord/errorEmbed');
 module.exports = {
     name: "tickets",
     aliases: ["t", "ticket"],

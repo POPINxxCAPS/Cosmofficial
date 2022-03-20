@@ -1,4 +1,4 @@
-const makeConfigVar = require('../functions_misc/makeConfigVar');
+const makeConfigVar = require('../functions/misc/makeConfigVar');
 const {demotePlayer, banPlayer, kickPlayer, promotePlayer} = require('../lib/admin');
 const sessionPath = '/v1/session';
 const {filterBySearch} = require('../lib/modifiers');

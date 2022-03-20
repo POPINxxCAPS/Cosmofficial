@@ -1,5 +1,5 @@
 let playerEcoModel = require('../models/playerEcoSchema');
-const errorEmbed = require('../functions_discord/errorEmbed');
+const errorEmbed = require('../functions/discord/errorEmbed');
 module.exports = {
     name: "taketokens",
     aliases: ['take'],

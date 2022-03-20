@@ -1,7 +1,7 @@
 const spaceTicketModel = require('../models/spaceTicketSchema');
 const verificationModel = require('../models/verificationSchema');
 const playerModel = require('../models/playerSchema');
-const errorEmbed = require('../functions_discord/errorEmbed');
+const errorEmbed = require('../functions/discord/errorEmbed');
 const ms = require('ms')
 
 

@@ -1,12 +1,12 @@
-const makeConfigVar = require('../functions_misc/makeConfigVar');
+const makeConfigVar = require('../functions/misc/makeConfigVar');
 const gridModel = require('../models/gridSchema');
 const verificationModel = require('../models/verificationSchema');
-const lockedEmbed = require('../functions_discord/lockedEmbed');
-const errorEmbed = require('../functions_discord/errorEmbed');
-const getGrids = require('../functions_db/getGrids')
-const getGridsByPCU = require('../functions_db/getGridsByPCU')
-const getGridsByBlockCount = require('../functions_db/getGridsByBlockCount')
-const getGridsByMass = require('../functions_db/getGridsByMass')
+const lockedEmbed = require('../functions/discord/lockedEmbed');
+const errorEmbed = require('../functions/discord/errorEmbed');
+const getGrids = require('../functions/database/getGrids')
+const getGridsByPCU = require('../functions/database/getGridsByPCU')
+const getGridsByBlockCount = require('../functions/database/getGridsByBlockCount')
+const getGridsByMass = require('../functions/database/getGridsByMass')
 
 async function fields(modifier, gridData) {
     let fields = [];
