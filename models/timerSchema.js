@@ -3,11 +3,13 @@ const mongoose = require("mongoose");
 const timerSchema = new mongoose.Schema({
     guildID: {
         type: String,
-        require: true
+        require: true,
+        index: true
     },
     name: {
         type: String,
-        require: true
+        require: true,
+        index: true
     },
     expirationTime: {
         type: String,

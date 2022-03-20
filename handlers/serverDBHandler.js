@@ -94,7 +94,7 @@ module.exports = async (client) => {
                 characterDocsCache: characterDocs
             }
 
-            lotteryHandler(req);
+            await lotteryHandler(req);
             await logStatus(req); // Specific Ordering
             await logFloatingObjs(req); // This doesn't need anything special
             await logChat(req);

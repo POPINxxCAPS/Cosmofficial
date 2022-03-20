@@ -26,7 +26,7 @@ module.exports = {
     })
     if (infoData === null) return errorEmbed(message.channel, `There was no server status document found for this server.\nJust connected your server? Allow up to 5 minutes for connection to be established.`)
 
-    if (infoData.online === false) {
+    if (infoData.serverOnline === false) {
       const embed = new discord.MessageEmbed()
         .setColor('#E02A6B')
         .setTitle('Server Status')
@@ -39,7 +39,7 @@ module.exports = {
       return message.channel.send(embed)
     }
 
-    if (infoData.isReady === false && infoData.online === true) {
+    if (infoData.isReady === false && infoData.serverOnline === true) {
       const embed = new discord.MessageEmbed()
         .setColor('#E02A6B')
         .setTitle('Server Status')
@@ -53,7 +53,7 @@ module.exports = {
     }
 
 
-    let onlineStatus = infoData.online ? 'Offline' : 'Online';
+    let onlineStatus = infoData.serverOnline === false ? 'Offline' : 'Online';
     const embed = new discord.MessageEmbed()
       .setColor('#E02A6B')
       .setTitle('Server Manager')

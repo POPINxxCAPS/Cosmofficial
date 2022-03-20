@@ -24,7 +24,7 @@ module.exports = {
         const JSONBI = require('json-bigint')({storeAsString: true, useNativeBigInt: true});
         const querystring = require('querystring');
         
-        const baseUrl = config.baseURL;
+        const baseUrl = config.ip;
         const port = config.port;
         const prefix = config.prefix;
         const secret = config.secret;

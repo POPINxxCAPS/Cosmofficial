@@ -9,7 +9,7 @@ const JSONBI = require('json-bigint')({
 const querystring = require('querystring');
 
 module.exports = async (config) => {
-    const baseUrl = config.baseURL;
+    const baseUrl = config.ip;
     const port = config.port;
     const prefix = config.prefix;
     const secret = config.secret;

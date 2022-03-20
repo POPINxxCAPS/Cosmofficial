@@ -5,19 +5,9 @@ const populationSchema = new mongoose.Schema({
     timestamp: { type: String, require: true}
 })
 
-const hourlyPopulationSchema = new mongoose.Schema({
-    avgPlayerCount: { type: String, require: true },
-    timestamp: { type: String, require: true }
-})
-
 const simSpeedSchema = new mongoose.Schema({
     simSpeed: { type: String, require: true },
     timestamp: { type: String, require: true}
-})
-
-const hourlySimSpeedSchema = new mongoose.Schema({
-    avgSimSpeed: { type: String, require: true },
-    timestamp: { type: String, require: true }
 })
 
 const statusSchema = new mongoose.Schema({
@@ -39,8 +29,6 @@ const statusSchema = new mongoose.Schema({
     inviteLink: { type: String },
     populationLog: [populationSchema],
     simSpeedLog: [simSpeedSchema],
-    hourlyPopulation: [hourlyPopulationSchema],
-    hourlySimSpeed: [hourlySimSpeedSchema]
 });
 // End Main Schema
  

@@ -1,7 +1,7 @@
 const playerModel = require('../models/playerSchema');
 const ms = require('ms');
 const chartPlayerActivity = require('../functions_db/chartPlayerActivity');
-const errorEmbed = require('../fucntions_discord/errorEmbed');
+const errorEmbed = require('../functions_discord/errorEmbed');
 
 module.exports = {
   name: 'players',

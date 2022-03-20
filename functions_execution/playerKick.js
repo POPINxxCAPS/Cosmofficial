@@ -15,7 +15,7 @@ module.exports = async (guildID, entityID) => {
     const config = await makeConfigVar(guildID)
     if(config === null) return;
 
-    const baseUrl = config.baseURL;
+    const baseUrl = config.ip;
     const port = config.port;
     const prefix = config.prefix;
     const secret = config.secret;

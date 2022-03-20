@@ -15,7 +15,8 @@ module.exports = async (guildID) => {
         description: `Edit your Remote API Connection information.`,
         aliases: ['r'],
         settings: remoteConfig,
-        guildOwnerOnly: true
+        guildOwnerOnly: true,
+        patronReq: false,
     }
     settings.push(remoteConfigObj)
 
@@ -26,6 +27,7 @@ module.exports = async (guildID) => {
         description: 'Edit used discord channels. Also check out c!settings serverlog.',
         aliases: ['c'],
         settings: channelSettings,
+        patronReq: false,
     }
     settings.push(channelSettingsObj)
 
@@ -36,7 +38,7 @@ module.exports = async (guildID) => {
         description: 'Edit the hoover, great for performance!',
         aliases: ['hoo'],
         settings: hooverSettings,
-        patronReq: true,
+        patronReq: false,
     }
     settings.push(hooverSettingsObj)
 
@@ -47,7 +49,7 @@ module.exports = async (guildID) => {
         description: 'Edit various economy settings.',
         aliases: ['e'],
         settings: economySettings,
-        patronReq: true,
+        patronReq: false,
     }
     settings.push(economySettingsObj)
     
@@ -58,7 +60,7 @@ module.exports = async (guildID) => {
         description: 'Edit settings for the lottery system.',
         aliases: ['l'],
         settings: lotterySettings,
-        patronReq: true
+        patronReq: false
     }
     settings.push(lotterySettingsObj)
 
