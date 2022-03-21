@@ -1,4 +1,4 @@
-const getAllSettings = require("../functions/database/getAllSettings");
+const getAllSettings = require("../database/getAllSettings");
 
 module.exports = async (guildID, settings) => {
     if(settings === undefined) {

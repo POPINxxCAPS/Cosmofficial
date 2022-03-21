@@ -41,6 +41,7 @@ module.exports = async (client) => {
     }
 
     let daysPlayed = Math.round(((time / (3600000 * 24)) * 100)) / 100;
+    if(channel === undefined) return;
     channel.setName(`Time Played: ${daysPlayed} days`)
     channel = guild.channels.cache.get('895742387631050803');
     channel.setName(`Active Players: ${activeCount}`)

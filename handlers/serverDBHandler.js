@@ -1,7 +1,11 @@
-// Settings stuff
+// Settings Stuff
 const getAllSettings = require('../functions/database/getAllSettings');
 const makeConfigVar = require('../functions/misc/makeConfigVar');
 const makeEcoSettingVar = require('../functions/misc/makeEcoSettingVar');
+
+// Hoover Functions
+const updateHoover = require('../functions/hoover/updateHoover')
+const executeHoover = require('../functions/hoover/executeHoover')
 
 // Query Functions
 const logStatus = require('../functions/server/logStatus');
@@ -12,6 +16,8 @@ const logChat = require('../functions/server/logChat');
 const logFloatingObjs = require('../functions/server/logFloatingObjs');
 const logVoxels = require('../functions/server/logVoxels');
 const lotteryHandler = require('../handlers/lotteryHandler');
+
+// Database Stuff
 const verificationModel = require('../models/verificationSchema');
 const allianceModel = require('../models/allianceSchema');
 const gridModel = require('../models/gridSchema');
@@ -75,7 +81,7 @@ module.exports = async (client) => {
             console.log(`Doing queries for guild ID ${guildID}`)
 
             // Start querys
-            const req = {
+            let req = {
                 guildID: guildID,
                 config: config,
                 statusDoc: statusDoc,
@@ -88,20 +94,24 @@ module.exports = async (client) => {
                 gridQueryDelay: queryDelay,
                 characterDocsCache: characterDocs
             }
-
             await lotteryHandler(req);
+            +
             await logStatus(req); // Specific Ordering
             await logFloatingObjs(req); // This doesn't need anything special
             await logChat(req);
             await logPlayers(req);
             await logCharacters(req);
-            const newGridDocsCache = await logGrids(req); // The last one needs await to ensure it's only running for one server at a time (performance reasons)
+            let newGridDocsCache = await logGrids(req); // The last one needs await to ensure it's only running for one server at a time (performance reasons)
             if (newGridDocsCache === null || newGridDocsCache === undefined) { // If grid query failed or didn't run, cancel the rest.
                 queryIsRunning = false;
                 continue;
             }
-            // Domination, Hotzone etc using absolute most recent grid+character information. (awaiting recodes)
 
+            // Domination, Hotzone, Hoover etc using absolute most recent grid+character information. (awaiting recodes)
+            req.gridDocsCache = newGridDocsCache;
+            newGridDocsCache = await updateHoover(req);
+            req.gridDocsCache = newGridDocsCache;
+            //newGridDocsCache = await executeHoover(req);
 
 
 
