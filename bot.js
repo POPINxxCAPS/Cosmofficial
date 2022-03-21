@@ -48,7 +48,6 @@ const serverLogHandler = require('./handlers/serverLogHandler');
 const hotzoneHandler = require('./handlers/hotzoneHandler');
 const dominationHandler = require('./handlers/dominationHandler');
 
-const TDMQueue = require('./crapstorage/TDMQueue');
 const TDMServerHandler = require('./handlers/TDMServerHandler');
 const TDMMatchHandler = require('./handlers/TDMMatchHandler');
 const TDMDeathCounter = require('./counters/TDMDeathCounter');
