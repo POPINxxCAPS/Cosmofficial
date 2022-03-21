@@ -12,7 +12,7 @@ module.exports = async (guildID, x, y, z, factionTag, distance, gridCache, allia
     };
     if (factionTag === undefined) return data;
 
-    // Check if grid docs need to be redownloaded, or if they were passed through.
+    // Check if grid/alliance docs need to be redownloaded, or if they were passed through.
     if(gridCache === undefined) {
         gridCache = await gridModel.find({
             guildID: guildID

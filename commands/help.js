@@ -73,8 +73,6 @@ module.exports = {
         let searchTerm = args[0].toLowerCase();
         for (const command of commands) {
             if(command[1].category === 'Cosmic' && message.guild.id !== '799685703910686720') continue; // If not running on cosmic, do not include cosmic categories/commands.
-            console.log(command[1].category === 'Cosmic')
-            console.log(message.guild.id !== '799685703910686720')
             if (command[1].category === searchTerm || command[1].aliases.includes(searchTerm) === true || command[1].name === searchTerm || command[1].categoryAliases.includes(searchTerm) === true) {
                 helpSearch.push(command)
             }
@@ -110,7 +108,6 @@ module.exports = {
 
         for (let i = startingPoint; i < endingPoint; i++) {
             const command = helpSearch[i];
-            console.log(command)
             if (command === undefined) continue;
             if (command[1].cosmicOnly === false || command[1].cosmicOnly === undefined) {
                 let embedValue = `${command[1].description}`

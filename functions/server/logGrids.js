@@ -7,7 +7,6 @@ const verificationModel = require('../../models/verificationSchema');
 const serverLogModel = require('../../models/serverLogSchema');
 const ms = require('ms')
 
-
 const queryGrids = require('../execution/queryGrids')
 const getNearbyGrids = require('../database/nearbyGrids');
 const getNearbyCharacters = require('../database/nearbyCharacters');
@@ -238,8 +237,5 @@ module.exports = async (req) => {
     }
     console.log(`Grid query took ${ms((Date.now() - current_time))}`);
     const runTime = (Date.now() - current_time);
-    return {
-        gridDocsCache: gridDocsCache,
-        runTime: runTime
-    };
+    return gridDocsCache;
 }

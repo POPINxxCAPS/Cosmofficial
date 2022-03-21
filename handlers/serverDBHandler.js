@@ -18,7 +18,11 @@ const gridModel = require('../models/gridSchema');
 const characterModel = require('../models/characterSchema');
 const statusModel = require('../models/statusSchema');
 
+// Debug stuff
+const ms = require('ms');
+
 let fullGridDocsCache = []; // Caching all grid docs so it doesn't have to keep downloading them.
+// Changing this to use a discord collection (just learned about them)
 module.exports = async (client) => {
     let guildIDs = await client.guilds.cache.map(guild => guild.id);
     let verDocs = await verificationModel.find({});
@@ -40,6 +44,12 @@ module.exports = async (client) => {
                 queryIsRunning = false;
                 continue;
             }; // Ignore Cosmofficial Discord
+            const execution_time = Date.now();
+            const gridDocsCache = client.gridDocCache.get(guildID) || await gridModel.find({
+                guildID: guildID
+            })
+            const lastGridDocsCache = client.lastGridDocCache.get(guildID);
+            const queryDelay = client.queryDelays.get(guildID) || 30;
 
             // Get server status document
             const statusDoc = await statusModel.findOne({
@@ -64,21 +74,6 @@ module.exports = async (client) => {
             })
             console.log(`Doing queries for guild ID ${guildID}`)
 
-            let gridDocsCache = fullGridDocsCache.find(cache => cache.guildID === guildID) || await gridModel.find({
-                guildID: guildID
-            })
-
-            let gridQueryDelay = gridDocsCache.gridQueryRunTime * 3 || 60000; // Setting delay to 4x the runtime of an individual server's grid query speed
-
-
-            if (gridDocsCache !== undefined) {
-                gridDocsCache = gridDocsCache.gridDocsCache || gridDocsCache;
-                if (gridQueryDelay < 60000) {
-                    gridQueryDelay = 60000 // Ensure it is no less than 60 seconds to avoid crashing the remote API
-                }
-                console.log(`New Grid Query Delay: ${gridQueryDelay / 1000}s`)
-            }
-
             // Start querys
             const req = {
                 guildID: guildID,
@@ -90,7 +85,7 @@ module.exports = async (client) => {
                 verDocs: verDocs,
                 allianceCache: allianceDocs,
                 gridDocsCache: gridDocsCache,
-                gridQueryDelay: gridQueryDelay,
+                gridQueryDelay: queryDelay,
                 characterDocsCache: characterDocs
             }
 
@@ -100,34 +95,33 @@ module.exports = async (client) => {
             await logChat(req);
             await logPlayers(req);
             await logCharacters(req);
-            const gridQueryResponse = await logGrids(req); // The last one needs await to ensure it's only running for one server at a time (performance reasons)
-            if (gridQueryResponse === null || gridQueryResponse === undefined) {
+            const newGridDocsCache = await logGrids(req); // The last one needs await to ensure it's only running for one server at a time (performance reasons)
+            if (newGridDocsCache === null || newGridDocsCache === undefined) { // If grid query failed or didn't run, cancel the rest.
                 queryIsRunning = false;
                 continue;
             }
-            const newGridDocsCache = gridQueryResponse.gridDocsCache;
-            const gridQueryRunTime = gridQueryResponse.runTime;
-            console.log(gridQueryRunTime)
-            let test = fullGridDocsCache.find(cache => cache.guildID === guildID);
-            if (test === undefined) { // If grid docs haven't been cached yet
-                fullGridDocsCache.push({
-                    guildID: guildID,
-                    gridDocsCache: newGridDocsCache,
-                    gridQueryRunTime: gridQueryRunTime
-                })
-            } else { // If they have, find index and replace the cache with updated version
-                let index = fullGridDocsCache.indexOf(test);
-                fullGridDocsCache[index] = {
-                    guildID: guildID,
-                    gridDocsCache: newGridDocsCache,
-                    gridQueryRunTime: gridQueryRunTime
-                }
+            // Domination, Hotzone etc using absolute most recent grid+character information. (awaiting recodes)
+
+
+
+
+            // Setting final vars
+            const runTime = Date.now() - execution_time;
+            console.log(`All queries/updates took ${ms(runTime)}`)
+            let baseDelayValue = runTime * 3 || 60000; // Set base delay to 3x the runtime of an individual server's query speed
+            if (baseDelayValue < 60000) {
+                baseDelayValue = 60000 // Ensure it is no less than 60 seconds to avoid crashing the remote API
             }
+            console.log(`New Query Delay: ${baseDelayValue / 1000}s`)
+
+            client.lastGridDocCache.set(guildID, gridDocsCache);
+            client.gridDocCache.set(guildID, newGridDocsCache);
+            client.queryDelays.set(guildID, baseDelayValue);
 
             //logVoxels(req); Disabled due to memory error
             console.log(`Finished queries for guild ID ${guildID}`)
             queryIsRunning = false;
             // Running test before finishing the noob caching
         }
-    }, 15000) //  Main timers are now handled in each query seperately. This just restarts the queries when the last server finishes.
+    }, 10000) //  Main timers are now handled in each query seperately. This just restarts the queries when the last server finishes.
 }

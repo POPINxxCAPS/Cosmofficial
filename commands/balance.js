@@ -3,7 +3,7 @@ const errorEmbed = require('../functions/discord/errorEmbed');
 module.exports = {
     name: 'balance',
     aliases: ['bal'],
-    description: "Check your economy balances.\mOr, *c!bal @player* to check their balances.",
+    description: "Check your economy balances.\nOr, *c!bal @player* to check their balances.",
     permissions: ["SEND_MESSAGES"],
     category: "Economy",
     categoryAliases: ['economy', 'eco'],

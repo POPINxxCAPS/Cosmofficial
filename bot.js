@@ -6,6 +6,9 @@ const prefix = 'a!';
 
 client.commands = new discord.Collection();
 client.events = new discord.Collection();
+client.queryDelays = new discord.Collection();
+client.gridDocCache = new discord.Collection();
+client.lastGridDocCache = new discord.Collection();
 
 ['command_handler', 'event_handler'].forEach(handler => {
   require(`./handlers/${handler}`)(client, discord);
