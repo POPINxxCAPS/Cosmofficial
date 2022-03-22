@@ -183,7 +183,7 @@ module.exports = async (guildID) => {
             description: 'Deletes grids of players that have not completed c!verify.\nThis helps deter alt accounts by forcing a discord-link.\nAlso deletes grids of players that leave your discord.',
             setting: 'unverifiedremoval',
             value: 'Not Set',
-            valueType: 'number'
+            valueType: 'boolean'
         })
     }
     settings.push(unverifiedRemoval);

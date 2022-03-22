@@ -17,7 +17,7 @@ module.exports = (client, discord) => {
         const sortedGrids = grids.sort((a, b) => ((a.displayName) > (b.displayName)) ? 1 : -1)
 
         try {
-            channel.bulkDelete(10);
+            channel.bulkDelete(20);
         } catch(err) {
 
         }
@@ -59,5 +59,6 @@ module.exports = (client, discord) => {
         try {
             channel.send(embed)
         } catch(err) {}
+        return;
     }, 300000)
 }

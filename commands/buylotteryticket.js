@@ -15,10 +15,8 @@ module.exports = {
         const mainGuild = req.mainGuild;
         let playerEco = req.playerEco;
         const lotterySettings = req.lotterySettings;
-
-        let ticketPrice = lotterySettings.ticketPrice;
-        ticketPrice = Math.round(Number(ticketPrice));
-        if (ticketPrice === NaN) return message.channel.send('Invalid ticket price. Ask an admin to check the lottery ticket price setting.');
+        if (lotterySettings.ticketPrice === 'Not Set') return message.channel.send('Invalid ticket price. Ask an admin to check the lottery ticket price setting.');
+        const ticketPrice = parseInt(lotterySettings.ticketPrice);
 
         let buyAmount = `${Math.round(args[0])}`;
         if (buyAmount === 'NaN') {
@@ -38,7 +36,7 @@ module.exports = {
         let potDoc = await lotteryPotModel.findOne({
             guildID: message.guild.id
         });
-        potDoc.potAmount = parseFloat(potDoc.potAmount) + Math.round(totalPrice * 0.8);
+        potDoc.potAmount = parseFloat(potDoc.potAmount) + Math.round((totalPrice * 0.8));
         potDoc.save();
         playerEco.currency = parseInt(playerEco.currency) - totalPrice;
         playerEco.save();
@@ -60,7 +58,5 @@ module.exports = {
         await lotteryTicketModel.insertMany(createTickets); // Much better for performance :p
         message.reply(`Successfully purchased ${buyAmount} tickets. Use c!tickets to view your current tickets and lucky numbers!`)
         return
-
-
     }
 };

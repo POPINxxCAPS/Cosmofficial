@@ -95,8 +95,6 @@ module.exports = (client) => {
                         }
                     } else {
                         // If there is no space ticket
-                        // Grid Deletion Stuff
-                        console.log(grid.displayName)
                         gridDocs[i].deletionReason = 'off-planet'
                         gridDocs[i].queuedForDeletion = true;
                         gridDocs[i].deletionTime = current_time + 300000;

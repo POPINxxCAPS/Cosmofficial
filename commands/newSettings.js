@@ -71,7 +71,7 @@ module.exports = {
             // Attempt to get time value
             try {
                 testVar = ms(value)
-                embed.setDescription(`${settingSearch.displayName} Successfully changed to ${settingSearch.value}`);
+                embed.setDescription(`${settingSearch.displayName} Successfully changed to ${value}`);
             } catch (err) {
                 errorString = 'Invalid Setting Value.\nValid: 1d, 4h, 30m, etc.'
             }

@@ -48,9 +48,6 @@ module.exports = async (req) => {
     const maxSpeed = hooverSettings.maxSpeed === 'Not Set' ? 1000000 : parseInt(hooverSettings.maxSpeed);
     const worldBorder = hooverSettings.worldBorder === 'Not Set' ? 1000000000 : parseInt(hooverSettings.worldBorder);
     const unverifiedRemoval = hooverSettings.unverifiedRemoval === 'Not Set' ? 'false' : hooverSettings.unverifiedRemoval;
-
-    if (hooverEnabled === 'false') return gridDocsCache;
-
     req.name = 'updateHoover'
     req.expirationInSeconds = scanInterval / 1000;
     if (req.expirationInSeconds < 30) req.expirationInSeconds = 30;
@@ -83,7 +80,7 @@ module.exports = async (req) => {
                 var dz = gridDoc.positionZ - 0;
 
                 let distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
-                if (distance < worldBorder) queued = false;
+                if (distance < (worldBorder * 1000)) queued = false;
             }
 
             if (gridDoc.deletionReason === 'off-planet') { // Cosmic only, space tickets
@@ -181,7 +178,7 @@ module.exports = async (req) => {
             var dy = gridDoc.positionY - 0;
             var dz = gridDoc.positionZ - 0;
             let distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
-            if (distance > worldBorder) {
+            if (distance > (worldBorder * 1000)) {
                 gridDoc.deletionReason = 'out of world boundary';
                 gridDoc.deletionTime = current_time + 600000;
                 gridDoc.queuedForDeletion = true

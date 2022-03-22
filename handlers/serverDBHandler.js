@@ -95,7 +95,6 @@ module.exports = async (client) => {
                 characterDocsCache: characterDocs
             }
             await lotteryHandler(req);
-            +
             await logStatus(req); // Specific Ordering
             await logFloatingObjs(req); // This doesn't need anything special
             await logChat(req);
@@ -133,5 +132,5 @@ module.exports = async (client) => {
             queryIsRunning = false;
             // Running test before finishing the noob caching
         }
-    }, 10000) //  Main timers are now handled in each query seperately. This just restarts the queries when the last server finishes.
+    }, 5000) //  Main timers are now handled in each query seperately. This just restarts the queries when the last server finishes.
 }
