@@ -51,11 +51,10 @@ module.exports = async (req) => {
     req.name = 'updateHoover'
     req.expirationInSeconds = scanInterval / 1000;
     if (req.expirationInSeconds < 30) req.expirationInSeconds = 30;
-    req.name = 'logPlayers'
     const timer = await timerFunction(req);
     if (timer === true) return gridDocsCache; // If there is a timer, cancel.
     const current_time = Date.now();
-    const deletionTime = current_time + sweepDelay;
+    const deletionTime = current_time + (sweepDelay * 1000);
 
     for (let gridDoc of gridDocsCache) {
         const cacheIndex = gridDocsCache.indexOf(gridDoc);
