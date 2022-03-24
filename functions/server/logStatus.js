@@ -46,10 +46,7 @@ module.exports = async (req) => {
 
     if (statusDoc.serverOnline === false || statusDoc.serverOnline === undefined) { // If document says server is offline, update to say online
         statusDoc.serverOnline = true;
-        statusDoc.save();
     }
-
-    if (statusDoc === null || statusDoc === undefined) return;
 
     if (statusDoc.nextPopLog < current_time) {
         let invLink = "https://cosmofficial.herokuapp.com/"
