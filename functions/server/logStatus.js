@@ -16,6 +16,14 @@ module.exports = async (req) => {
     const current_time = Date.now();
     let servInfo = await queryStatus(config);
 
+    if (servInfo === undefined) {
+        if(statusDoc === null) return;
+        if (statusDoc.serverOnline === true || statusDoc.serverOnline === undefined) { // If document says server is online, update to say offline
+            statusDoc.serverOnline = false;
+            statusDoc.save();
+        }
+        return;
+    }
     if (statusDoc === undefined || statusDoc === null) {
         statusDoc = await statusModel.create({
             guildID: guildID,
@@ -33,16 +41,6 @@ module.exports = async (req) => {
             lastUpdated: current_time,
             nextPopLog: current_time + 600000,
         })
-    }
-
-
-
-    if (servInfo === undefined) {
-        if (statusDoc.serverOnline === true || statusDoc.serverOnline === undefined) { // If document says server is online, update to say offline
-            statusDoc.serverOnline = false;
-            statusDoc.save();
-        }
-        return;
     }
 
 
