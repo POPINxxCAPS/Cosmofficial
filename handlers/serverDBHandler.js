@@ -94,8 +94,12 @@ module.exports = async (client) => {
                 gridQueryDelay: queryDelay,
                 characterDocsCache: characterDocs
             }
-            await lotteryHandler(req);
             await logStatus(req); // Specific Ordering
+            if(statusDoc === null) {
+                queryIsRunning = false;
+                continue;
+            }
+            await lotteryHandler(req);
             await logFloatingObjs(req); // This doesn't need anything special
             await logChat(req);
             await logPlayers(req);

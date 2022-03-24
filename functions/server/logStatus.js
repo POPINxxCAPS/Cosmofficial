@@ -12,10 +12,33 @@ module.exports = async (req) => {
     req.name = 'logStatus'
     const timerCheck = await timerFunction(req)
     if (timerCheck === true) return; // If there is a timer, cancel.
+    
     const current_time = Date.now();
     let servInfo = await queryStatus(config);
+
+    if(statusDoc === undefined || statusDoc === null) {
+        statusDoc = await statusModel.create({
+            guildID: guildID,
+    game: servInfo.Game,
+    isReady: servInfo.IsReady,
+    pirateUsedPCU: servInfo.PirateUsedPCU,
+    players: servInfo.Players,
+    serverID: servInfo.ServerId,
+    serverName: servInfo.ServerName,
+    simSpeed: servInfo.SimSpeed,
+    simCPULoad: servInfo.SimulationCpuLoad,
+    usedPCU: servInfo.UsedPCU,
+    version: servInfo.Version,
+    worldName: servInfo.WorldName,
+    lastUpdated: current_time,
+    nextPopLog: current_time + 600000,
+        })
+    }
+
+
+
     if (servInfo === undefined) {
-        if (statusDoc.serverOnline === true) { // If document says server is online, update to say offline
+        if (statusDoc.serverOnline === true || statusDoc.serverOnline === undefined) { // If document says server is online, update to say offline
             statusDoc.serverOnline = false;
             statusDoc.save();
         }
