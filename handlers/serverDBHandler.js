@@ -107,6 +107,7 @@ module.exports = async (client) => {
             let newGridDocsCache = await logGrids(req); // The last one needs await to ensure it's only running for one server at a time (performance reasons)
             if (newGridDocsCache === null || newGridDocsCache === undefined) { // If grid query failed or didn't run, cancel the rest.
                 queryIsRunning = false;
+                console.log(`Grid Query for guild ID ${guildID} failed. Cancelling the rest.`)
                 continue;
             }
 
@@ -114,9 +115,15 @@ module.exports = async (client) => {
             req.gridDocsCache = newGridDocsCache;
             newGridDocsCache = await updateHoover(req);
             req.gridDocsCache = newGridDocsCache;
-            //newGridDocsCache = await executeHoover(req);
+            newGridDocsCache = await executeHoover(req);
 
 
+            for(const doc of newGridDocsCache) { // Save all changes to gridCache to the database
+                const cacheIndex = newGridDocsCache.indexOf(doc);
+                doc.save().then(savedDoc => {
+                    newGridDocsCache[cacheIndex] = savedDoc;
+                })
+            }
 
             // Setting final vars
             const runTime = Date.now() - execution_time;

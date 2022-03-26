@@ -9,6 +9,14 @@ client.events = new discord.Collection();
 client.queryDelays = new discord.Collection();
 client.gridDocCache = new discord.Collection();
 client.lastGridDocCache = new discord.Collection();
+client.commonVars = new discord.Collection();
+
+const NPCNames = ['The Tribunal', 'Contractors', 'Gork and Mork', 'Space Pirates', 'Space Spiders', 'The Chairman', 'Miranda Survivors', 'VOID', 'The Great Tarantula', 'Cosmofficial', 'Clang Technologies CEO', 'Merciless Shipping CEO', 'Mystic Settlers CEO', 'Royal Drilling Consortium CEO', 'Secret Makers CEO', 'Secret Prospectors CEO', 'Specialized Merchants CEO', 'Star Inventors CEO', 'Star Minerals CEO', 'The First Heavy Industry CEO', 'The First Manufacturers CEO', 'United Industry CEO', 'Universal Excavators CEO', 'Universal Miners Guild CEO', 'Unyielding Excavators CEO'];
+const NPCGridNames = ['Mining vessel Debris', 'Mining ship Debris', 'Daniel A. Collins', 'Transporter debree'];
+const respawnShipNames = ['Respawn Station', 'Respawn Planet Pod', 'Respawn Space Pod'];
+client.commonVars.set('NPCNames', NPCNames);
+client.commonVars.set('NPCGridNames', NPCGridNames);
+client.commonVars.set('respawnShipNames', respawnShipNames);
 
 ['command_handler', 'event_handler'].forEach(handler => {
   require(`./handlers/${handler}`)(client, discord);

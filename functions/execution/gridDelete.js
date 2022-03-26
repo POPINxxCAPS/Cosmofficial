@@ -87,7 +87,5 @@ module.exports = async (guildID, entityID) => {
     // End Bridge Init
 
     send('DELETE', `${gridPath}/${entityID}`)
-    return;
-
-    
+    return true;
 }

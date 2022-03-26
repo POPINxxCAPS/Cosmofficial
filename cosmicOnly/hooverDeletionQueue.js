@@ -60,5 +60,5 @@ module.exports = (client, discord) => {
             channel.send(embed)
         } catch(err) {}
         return;
-    }, 300000)
+    }, 600000)
 }

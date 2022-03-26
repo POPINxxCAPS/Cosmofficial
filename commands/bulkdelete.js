@@ -17,7 +17,7 @@ module.exports = {
       let i = 0;
       while (i < args[0]) {
         try {
-          message.channel.bulkDelete(100)
+          message.channel.bulkDelete(100).catch(err => {})
         } catch (err) {}
         i += 100;
       }

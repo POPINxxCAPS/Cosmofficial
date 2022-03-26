@@ -9,14 +9,14 @@ const errorEmbed = require('../../functions/discord/errorEmbed');
 module.exports = async (discord, client, message) => {
   const prefix = 'c!'
   const guild = message.guild;
+  if (guild === null) return; // Redundancy Crash Fix
   const mainGuild = client.guilds.cache.get("853247020567101440");
   const settings = await getAllSettings(guild.id);
   const channels = await makeChannelsVar(guild.id, settings);
-  
-  if (!message.content.startsWith(prefix) || message.author.bot) return;
-  if(message.guild === null) return; // Redundancy Crash Fix
 
-  
+  if (!message.content.startsWith(prefix) || message.author.bot) return;
+
+
   const args = message.content.slice(prefix.length).split(/ +/);
   const cmd = args.shift().toLowerCase();
   const command = await client.commands.get(cmd) || client.commands.find(a => a.aliases && a.aliases.includes(cmd));
@@ -88,8 +88,8 @@ module.exports = async (discord, client, message) => {
   try {
     let patron = false;
     const guildOwner = mainGuild.members.cache.get(message.guild.owner.user.id);
-    if(!guildOwner || guildOwner === undefined || guildOwner === null) return errorEmbed(message.channel, 'The owner of this discord must be in the Cosmofficial discord to enable functionality of the bot.\nhttps://discord.gg/BfFc8cfp3n');
-    if(guildOwner.roles.cache.has('883535930630213653') || guildOwner.roles.cache.has('883564396587147275')) {
+    if (!guildOwner || guildOwner === undefined || guildOwner === null) return errorEmbed(message.channel, 'The owner of this discord must be in the Cosmofficial discord to enable functionality of the bot.\nhttps://discord.gg/BfFc8cfp3n');
+    if (guildOwner.roles.cache.has('883535930630213653') || guildOwner.roles.cache.has('883564396587147275')) {
       patron = true;
     }
 

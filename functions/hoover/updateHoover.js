@@ -1,9 +1,8 @@
 const makeHooverSettingVar = require('../misc/makeHooverSettingVar');
 const timerFunction = require('../database/timerFunction');
+const spaceTicketModel = require('../../models/spaceTicketSchema');
 
 
-
-const NPCNames = ['The Tribunal', 'Contractors', 'Gork and Mork', 'Space Pirates', 'Space Spiders', 'The Chairman', 'Miranda Survivors', 'VOID', 'The Great Tarantula', 'Cosmofficial', 'Clang Technologies CEO', 'Merciless Shipping CEO', 'Mystic Settlers CEO', 'Royal Drilling Consortium CEO', 'Secret Makers CEO', 'Secret Prospectors CEO', 'Specialized Merchants CEO', 'Star Inventors CEO', 'Star Minerals CEO', 'The First Heavy Industry CEO', 'The First Manufacturers CEO', 'United Industry CEO', 'Universal Excavators CEO', 'Universal Miners Guild CEO', 'Unyielding Excavators CEO'];
 const planetLocations = [{
     x: -2043,
     y: -1621,
@@ -39,6 +38,9 @@ module.exports = async (req) => {
     const hooverSettings = await makeHooverSettingVar(guildID, settings);
     if (hooverSettings === null || hooverSettings === undefined) return gridDocsCache;
     if (hooverSettings.enabled === 'Not Set' || hooverSettings.enabled === 'false') return gridDocsCache;
+    const NPCNames = req.client.commonVars.get('NPCNames')
+    const NPCGridNames = req.client.commonVars.get('NPCGridNames')
+    const respawnShipNames = req.client.commonVars.get('respawnShipNames')
     const scanInterval = hooverSettings.scanInterval === 'Not Set' ? 300 : hooverSettings.scanInterval / 1000;
     const sweepDelay = hooverSettings.sweepDelay === 'Not Set' ? 300 : hooverSettings.sweepDelay / 1000;
     const unpoweredGrids = hooverSettings.unpoweredGrids === 'Not Set' ? 'false' : hooverSettings.unpoweredGrids;
@@ -55,11 +57,14 @@ module.exports = async (req) => {
     if (timer === true) return gridDocsCache; // If there is a timer, cancel.
     const current_time = Date.now();
     const deletionTime = current_time + (sweepDelay * 1000);
-
     for (let gridDoc of gridDocsCache) {
         const cacheIndex = gridDocsCache.indexOf(gridDoc);
+        if(gridDoc === undefined) { // Fixing weird occurance
+            gridDocsCache.splice(cacheIndex, 1);
+            continue;
+        }
         const verDoc = verificationCache.find(verification => verification.username === gridDoc.ownerDisplayName)
-        // First, if it's already queued for deletion see if the error has been resolved
+        // First, if it's already queued for deletion, see if the error has been resolved
         if (gridDoc.queuedForDeletion === true) {
             let queued = true;
             if (gridDoc.deletionReason === 'unpowered' && gridDoc.isPOwered === true) queued = false;
@@ -112,47 +117,47 @@ module.exports = async (req) => {
                 gridDoc.deletionReason = '';
             }
         }
-
+        // Afterwards, check for hoover sweeps
 
 
         // Large Grid Check
-        if (gridDoc.queuedForDeletion === false && gridDoc.GridSize === 'Large' && largeGrids === false) {
+        if (gridDoc.queuedForDeletion === false && gridDoc.gridSize === 'Large' && largeGrids === 'true') {
             gridDoc.deletionReason = 'large grids not allowed'
             gridDoc.queuedForDeletion = true;
-            gridDoc.deletionTime = sweepDelay;
+            gridDoc.deletionTime = deletionTime
         }
         // Small Grid Check
-        if (gridDoc.queuedForDeletion === false && gridDoc.GridSize === 'Small' && smallGrids === false) {
+        if (gridDoc.queuedForDeletion === false && gridDoc.gridSize === 'Small' && smallGrids === 'true') {
             gridDoc.deletionReason = 'small grids not allowed'
             gridDoc.queuedForDeletion = true;
-            gridDoc.deletionTime = sweepDelay;
+            gridDoc.deletionTime = deletionTime
         }
         // Block Threshold Check
-        if (gridDoc.queuedForDeletion === false && gridDoc.blocksCount < parseInt(blockThreshold) && NPCGridNames.includes(singlegridDoc.DisplayName) === false && NPCNames.includes(singlegridDoc.OwnerDisplayName) === false) {
+        if (gridDoc.queuedForDeletion === false && gridDoc.blocksCount < parseInt(blockThreshold)) {
             gridDoc.deletionReason = 'less than block threshold'
             gridDoc.queuedForDeletion = true;
-            gridDoc.deletionTime = sweepDelay;
+            gridDoc.deletionTime = deletionTime
         }
         // Power Check
-        if (gridDoc.queuedForDeletion === false && gridDoc.IsPowered === false && unpoweredGrids === true && NPCNames.includes(singlegridDoc.OwnerDisplayName) === false) {
+        if (gridDoc.queuedForDeletion === false && gridDoc.isPowered === false && unpoweredGrids === 'true') {
             gridDoc.deletionReason = 'unpowered'
             gridDoc.queuedForDeletion = true;
-            gridDoc.deletionTime = sweepDelay;
+            gridDoc.deletionTime = deletionTime
         }
         // Verification Check
-        if (gridDoc.queuedForDeletion === false && unverifiedRemoval === false) { // If unverified cleanup is enabled
-            if ((verDoc === null || verDoc === undefined) === true && gridDoc.queuedForDeletion === false && NPCNames.includes(singlegridDoc.OwnerDisplayName) === false) { // If verdoc is not found, and grid is not already queued for deletion
+        if (gridDoc.queuedForDeletion === false && unverifiedRemoval === 'true') { // If unverified cleanup is enabled
+            if ((verDoc === null || verDoc === undefined) === true && gridDoc.queuedForDeletion === false && NPCNames.includes(gridDoc.OwnerDisplayName) === false) { // If verdoc is not found, and grid is not already queued for deletion
                 // If no verification
                 if (gridDoc.ownerDisplayName === '') {
                     // No owner? (no terminal blocks)
                     gridDoc.deletionReason = 'no clear owner'
                     gridDoc.queuedForDeletion = true;
-                    gridDoc.deletionTime = sweepDelay;
+                    gridDoc.deletionTime = deletionTime
                 } else {
                     // Has an owner, player just isn't verified.
                     gridDoc.deletionReason = 'unverified player grid'
                     gridDoc.queuedForDeletion = true;
-                    gridDoc.deletionTime = sweepDelay;
+                    gridDoc.deletionTime = deletionTime
                 }
             } else {
                 // If there is a verification doc, confirm they are still in the discord.
@@ -161,14 +166,14 @@ module.exports = async (req) => {
                     // No longer in the discord
                     gridDoc.deletionReason = 'player left the discord'
                     gridDoc.queuedForDeletion = true;
-                    gridDoc.deletionTime = sweepDelay;
+                    gridDoc.deletionTime = deletionTime
                 } // Discord check end
             }
         }
         // Speed Check
         if (gridDoc.queuedForDeletion === false && parseInt(gridDoc.linearSpeed) > maxSpeed) {
             gridDoc.deletionReason = 'bypassing speed limits';
-            gridDoc.deletionTime = current_time + 60000;
+            gridDoc.deletionTime = current_time + 60000; // Deletes in 60 seconds if still bypassing speed limits by then.
             gridDoc.queuedForDeletion = true
         }
         // World Boundary Check
@@ -179,16 +184,17 @@ module.exports = async (req) => {
             let distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
             if (distance > (worldBorder * 1000)) {
                 gridDoc.deletionReason = 'out of world boundary';
-                gridDoc.deletionTime = current_time + 600000;
+                gridDoc.deletionTime = current_time + 600000; // Gives 10 minutes to return in-boundary
                 gridDoc.queuedForDeletion = true
             }
         }
 
-        // Save doc
-        gridDoc.save().then(savedDoc => {
-            gridDoc = savedDoc;
-            gridDocsCache[cacheIndex] = gridDoc;
-        })
+        if (NPCNames.includes(gridDoc.ownerDisplayName) === true) { // Remove queued status from NPC grids
+            gridDoc.queuedForDeletion = false;
+            gridDoc.deletionReason = '';
+        }
+        
+        gridDocsCache[cacheIndex] = gridDoc;
     }
     return gridDocsCache;
 }
