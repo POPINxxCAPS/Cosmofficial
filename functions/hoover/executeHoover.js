@@ -19,11 +19,11 @@ module.exports = async (req) => {
         }
         if (gridDoc.deletionTime < current_time && gridDoc.queuedForDeletion === true) {
             await gridDelete(guildID, gridDoc.entityID);
+            console.log(`Hoover swept ${gridDoc.displayName}`)
             gridDocsCache.splice(index, 1);
             try {
                 gridDoc.remove();
             } catch(err) {}
-            console.log(`Hoover deleted ${gridDoc.displayName}`)
         }
     }
     return gridDocsCache;

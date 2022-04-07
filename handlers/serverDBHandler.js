@@ -100,7 +100,7 @@ module.exports = async (client) => {
                 continue;
             }
             await lotteryHandler(req);
-            await logFloatingObjs(req); // This doesn't need anything special
+            await logFloatingObjs(req);
             await logChat(req);
             await logPlayers(req);
             await logCharacters(req);

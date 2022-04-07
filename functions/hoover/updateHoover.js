@@ -67,9 +67,9 @@ module.exports = async (req) => {
         // First, if it's already queued for deletion, see if the error has been resolved
         if (gridDoc.queuedForDeletion === true) {
             let queued = true;
-            if (gridDoc.deletionReason === 'unpowered' && gridDoc.isPOwered === true) queued = false;
+            if (gridDoc.deletionReason === 'unpowered' && gridDoc.isPowered === true) queued = false;
             if (gridDoc.deletionReason === 'no clear owner' && gridDoc.ownerDisplayName !== '') queued = false;
-            if (gridDoc.deletionReason === 'unverified player grid' && verDoc !== null) queued = false;
+            if (gridDoc.deletionReason === 'unverified player grid' && verDoc !== null && verDoc !== undefined) queued = false;
             if (gridDoc.deletionReason === 'small grids not allowed' && smallGrids === true) queued = false;
             if (gridDoc.deletionReason === 'large grids not allowed' && largeGrids === true) queued = false;
             if (gridDoc.deletionReason === 'less than block threshold' && parseInt(gridDoc.blocksCount) > blockThreshold) queued = false;
@@ -134,9 +134,10 @@ module.exports = async (req) => {
         }
         // Block Threshold Check
         if (gridDoc.queuedForDeletion === false && gridDoc.blocksCount < parseInt(blockThreshold)) {
+            const modifiedDeletionTime = current_time + Math.round((sweepDelay * 1000) * 0.33);
             gridDoc.deletionReason = 'less than block threshold'
             gridDoc.queuedForDeletion = true;
-            gridDoc.deletionTime = deletionTime
+            gridDoc.deletionTime = modifiedDeletionTime;
         }
         // Power Check
         if (gridDoc.queuedForDeletion === false && gridDoc.isPowered === false && unpoweredGrids === 'true') {
