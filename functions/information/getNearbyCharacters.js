@@ -1,4 +1,5 @@
-const characterModel = require('../models/characterSchema');
+const characterModel = require('../../models/characterSchema');
+const playerModel = require('../../models/playerSchema');
 
 module.exports = async (guildID, distance, x, y, z) => {
     let characterDocs = await characterModel.find({

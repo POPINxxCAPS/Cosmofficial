@@ -16,6 +16,7 @@ const logChat = require('../functions/server/logChat');
 const logFloatingObjs = require('../functions/server/logFloatingObjs');
 const logVoxels = require('../functions/server/logVoxels');
 const lotteryHandler = require('../handlers/lotteryHandler');
+const hotzoneHandler = require('../functions/hotzone/hotzoneHandler');
 
 // Database Stuff
 const verificationModel = require('../models/verificationSchema');
@@ -29,7 +30,7 @@ const ms = require('ms');
 
 let fullGridDocsCache = []; // Caching all grid docs so it doesn't have to keep downloading them.
 // Changing this to use a discord collection (just learned about them)
-module.exports = async (client) => {
+module.exports = async (client, discord) => {
     let guildIDs = await client.guilds.cache.map(guild => guild.id);
     let verDocs = await verificationModel.find({});
 
@@ -37,7 +38,7 @@ module.exports = async (client) => {
     setInterval(async () => {
         guildIDs = await client.guilds.cache.map(guild => guild.id);
         verDocs = await verificationModel.find({});
-    }, 600000)
+    }, 120000)
 
     // Query Interval
     let queryIsRunning = false;
@@ -54,6 +55,7 @@ module.exports = async (client) => {
             const gridDocsCache = client.gridDocCache.get(guildID) || await gridModel.find({
                 guildID: guildID
             })
+            if(client.gridDocCache.get(guildID) === undefined) client.gridDocCache.set(guildID, gridDocsCache);
             const lastGridDocsCache = client.lastGridDocCache.get(guildID);
             const queryDelay = client.queryDelays.get(guildID) || 30;
 
@@ -88,6 +90,7 @@ module.exports = async (client) => {
                 settings: settings,
                 ecoSettings: ecoSettings,
                 client: client,
+                discord: discord,
                 verDocs: verDocs,
                 allianceCache: allianceDocs,
                 gridDocsCache: gridDocsCache,
@@ -104,14 +107,15 @@ module.exports = async (client) => {
             await logChat(req);
             await logPlayers(req);
             await logCharacters(req);
+            await hotzoneHandler(req);
             let newGridDocsCache = await logGrids(req); // The last one needs await to ensure it's only running for one server at a time (performance reasons)
             if (newGridDocsCache === null || newGridDocsCache === undefined) { // If grid query failed or didn't run, cancel the rest.
                 queryIsRunning = false;
                 console.log(`Grid Query for guild ID ${guildID} failed. Cancelling the rest.`)
                 continue;
             }
-
-            // Domination, Hotzone, Hoover etc using absolute most recent grid+character information. (awaiting recodes)
+            
+            // Hoover using absolute most recent grid information.
             req.gridDocsCache = newGridDocsCache;
             newGridDocsCache = await updateHoover(req);
             req.gridDocsCache = newGridDocsCache;

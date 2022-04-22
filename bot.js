@@ -53,7 +53,6 @@ const serverDBHandler = require('./handlers/serverDBHandler');
 const cooldownHandler = require('./handlers/cooldownHandler');
 
 const serverLogHandler = require('./handlers/serverLogHandler');
-const hotzoneHandler = require('./handlers/hotzoneHandler');
 const dominationHandler = require('./handlers/dominationHandler');
 
 const TDMServerHandler = require('./handlers/TDMServerHandler');
@@ -73,7 +72,7 @@ client.on('ready', () => {
   statusDocCleanup(); // Only need to run this once per bot deploy
 
   //hotzoneHandler(client, discord); // Disabled until complete recode, noob code causing performancing problems
-  serverDBHandler(client);
+  serverDBHandler(client, discord);
   //dominationHandler(client, discord);
 
   //TDMQueue(client); // Stuff for a TDM server nobody played, was shut down.

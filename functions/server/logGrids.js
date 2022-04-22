@@ -14,7 +14,6 @@ const NPCGridNames = ['Mining vessel Debris', 'Mining ship Debris', 'Daniel A. C
 const respawnShipNames = ['Respawn Station', 'Respawn Planet Pod', 'Respawn Space Pod']
 
 let insertData = [];
-// Pyramid of HELL noob code lmfao (Getting smaller, slowly)
 module.exports = async (req) => {
     const guildID = req.guildID;
     const config = req.config;
@@ -36,7 +35,7 @@ module.exports = async (req) => {
     }
     req.name = 'logGrids'
     const timer = await timerFunction(req);
-    if (timer === true) return null; // If there is a timer, cancel.
+    if (timer === true) return gridDocsCache; // If there is a timer, cancel.
 
     const guild = client.guilds.cache.get(guildID);
     const mainGuild = client.guilds.cache.get("853247020567101440");
