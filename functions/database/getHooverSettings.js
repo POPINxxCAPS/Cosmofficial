@@ -106,7 +106,7 @@ module.exports = async (guildID) => {
     if (smallGrids === null) {
         smallGrids = await settingsModel.create({
             guildID: guildID,
-            displayName: 'Large Grid Removal',
+            displayName: 'Small Grid Removal',
             category: 'hoover',
             description: 'Delete *all* small grids?',
             setting: 'smallgrids',

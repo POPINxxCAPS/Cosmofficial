@@ -97,6 +97,6 @@ client.on('ready', () => {
 
   autoRoleCosmic(client);
   gridDeletionQueue(client, discord) // Will create this for all
-  //spaceTicketEnforcer(client) // Cosmic Network Only
+  spaceTicketEnforcer(client) // Cosmic Network Only
   //cosmicCharts(client, discord); // Testing function for me, creates 3d scatter plot map of the server
 })

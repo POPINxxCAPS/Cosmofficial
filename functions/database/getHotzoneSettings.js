@@ -125,9 +125,9 @@ module.exports = async (guildID) => {
     if (range === null) {
         range = await settingsModel.create({
             guildID: guildID,
-            displayName: 'Hotzone Radius',
+            displayName: 'Hotzone Range',
             category: 'hotzone',
-            description: 'Radius from x0 y0 z0 the Hotzone can spawn. (Meters)',
+            description: 'How far from x0 y0 z0 the Hotzone can spawn. (Meters)',
             setting: 'range',
             value: 'Not Set',
             valueType: 'number'
