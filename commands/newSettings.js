@@ -41,11 +41,15 @@ module.exports = {
 
         if (categorySearch === undefined) return errorEmbed(message.channel, 'Category was not found. Please check your spelling and try again.')
         if (categorySearch.guildOwnerOnly === true) { // Confirm it's the guild owner running the command.
-            if (message.author.id !== message.guild.owner.user.id) return errorEmbed(message.channel, 'Only the discord owner may edit settings in this category.');
+            if (message.author.id !== message.guild.owner.user.id) {
+                if (message.author.bot) {} else {
+                    return errorEmbed(message.channel, 'Only the discord owner may edit settings in this category.');
+                }
+            }
         }
-        if(categorySearch.patronReq === true) {
+        if (categorySearch.patronReq === true) {
             const patron = await checkPatron(client, message.guild.owner.user.id)
-            if(patron === false) return lockedEmbed(message.channel, discord)
+            if (patron === false) return lockedEmbed(message.channel, discord)
         }
 
         if (setting === undefined) { // If setting is undefined, list available settings within that category.

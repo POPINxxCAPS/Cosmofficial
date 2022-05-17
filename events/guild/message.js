@@ -14,7 +14,7 @@ module.exports = async (discord, client, message) => {
   const settings = await getAllSettings(guild.id);
   const channels = await makeChannelsVar(guild.id, settings);
 
-  if (!message.content.startsWith(prefix) || message.author.bot) return;
+  if (!message.content.startsWith(prefix)) return;
 
 
   const args = message.content.slice(prefix.length).split(/ +/);

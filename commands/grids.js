@@ -61,6 +61,7 @@ module.exports = {
     categoryAliases: ['general'],
     async execute(req) {
         const message = req.message;
+        if(message === undefined) return;
         const args = req.args;
         const discord = req.discord;
         const guild = req.guild;
