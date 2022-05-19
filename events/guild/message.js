@@ -5,6 +5,7 @@ const makeEcoSettingVar = require('../../functions/misc/makeEcoSettingVar');
 const makeLotterySettingVar = require('../../functions/misc/makeLotterySettingVar');
 const getPlayerEco = require('../../functions/database/getPlayerEco');
 const errorEmbed = require('../../functions/discord/errorEmbed');
+const makeConfigVar = require('../../functions/misc/makeConfigVar');
 
 module.exports = async (discord, client, message) => {
   const prefix = 'c!'
@@ -96,6 +97,7 @@ module.exports = async (discord, client, message) => {
     let playerEco = await getPlayerEco(guild.id, message.author.id, settings);
     const ecoSettings = await makeEcoSettingVar(guild.id, settings);
     const lotterySettings = await makeLotterySettingVar(guild.id, settings);
+    const config = await makeConfigVar(guild.id, settings);
 
     // Making it more "restful"
     let req = {};
@@ -109,6 +111,7 @@ module.exports = async (discord, client, message) => {
     req.playerEco = playerEco;
     req.patron = patron;
     req.settings = settings;
+    req.config = config;
     req.channels = channels;
     req.ecoSettings = ecoSettings;
     req.lotterySettings = lotterySettings;
