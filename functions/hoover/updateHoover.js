@@ -190,7 +190,7 @@ module.exports = async (req) => {
             }
         }
 
-        if (NPCNames.includes(gridDoc.ownerDisplayName) === true) { // Remove queued status from NPC grids
+        if (NPCNames.includes(gridDoc.ownerDisplayName) === true || gridDoc.ownerDisplayName.includes(' CEO')) { // Remove queued status from NPC grids
             gridDoc.queuedForDeletion = false;
             gridDoc.deletionReason = '';
         }
