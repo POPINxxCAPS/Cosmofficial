@@ -13,7 +13,7 @@ module.exports = {
         .setColor('#E02A6B')
         .setTitle(`Cosmofficial Patreon Link`)
         .setURL('https://cosmofficial.herokuapp.com/')
-        .setDescription(`Like the bot? Support it's development!\nMore support = more motivation. Thanks!\nhttps://cosmofficial.herokuapp.com/`)
+        .setDescription(`Like the bot? Support it's development!\nMore support = more motivation. Thanks!\nhttps://patreon.com/Cosmofficial/`)
         .setFooter('Cosmofficial by POPINxxCAPS');
         message.channel.send(embed)
     }
