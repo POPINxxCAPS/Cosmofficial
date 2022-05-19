@@ -71,7 +71,11 @@ module.exports = {
                 return message.channel.send(embed);
             } catch (err) {}
         } else {
-            ticket.expirationTime = parseInt(ticket.expirationTime) + ticketTime
+            if(parseInt(ticket.expirationTime) - current_time <= 0) {
+                ticket.expirationTime = current_time + ticketTime
+            } else {
+                ticket.expirationTime = parseInt(ticket.expirationTime) + ticketTime
+            }
             ticket.save();
             playerEco.currency = parseInt(playerEco.currency) - price;
             playerEco.save();
