@@ -61,12 +61,12 @@ module.exports = (client) => {
                 console.log(`${grid.displayName} In Boundary: ${inBoundary}`);
             }
 
-            if (inBoundary === false) { // Check if there is a space ticket, if not do grid deletion
-                // Grid Deletion Stuff
+            if (inBoundary === false && grid.queuedForDeletion === false) { // Check if there is a space ticket, if not do grid deletion
+                // Grid Deletion Marking Stuff
                 console.log(grid.displayName)
                 grid.deletionReason = 'left permitted boundaries'
                 grid.queuedForDeletion = true;
-                grid.deletionTime = current_time + 120000;
+                grid.deletionTime = current_time + 150000;
                 grid.save().then(savedDoc => {
                     gridDocs[index] = savedDoc;
                 })
@@ -76,7 +76,7 @@ module.exports = (client) => {
                 if (verDoc !== null) {
                     let memberTarget = await guild.members.cache.find(member => member.id === verDoc.userID)
                     try {
-                        memberTarget.send(`**__Warning__**\n>>> ${grid.displayName} has left the Cosmic Boundary.\nBuy a Space Ticket with c!bst or re-enter the zones.\nOtherwise, grid will be removed in ~1-2 minutes.`)
+                        memberTarget.send(`**__Warning__**\n>>> ${grid.displayName} has left the Cosmic Boundary.\nBuy a Space Ticket with c!bst or re-enter the zones.\nOtherwise, grid will be removed in ~2-5 minutes.`)
                     } catch (err) {}
                 }
             } else if(grid.queuedForDeletion === true && (inBoundary === true || allowedFactionTags.includes(grid.factionTag === true)) === true) {
@@ -88,5 +88,6 @@ module.exports = (client) => {
             }
         }
         client.gridDocCache.set(guildID, gridDocs); // Update the cached info with the most recent changes
+        running = false;
     }, 20000)
 }
