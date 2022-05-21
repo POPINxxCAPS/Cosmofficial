@@ -87,31 +87,6 @@ module.exports = async (req) => {
                 if (distance < (worldBorder * 1000)) queued = false;
             }
 
-            if (gridDoc.deletionReason === 'off-planet') { // Cosmic only, space tickets
-                let inSpace = true;
-                if (NPCNames.includes(gridDoc.ownerDisplayName) === true) {
-                    inSpace = false
-                }
-                for (let a = 0; a < planetLocations.length && inSpace === true; a++) {
-                    var dx = gridDoc.positionX - planetLocations[a].x;
-                    var dy = gridDoc.positionY - planetLocations[a].y;
-                    var dz = gridDoc.positionZ - planetLocations[a].z;
-
-                    let distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
-                    if (distance < planetLocations[a].distanceLimit) {
-                        inSpace = false;
-                    }
-                }
-                const spaceTicketDoc = await spaceTicketModel.findOne({
-                    factionTag: gridDoc.factionTag
-                })
-                if (spaceTicketDoc !== null) {
-                    if (spaceTicketDoc.expirationTime > current_time) queued = false;
-                }
-                if (inSpace === false) queued = false;
-                if (guildID !== '799685703910686720') queued = false;
-            }
-
             if (queued === false) {
                 gridDoc.queuedForDeletion = false;
                 gridDoc.deletionReason = '';

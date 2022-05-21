@@ -16,6 +16,7 @@ module.exports = (client) => {
         const NPCGridNames = client.commonVars.get('NPCGridNames');
         const spawnerGridNames = client.commonVars.get('respawnShipNames');
         let gridDocs = client.gridDocCache.get(guildID);
+        let guild = await client.guilds.cache.get(guildID);
         const current_time = Date.now();
         if (gridDocs === undefined) return running = false;
         if (gridDocs.length === 0) return running = false;
@@ -36,10 +37,11 @@ module.exports = (client) => {
         }
 
         for (let grid of gridDocs) {
+            if(allowedFactionTags.includes(grid.factionTag) === true) continue;
             console.log(grid.displayName)
             let index = gridDocs.indexOf(grid);
             if (NPCNames.includes(grid.ownerDisplayName) === true || grid.ownerDisplayName.includes(" CEO") === true) continue;
-            if (grid.queuedForDeletion === true) continue;
+            if (grid.queuedForDeletion === true && grid.deletionReason !== 'left permitted boundaries') continue;
             let inBoundary = false;
             for (const buoy of buoyDocs) { // Check if grid is within a boundary buoy
                 let cutString = buoy.displayName.replace('Lane Buoy', '');
@@ -62,21 +64,29 @@ module.exports = (client) => {
             if (inBoundary === false) { // Check if there is a space ticket, if not do grid deletion
                 // Grid Deletion Stuff
                 console.log(grid.displayName)
-                grid.deletionReason = 'off-planet'
+                grid.deletionReason = 'left permitted boundaries'
                 grid.queuedForDeletion = true;
-                grid.deletionTime = current_time + 60000;
-                grid.save()
+                grid.deletionTime = current_time + 120000;
+                grid.save().then(savedDoc => {
+                    gridDocs[index] = savedDoc;
+                })
                 let verDoc = await verificationModel.findOne({
                     username: grid.ownerDisplayName
                 })
-                let guild = await client.guilds.cache.get("853247020567101440");
                 if (verDoc !== null) {
                     let memberTarget = await guild.members.cache.find(member => member.id === verDoc.userID)
                     try {
-                        memberTarget.send(`**__Warning__**\n>>> ${grid.displayName} has left planetary zones.\nBuy a Space Ticket with c!bst or re-enter the zone.\nOtherwise, grid will be removed in ~1-2 minutes.`)
+                        memberTarget.send(`**__Warning__**\n>>> ${grid.displayName} has left the Cosmic Boundary.\nBuy a Space Ticket with c!bst or re-enter the zones.\nOtherwise, grid will be removed in ~1-2 minutes.`)
                     } catch (err) {}
                 }
+            } else if(grid.queuedForDeletion === true && (inBoundary === true || allowedFactionTags.includes(grid.factionTag === true)) === true) {
+                grid.deletionReason = '';
+                grid.queuedForDeletion = false;
+                grid.save().then(savedDoc => {
+                    gridDocs[index] = savedDoc;
+                })
             }
         }
+        client.gridDocCache.set(guildID, gridDocs); // Update the cached info with the most recent changes
     }, 20000)
 }
