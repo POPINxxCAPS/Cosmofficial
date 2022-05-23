@@ -38,7 +38,6 @@ module.exports = (client) => {
 
         for (let grid of gridDocs) {
             if(allowedFactionTags.includes(grid.factionTag) === true) continue;
-            console.log(grid.displayName)
             let index = gridDocs.indexOf(grid);
             if (NPCNames.includes(grid.ownerDisplayName) === true || grid.ownerDisplayName.includes(" CEO") === true) continue;
             if (grid.queuedForDeletion === true && grid.deletionReason !== 'left permitted boundaries') continue;
@@ -57,13 +56,8 @@ module.exports = (client) => {
                 }
             }
 
-            if (grid.displayName.includes("Lane Buoy") === false) {
-                console.log(`${grid.displayName} In Boundary: ${inBoundary}`);
-            }
-
             if (inBoundary === false && grid.queuedForDeletion === false) { // Check if there is a space ticket, if not do grid deletion
                 // Grid Deletion Marking Stuff
-                console.log(grid.displayName)
                 grid.deletionReason = 'left permitted boundaries'
                 grid.queuedForDeletion = true;
                 grid.deletionTime = current_time + 150000;
