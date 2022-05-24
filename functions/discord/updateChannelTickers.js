@@ -1,19 +1,16 @@
 // Moving all of these to one function so that there is less intervals running all over the place
 const playerModel = require('../../models/playerSchema');
+const botStatModel = require('../../models/botStatisticSchema');
 
 const statusModel = require('../../models/statusSchema');
 module.exports = async (client) => {
     const current_time = Date.now();
-
-    // Bot Activity Status
-    const settingDocs = await statusModel.find({});
-    let servers = 0;
-    settingDocs.forEach(doc => {
-        if (doc.serverOnline === true) {
-            servers += 1;
-        }
+    const botStatDoc = await botStatModel.findOne({
+        name: 'deletedByHoover'
     })
-    client.user.setActivity(`${servers} Servers`, ({
+    // Bot Activity Status
+    let grids = botStatDoc === null ? 0 : botStatDoc.value;
+    client.user.setActivity(`Hoover. ${servers} Grids Swept!`, ({
         type: "WATCHING"
     }))
 
