@@ -10,7 +10,7 @@ module.exports = async (client) => {
     })
     // Bot Activity Status
     let grids = botStatDoc === null ? 0 : botStatDoc.value;
-    client.user.setActivity(`Hoover. ${servers} Grids Swept!`, ({
+    client.user.setActivity(`Hoover. ${grids} Grids Swept!`, ({
         type: "WATCHING"
     }))
 
