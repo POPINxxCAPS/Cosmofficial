@@ -123,25 +123,26 @@ module.exports = async (req) => {
     let winners = [];
     let totalWeight = 0;
     for (let w = 0; w < winningTickets.length; w++) { // Condense winning tickets into "player weights"
-        let search = winners.find(winner => winner.userID === winningTickets.userID);
+        let search = winners.find(winner => winner.userID === winningTickets[w].userID);
         totalWeight += 1;
         if (search === undefined) {
             search = {
-                userID: winners.userID,
+                userID: winningTickets[w].userID,
                 weight: 1
             }
             winners.push(search)
         } else {
-            search.weight += 1;
             const index = winners.findIndex(search);
+            search.weight += 1;
             winners[index] = search;
         }
     }
 
     for (let t = 0; t < winners.length; t++) { // Reward each winner based on their weight (Winning ticket count)
-        let playerEcoDoc = await getPlayerEco(guildID, userID, req.settings)
-        const memberTarget = await guild.members.cache.find(member => member.id === verDoc.userID)
-        const rewardAmount = (winners[t].weight / totalWeight) * (parseInt(potDoc.potAmount) * 0.8);
+        let playerEcoDoc = await getPlayerEco(guildID, winners[t].userID, req.settings);
+        const memberTarget = await guild.members.cache.find(member => member.id === winners[t].userID)
+        const totalRewardAmount = parseInt(potDoc.potAmount) * 0.8;
+        const rewardAmount = (winners[t].weight / totalWeight) * totalRewardAmount;
         playerEcoDoc.vault = parseInt(playerEcoDoc.vault) + rewardAmount;
         playerEcoDoc.save();
         try {
@@ -155,7 +156,7 @@ module.exports = async (req) => {
         for (let i = 0; i < winners.length; i++) {
             winnerString += `@<${winners[i].userID}>, ${winners[i].weight} Winning Tickets\n`
         }
-        potDoc.potAmount = parseInt(potDoc.potAmount) - rewardAmount;
+        potDoc.potAmount = parseInt(potDoc.potAmount) - totalRewardAmount;
         potDoc.drawTime = drawTime;
         let ran1 = Math.floor(Math.random() * 9);
         let ran2 = Math.floor(Math.random() * 9);
@@ -181,9 +182,9 @@ module.exports = async (req) => {
             await channel.bulkDelete(2);
             return channel.send(embed);
         } catch (err) {}
-        tickets.forEach(ticket => {
-            ticket.remove()
-        })
+        for(const ticket of tickets) { // Delete all processed tickets
+            ticket.remove();
+        }
         return;
     }
 
@@ -211,9 +212,9 @@ module.exports = async (req) => {
     potDoc.winningNum2 = ran2;
     potDoc.winningNum3 = ran3;
     potDoc.save();
-    tickets.forEach(ticket => {
-        ticket.remove()
-    })
+    for(const ticket of tickets) { // Delete all processed tickets
+        ticket.remove();
+    }
     try {
         channel.bulkDelete(2);
         channel.send(embed);
