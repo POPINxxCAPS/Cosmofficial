@@ -39,6 +39,8 @@ module.exports = async (req) => {
             } catch(err) {}
         }
     }
-    botStatDoc.save();
+    try {
+        botStatDoc.save().then().catch(err => {});
+    } catch(err) {}
     return gridDocsCache;
 }
