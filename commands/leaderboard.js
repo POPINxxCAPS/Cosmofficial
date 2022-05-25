@@ -10,6 +10,7 @@ module.exports = {
         const message = req.message;
         const client = req.client;
         const mainGuild = req.mainGuild;
+        const discord = req.discord;
         const guild = req.guild;
         const ecoSettings = req.ecoSettings;
         const currencyName = ecoSettings.currencyName;
