@@ -1,5 +1,6 @@
 const spawnerGridNames = ['Zone Chip Spawner', 'Ice Spawner', 'Iron Spawner', 'Silicon Spawner', 'Cobalt Spawner', 'Silver Spawner', 'Magnesium Spawner', 'Gold Spawner', 'Platinum Spawner', 'Uranium Spawner', 'Powerkit Spawner', 'Space Credit Converter', 'Common Loot Box', 'Ramshackle Loot Box', 'Apprentice Loot Box', 'Journeyman Loot Box', 'Mastercraft Loot Box', 'Ascendant Loot Box']
 const spawnerModel = require('../models/spawnerSchema');
+const gridPowerOff = require('../functions/execution/gridPowerOff')
 
 module.exports = async (guildID, grid) => {
     const current_time = Date.now();
