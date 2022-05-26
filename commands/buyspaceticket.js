@@ -32,7 +32,7 @@ module.exports = {
         let totalPlayerBal = parseInt(playerEco.currency) + parseInt(playerEco.vault);
         if (parseInt(playerEco.currency) < price) {
             if (totalPlayerBal < price) {
-                return errorEmbed(message.channel, `You do not enough ${currencyName} to purchase this!`)
+                return errorEmbed(message.channel, `You do not enough ${currencyName} to purchase this!\nPrice: ${price}`)
             } else {
                 return errorEmbed(message.channel, `You must withdraw ${price - parseInt(playerEco.currency)} ${currencyName} to purchase this!`)
             }
@@ -44,7 +44,6 @@ module.exports = {
             guildID: message.guild.id,
             displayName: verDoc.username
         })
-
 
         if (playerDoc === null) return errorEmbed(message.channel, `An unknown error occurred. Please try again`)
         if (playerDoc.factionTag === '') return errorEmbed(message.channel, `You must create a faction first!`)
