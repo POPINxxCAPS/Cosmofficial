@@ -51,6 +51,7 @@ module.exports = {
         const args = req.args;
         const discord = req.discord;
         const config = req.config;
+        const guildID = message.guild.id;
         if (config.ip === "Not Set" || config.port === "Not Set" || config.secret === "Not Set") return message.channel.send('This discord does not have a server registered.\nUse c!setup to add your remote configuration.');
         let playerEco = req.playerEco;
         const ecoSettings = req.ecoSettings;
@@ -122,7 +123,7 @@ module.exports = {
         playerEco.currency = parseInt(playerEco.currency) - price;
         playerEco.save();
         spawnerDoc.save();
-        await gridPowerOn(guildID, entityID)
+        await gridPowerOn(guildID, grid.entityID)
         const embed = new discord.MessageEmbed()
             .setColor('#E02A6B')
             .setTitle(`Loot Box Manager`)
@@ -133,7 +134,7 @@ module.exports = {
 
 
         setTimeout(async () => {
-            await gridPowerOff(guildID, entityID)
+            await gridPowerOff(guildID, grid.entityID)
             console.log(`${gridName} Deactivated`)
         }, (seconds * 1000))
     }
