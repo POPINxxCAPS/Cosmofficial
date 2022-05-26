@@ -13,6 +13,13 @@ module.exports = async (guildID, grid) => {
         if (spawnerDoc.expirationTime < current_time && grid.IsPowered === true) {
             gridPowerOff(guildID, grid.EntityId)
         }
+    } else {
+        await spawnerModel.create({
+            guildID: guildID,
+            gridName: grid.DisplayName,
+            expirationTime: current_time
+        })
+        gridPowerOff(guildID, grid.EntityId)
     }
     return;
 }
