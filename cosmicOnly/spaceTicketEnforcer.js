@@ -73,9 +73,12 @@ module.exports = (client) => {
                 grid.deletionReason = 'left permitted boundaries'
                 grid.queuedForDeletion = true;
                 grid.deletionTime = current_time + 300000;
-                grid.save().then(savedDoc => {
-                    gridDocs[index] = savedDoc;
-                })
+                try{
+                    grid.save().then(savedDoc => {
+                        gridDocs[index] = savedDoc;
+                    }).catch(err => {})
+                } catch(err) {}
+                
                 let verDoc = await verificationModel.findOne({
                     username: grid.ownerDisplayName
                 })
