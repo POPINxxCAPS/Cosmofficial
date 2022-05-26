@@ -2,6 +2,7 @@ const spaceTicketModel = require('../models/spaceTicketSchema');
 const gridModel = require('../models/gridSchema');
 const gridDelete = require('../functions/execution/gridDelete');
 const verificationModel = require('../models/verificationSchema');
+const ms = require('ms')
 
 
 const spawnerGridNames = ['Zone Chip Spawner', 'Ice Spawner', 'Iron Spawner', 'Silicon Spawner', 'Cobalt Spawner', 'Silver Spawner', 'Magnesium Spawner', 'Gold Spawner', 'Platinum Spawner', 'Uranium Spawner', 'Powerkit Spawner']
@@ -24,6 +25,7 @@ module.exports = (client) => {
         let allowedFactionTags = [];
         let spaceTicketDocs = await spaceTicketModel.find({})
         for (let i = 0; i < spaceTicketDocs.length; i++) {
+            console.log(`Faction: ${spaceTicketDocs[i].factionTag} Space Ticket Time Remaining: ${ms(parseInt(spaceTicketDocs[i].expirationTime) - current_time)}`);
             if (parseInt(spaceTicketDocs[i].expirationTime) > current_time) {
                 allowedFactionTags.push(spaceTicketDocs[i].factionTag);
             } else continue;
@@ -41,6 +43,7 @@ module.exports = (client) => {
             if (NPCNames.includes(grid.ownerDisplayName) === true || grid.ownerDisplayName.includes(" CEO") === true) continue;
             if (grid.queuedForDeletion === true && grid.deletionReason !== 'left permitted boundaries') continue;
             let inBoundary = false;
+            let deleteGrid = false;
             if(allowedFactionTags.includes(grid.factionTag) === true) inBoundary = true;
             for (const buoy of buoyDocs) { // Check if grid is within a boundary buoy
                 if(inBoundary === true) continue;
@@ -58,7 +61,13 @@ module.exports = (client) => {
                 }
             }
 
-            if (inBoundary === false && grid.queuedForDeletion === false && allowedFactionTags.includes(grid.factionTag) === false) { 
+            if(inBoundary === false) {
+                if(allowedFactionTags.includes(grid.factionTag) === false) deleteGrid = true;
+                if(allowedFactionTags.includes(grid.factionTag) === true) deleteGrid = false;
+            } else {
+                deleteGrid = false;
+            }
+            if (deleteGrid === true && grid.queuedForDeletion === false) {
                 // Check if there is a space ticket, if not do grid deletion
                 // Grid Deletion Marking Stuff
                 grid.deletionReason = 'left permitted boundaries'
@@ -76,8 +85,8 @@ module.exports = (client) => {
                         memberTarget.send(`**__Warning__**\n>>> ${grid.displayName} has left the Cosmic Boundary.\nBuy a Space Ticket with c!bst or re-enter the zones.\nOtherwise, grid will be removed in ~5 minutes.`)
                     } catch (err) {}
                 }
-            } else if(grid.queuedForDeletion === true && (inBoundary === true || allowedFactionTags.includes(grid.factionTag === true)) === true) {
-                // Remove queue status from grids that re-enter or buy a space ticket
+            } else if(grid.queuedForDeletion === true) {
+                // Remove queue status from grids that re-enter zones or buy a space ticket
                 grid.deletionReason = '';
                 grid.queuedForDeletion = false;
                 grid.save().then(savedDoc => {
