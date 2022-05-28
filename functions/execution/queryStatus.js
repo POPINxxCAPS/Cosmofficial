@@ -9,6 +9,7 @@ const JSONBI = require('json-bigint')({
 const querystring = require('querystring');
 
 module.exports = async (config) => {
+    let data = {}
     const baseUrl = config.ip;
     const port = config.port;
     const prefix = config.prefix;
@@ -53,7 +54,7 @@ module.exports = async (config) => {
         qs,
         log = false
     } = {}) => {
-        if (log) {
+        if (log === true) {
             console.log(`${method}: ${opts(method, path).url}`)
         }
 
@@ -73,15 +74,13 @@ module.exports = async (config) => {
                 } = result;
                 return data || {};
             })
-            .catch(e => {
-                return;
-            });
+            .catch(e => { // Return a message to the user, add +1 to the "Failed queries" var
+            data.err = e.code === undefined ? e.name : e.code;
+        });
     };
-
     const info = async () => send('GET', serverPath);
-    let data;
     await info().then(result => {
-        data = result
+        data.res = result
     })
     return data;
 }

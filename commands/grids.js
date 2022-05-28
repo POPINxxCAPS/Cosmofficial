@@ -75,7 +75,7 @@ module.exports = {
         if (args[0] === undefined) {
             description = "Top 10 Grids (Block Count)"
             gridData = await getGridsByBlockCount(guild.id)
-            if (gridData.length < 10) return errorEmbed.message.channel, ('There are not enough grids to display the information!')
+            if (gridData.length < 10) return errorEmbed(message.channel, 'There are not enough grids to display the information!')
             embedFields = await fields('blockcount', gridData)
             return await embed(discord, message.channel, description, embedFields)
         }

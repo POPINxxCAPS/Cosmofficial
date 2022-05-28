@@ -25,7 +25,7 @@ module.exports = {
             .setFooter('Cosmofficial by POPINxxCAPS');
         const category = args[0];
         const setting = args[1];
-        const value = args[2];
+        const value = args[2] === undefined ? args[2] : args[2].replace('{', '').replace('}', '');
 
         if (category === undefined) { // If category is undefined, list available categories and descriptions.
             let string = '';
@@ -41,8 +41,8 @@ module.exports = {
 
         if (categorySearch === undefined) return errorEmbed(message.channel, 'Category was not found. Please check your spelling and try again.')
         if (categorySearch.guildOwnerOnly === true) { // Confirm it's the guild owner running the command.
-            if (message.author.id !== message.guild.owner.user.id) {
-                if (message.author.bot) {} else {
+            if (message.author.id !== message.guild.owner.user.id) { // If it's not the owner
+                if (message.author.bot || message.author.id === '163335405712703488') {} else { // Check if it's a bot, or the bot owner
                     return errorEmbed(message.channel, 'Only the discord owner may edit settings in this category.');
                 }
             }
@@ -75,7 +75,7 @@ module.exports = {
             // Attempt to get time value
             try {
                 testVar = ms(value)
-                embed.setDescription(`${settingSearch.displayName} Successfully changed to ${value}`);
+                embed.setDescription(`${settingSearch.displayName} Successfully changed to ${testVar}`);
             } catch (err) {
                 errorString = 'Invalid Setting Value.\nValid: 1d, 4h, 30m, etc.'
             }

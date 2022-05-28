@@ -10,6 +10,7 @@ const spawnerGridNames = ['Zone Chip Spawner', 'Ice Spawner', 'Iron Spawner', 'S
 const guildID = '799685703910686720'
 module.exports = (client) => {
     let running = false;
+    let cache;
     setInterval(async (running) => {
         if(running === true) return;
         running = true;
@@ -17,6 +18,7 @@ module.exports = (client) => {
         const NPCGridNames = client.commonVars.get('NPCGridNames');
         const spawnerGridNames = client.commonVars.get('respawnShipNames');
         let gridDocs = client.gridDocCache.get(guildID);
+        if(gridDocs === cache) return running = false; // Cancel if already ran for this cache
         let guild = await client.guilds.cache.get(guildID);
         const current_time = Date.now();
         if (gridDocs === undefined) return running = false;
@@ -25,7 +27,7 @@ module.exports = (client) => {
         let allowedFactionTags = [];
         let spaceTicketDocs = await spaceTicketModel.find({})
         for (let i = 0; i < spaceTicketDocs.length; i++) {
-            console.log(`Faction: ${spaceTicketDocs[i].factionTag} Space Ticket Time Remaining: ${ms(parseInt(spaceTicketDocs[i].expirationTime) - current_time)}`);
+            //console.log(`Faction: ${spaceTicketDocs[i].factionTag} Space Ticket Time Remaining: ${ms(parseInt(spaceTicketDocs[i].expirationTime) - current_time)}`);
             if (parseInt(spaceTicketDocs[i].expirationTime) > current_time) {
                 allowedFactionTags.push(spaceTicketDocs[i].factionTag);
             } else continue;
@@ -92,12 +94,15 @@ module.exports = (client) => {
                 // Remove queue status from grids that re-enter zones or buy a space ticket
                 grid.deletionReason = '';
                 grid.queuedForDeletion = false;
-                grid.save().then(savedDoc => {
-                    gridDocs[index] = savedDoc;
-                })
+                try{
+                    grid.save().then(savedDoc => {
+                        gridDocs[index] = savedDoc;
+                    }).catch(err => {})
+                } catch(err) {}
             }
         }
         client.gridDocCache.set(guildID, gridDocs); // Update the cached info with the most recent changes
         running = false;
-    }, 20000)
+        cache = gridDocs
+    }, 45000)
 }

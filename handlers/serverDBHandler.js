@@ -28,7 +28,6 @@ const statusModel = require('../models/statusSchema');
 // Debug stuff
 const ms = require('ms');
 
-let fullGridDocsCache = []; // Caching all grid docs so it doesn't have to keep downloading them.
 // Changing this to use a discord collection (just learned about them)
 module.exports = async (client, discord) => {
     let guildIDs = await client.guilds.cache.map(guild => guild.id);
@@ -97,8 +96,12 @@ module.exports = async (client, discord) => {
                 gridQueryDelay: queryDelay,
                 characterDocsCache: characterDocs
             }
-            await logStatus(req); // Specific Ordering
-            if(statusDoc === null) {
+            req.statusDoc = await logStatus(req); // Specific Ordering
+            if(req.statusDoc === null) { // Error Prevention
+                queryIsRunning = false;
+                continue;
+            }
+            if(req.statusDoc.serverOnline === false) { // If the server is offline, don't do anything else.
                 queryIsRunning = false;
                 continue;
             }
@@ -124,9 +127,12 @@ module.exports = async (client, discord) => {
 
             for(const doc of newGridDocsCache) { // Save all changes to gridCache to the database
                 const cacheIndex = newGridDocsCache.indexOf(doc);
-                doc.save().then(savedDoc => {
-                    newGridDocsCache[cacheIndex] = savedDoc;
-                })
+                try {
+                    doc.save().then(savedDoc => {
+                        newGridDocsCache[cacheIndex] = savedDoc;
+                    }).catch(err => {});
+                } catch(err) {}
+                
             }
 
             // Setting final vars

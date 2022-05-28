@@ -11,13 +11,13 @@ const simSpeedSchema = new mongoose.Schema({
 })
 
 const statusSchema = new mongoose.Schema({
-    guildID: { type: String, require: true },
+    guildID: { type: String, require: true, unique: true, index: true },
     game: { type: String, require: true },
     isReady: { type: Boolean, require: true },
     pirateUsedPCU: { type: String, require: true },
     players: { type: String, require: true},
     serverID: { type: String, require: true },
-    serverName: { type: String, require: true, unique: true, index: true },
+    serverName: { type: String, require: true },
     simSpeed: { type: String, require: true },
     simCPULoad: { type: String, require: true},
     usedPCU: { type: String, require: true },
@@ -27,6 +27,8 @@ const statusSchema = new mongoose.Schema({
     nextPopLog: { type: String, require: true},
     serverOnline: { type: Boolean },
     inviteLink: { type: String },
+    failedConnects: { type: String },
+    nextConnectAttempt: { type: String },
     populationLog: [populationSchema],
     simSpeedLog: [simSpeedSchema],
 });

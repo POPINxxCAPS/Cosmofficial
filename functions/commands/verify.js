@@ -15,8 +15,8 @@ module.exports = async (username, userID, channel) => {
         displayName: username,
     })
     if (playerDoc === null) {
-        if(channel !== undefined) {
-             errorEmbed(channel, 'Username was not found in the database.\nHave you logged into a server running Cosmofficial?\nIf you are having trouble, use c!players while logged in to see the username reported by Space Engineers.');
+        if (channel !== undefined) {
+            errorEmbed(channel, 'Username was not found in the database.\nHave you logged into a server running Cosmofficial?\nIf you are having trouble, use c!players while logged in to see the username reported by Space Engineers.');
         }
         return null;
     }
@@ -26,20 +26,24 @@ module.exports = async (username, userID, channel) => {
         username: username
     })
     if (verDoc !== null) {
-        if(channel !== undefined) {
-            errorEmbed(channel, `${username} is already registered to a user!`)
+        if (channel !== undefined) {
+            if (verDoc.userID === userID) {
+                errorEmbed(channel, `${username} is already registered to you!`)
+            } else {
+                errorEmbed(channel, `${username} is already registered to a user!`)
+            }
         }
         return null;
     }
 
-    
+
     verDoc = await verificationModel.findOne({
         userID: userID
     })
     if (verDoc !== null) { // If user was already verified previously, set a cooldown and change their verified username
-        const cooldown = await cooldownFunction.cd('development', 259200);
+        const cooldown = await cooldownFunction.cd('development', 259200, message);
         if (cooldown !== undefined) {
-            if(channel !== undefined) {
+            if (channel !== undefined) {
                 cooldownEmbed(channel, cooldown, 'Timely', message.author.id)
             }
             return null;
