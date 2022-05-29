@@ -3,8 +3,9 @@ const spawnerModel = require('../models/spawnerSchema');
 const gridPowerOff = require('../functions/execution/gridPowerOff')
 
 module.exports = async (guildID, grid) => {
-    const current_time = Date.now();
     if (spawnerGridNames.includes(grid.DisplayName) === false || grid.OwnerDisplayName !== "Space Pirates") return;
+    const current_time = Date.now();
+
     // If it's a spawner grid, check to see if the grid should be powered off. (Deactivation timer failed due to crash or server restart)
     const spawnerDoc = await spawnerModel.findOne({
         guildID: guildID,

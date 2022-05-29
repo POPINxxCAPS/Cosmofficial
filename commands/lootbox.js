@@ -129,7 +129,7 @@ module.exports = {
             .setTitle(`Loot Box Manager`)
             .setURL('https://cosmofficial.herokuapp.com/')
             .setFooter('Cosmofficial by POPINxxCAPS')
-            .setDescription(`Successfully activated ${gridName} for ${seconds} seconds!`)
+            .setDescription(`Successfully activated ${gridName} spawner!\nLook for tiny loot-boxes and grind them up!`)
         message.channel.send(embed);
 
 
