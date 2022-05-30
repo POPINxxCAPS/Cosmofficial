@@ -114,7 +114,7 @@ module.exports = async (req) => {
             guildID: guildID,
             displayName: character.name
         })
-        characterString += `> [${playerDoc.factionTag}] ${character.name}`;
+        characterString += `> [${playerDoc.factionTag}] ${character.name}\n`;
         if (playerDoc === null) continue;
         let factionEcoStatDoc = ecoStatCache.find(doc => doc.factionTag === playerDoc.factionTag) || await temporaryStatModel.findOne({
             guildID: guildID,
@@ -126,7 +126,7 @@ module.exports = async (req) => {
                 guildID: guildID,
                 factionTag: playerDoc.factionTag,
                 name: 'HotzoneReward',
-                value: rewardAmount / nearbyChars.length
+                value: Math.round(rewardAmount / nearbyChars.length)
             })
             ecoStatCache.push(factionEcoStatDoc)
         } else {
@@ -167,17 +167,18 @@ module.exports = async (req) => {
             let statFound = false;
             for (let s = 0; s < playerEcoDoc.statistics.length; s++) {
                 if (playerEcoDoc.statistics[s].name === 'HotzoneRewardReceived') {
-                    playerEcoDoc.statistics[s].value = Number(playerEcoDoc.statistics[s].value) + rewardAmount;
+                    playerEcoDoc.statistics[s].value = Math.round(Number(playerEcoDoc.statistics[s].value) + rewardAmount);
                     statFound = true;
                 }
             }
             if (statFound === false) {
                 playerEcoDoc.statistics.push({
                     name: 'HotzoneRewardReceived',
-                    value: `${rewardAmount}` // overwatch procrastination
+                    value: `${rewardAmount}`
                 })
             }
-            playerEcoDoc.currency = (parseInt(playerEcoDoc.currency) + rewardAmount) / nearbyChars.length; // Multiply reward * query delay / characters to reward
+            // Reward for being in the zone
+            playerEcoDoc.currency = parseInt(playerEcoDoc.currency) + Math.round(rewardAmount / nearbyChars.length) ; // Multiply reward * query delay / characters to reward
             playerEcoDoc.save();
         }
 

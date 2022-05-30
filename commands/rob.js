@@ -38,6 +38,7 @@ module.exports = {
         let robPerc = 0.1 + bonusRobPercent;
 
         let robAmt = Math.round(parseInt(targetDoc.currency) * robPerc);
+        if(targetDoc.currency === '0') robAmt = 0;
         targetDoc.currency = parseInt(targetDoc.currency) - robAmt;
 
         targetDoc.save();
@@ -46,7 +47,7 @@ module.exports = {
 
         const embed = new discord.MessageEmbed()
             .setColor('#E02A6B')
-            .setTitle(`Robbing & Stealing`)
+            .setTitle(`Economy Manager`)
             .setURL('https://cosmofficial.herokuapp.com/')
             .setDescription(`<@${message.author.id}> robbed **${robAmt.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} ${currencyName}** from <@${target.id}>!`)
             .setFooter('Cosmofficial by POPINxxCAPS');

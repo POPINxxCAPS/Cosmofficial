@@ -23,7 +23,7 @@ module.exports = async (guildID, factionTag, rewardAmount) => {
             guildID: guildID,
             userID: userID
         })
-        playerEcoDoc.currency = parseInt(playerEcoDoc.currency) + (rewardAmount / playersToReward);
+        playerEcoDoc.currency = parseInt(playerEcoDoc.currency) + Math.round((rewardAmount / playersToReward));
         playerEcoDoc.save();
     }
 

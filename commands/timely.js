@@ -13,7 +13,7 @@ module.exports = {
         let playerEco = req.playerEco;
         const ecoSettings = req.ecoSettings;
         const currencyName = ecoSettings.currencyName;
-        const cdInSec = 60
+        const cdInSec = 3600
         let maxTimelyReward = ecoSettings.timelyReward;
         if(maxTimelyReward === "Not Set") maxTimelyReward = 5000; 
 
