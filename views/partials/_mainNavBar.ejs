@@ -1,0 +1,52 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand">
+        <div class="row">
+            <div class="col-md-6">Cosmofficial</div>
+        </div>
+        <div class="row">
+           <div class="col-md-6">SE Discord Bot</div>
+        </div>
+        <span class="text-justify"></span></a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown"
+        aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+        <ul class="navbar-nav">
+            <li class="nav-item active">
+                <a class="nav-link" href="https://heroku.cosmofficial.com/">Home<span class="sr-only"></span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/commands">Commands</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="https://patreon.com/Cosmofficial">Patreon</a>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false">
+                    Bot Invites
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                    <a class="dropdown-item" href="#">Invite Cosmofficial</a>
+                    <a class="dropdown-item" href="#">Cosmofficial Discord</a>
+                </div>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/serverList">Server List</a>
+            </li>
+            <% if(reqObj.authURL === "Logged-In") { %>
+                <li class="nav-item">
+                    <a class="nav-link" href="/profile/<%= reqObj.user._username %>">Your Servers</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/signOut">Sign-Out</a>
+                </li>
+                <% } else { %>
+                <li class="nav-item">
+                    <a class="nav-link" href="<%= reqObj.authURL %>">Log-In</a>
+                </li>
+                <% } %>
+        </ul>
+    </div>
+</nav>

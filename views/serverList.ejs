@@ -4,7 +4,27 @@
 <%- include("./partials/_header") %>
 
 <body>
-    <%- include("./partials/_mainNavBar", { reqObj: reqObj }) %>
+    <div class="container">
+        <div class="row">
+            <div class="col offset-md-1">
+                <div class="btn-toolbar">
+                    <div class="btn-group">
+                        <a href="https://cosmofficial.herokuapp.com/" class="btn btn-success">Home Page</a>
+                        <a href="https://discord.gg/BfFc8cfp3n" class="btn btn-info">Cosmofficial Discord</a>
+                        <a href="https://discord.com/api/oauth2/authorize?client_id=845784381025157131&permissions=8&scope=bot"
+                            class="btn btn-primary">Bot Invite Link</a>
+                        <a href="https://cosmofficial.herokuapp.com/" class="btn btn-secondary">Patreon</a>
+                        <% if(reqObj.authURL === "Logged-In") { %>
+                        <a href="/profile/<%= reqObj.user._username %>" class="btn btn-success">Your Servers</a>
+                        <a href="/signOut" class="btn btn-danger">Sign-Out</a>
+                        <% } else { %>
+                        <a href="<%= reqObj.authURL %>" class="btn btn-success">Log-In</a>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="container">
         <% reqObj.servers.forEach(server => { %>
         <div class="card mt-4">

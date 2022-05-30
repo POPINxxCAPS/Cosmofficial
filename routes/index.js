@@ -7,8 +7,13 @@ const getUser = require('../functions_oAuth/getUser');
 
 router.use(cookies())
 router.get('/', async (req, res) => { // Not using verifyKey middleware because this is the main login page
-    const servers = await statusModel.find({}); // Get all status documents (to get server names)
-    if (servers.length === 0) return res.status(500).json({ // Return error if server documents fail to download
+    const reqObj = {}; // Object for sending information to the page in one var
+    reqObj.servers = await statusModel.find({
+        serverName: { $ne: "Connection Error" },
+        serverOnline: true
+    }); // Get all status documents (to get server names)
+
+    if (reqObj.servers.length === 0) return res.status(500).json({ // Return error if server documents fail to download
         message: err.message
     })
 
@@ -16,10 +21,10 @@ router.get('/', async (req, res) => { // Not using verifyKey middleware because 
     // Check if user was previously logged in and attempt to refresh their oauth key
     if (req.cookies['doaKey'] !== undefined && req.cookies['doaKey'] !== 'deleted') { // If there is already an old key in the cookies
         try {
-            let keyValidity = await client.checkValidity(`${req.cookies['doaKey']}`);
+            let keyValidity = client.checkValidity(`${req.cookies['doaKey']}`);
             if (keyValidity.expired === true) { // If token expired === true, refresh and change the login button to home-page button
                 const newKey = await client.refreshToken(req.cookies['doaKey']);
-                keyValidity = await client.checkValidity(`${req.cookies['doaKey']}`);
+                keyValidity = client.checkValidity(`${req.cookies['doaKey']}`);
                 if(keyValidity.expired === true) { // If token refresh failed, send them back to home page
                     res.render('index', {
                         servers: servers,
@@ -28,22 +33,20 @@ router.get('/', async (req, res) => { // Not using verifyKey middleware because 
                 } else { // If token refresh succeeded
                     const user = await getUser(req.cookies['doaKey'])
                     res.cookie('doaKey', newKey);
+                    reqObj.authURL = "Logged-In"
+                    reqObj.user = user;
                     res.render('index', {
-                        servers: servers,
-                        authURL: "Logged-In",
-                        user: user
+                        reqObj: reqObj
                     })
                     
                 }
             } else { // If current key (in cookies) is valid
                 const user = await getUser(req.cookies['doaKey'])
+                reqObj.user = user;
+                reqObj.authURL = "Logged-In";
                 res.render('index', {
-                    servers: servers,
-                    authURL: "Logged-In",
-                    user: user
+                    reqObj: reqObj
                 });
-                console.log(user)
-                
             }
         } catch (err) { // If there is an error refreshing their token, show the home page
             console.error(err);
@@ -56,8 +59,7 @@ router.get('/', async (req, res) => { // Not using verifyKey middleware because 
             });
             res.cookie('user-state', state);
             res.render('index', {
-                servers: servers,
-                authURL: client.auth.link,
+                reqObj: reqObj
             })
             
         }
@@ -67,9 +69,9 @@ router.get('/', async (req, res) => { // Not using verifyKey middleware because 
             state
         } = client.auth;
         res.cookie('user-state', state);
+        reqObj.authURL = client.auth.link;
         res.render('index', {
-            servers: servers,
-            authURL: client.auth.link,
+            reqObj: reqObj
         })
     }
     // Login Redirecting Complete
