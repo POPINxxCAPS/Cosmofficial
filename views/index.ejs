@@ -3,30 +3,105 @@
 
 <%- include("./partials/_header") %>
 
-<body>
+<body class="bg-dark">
     <%- include("./partials/_mainNavBar", { reqObj: reqObj }) %>
-    <div class="container">
-        <% reqObj.servers.forEach(server => { %>
-        <div class="card mt-4">
-            <div class="card-body">
-                <h4 class="card-title"><%= server.serverName %></h4>
-                <div class="card-subtitle text-muted mb-2">
-                    <%= `${server.players} Players Online` %>
-                </div>
-                <div class="row">
-                    <div class="btn-toolbar">
-                        <div class="btn-group">
-                            <a href="<%= server.inviteLink %>" class="btn btn-success">Discord</a>
-                            <a href="servers/<%= server.guildID %>" class="btn btn-primary">Select Server</a>
-                            <a href="grids/<%= server.guildID %>" class="btn btn-primary">Grids</a>
-                            <a href="users/<%= server.guildID %>" class="btn btn-primary">Players</a>
-                            <!-- <a href="factions/<%= server.serverName %>" class="btn btn-danger">Admin Area</a> -->
-                        </div>
+    <div class="container bg-dark">
+        <div class="row">
+            <div class="col">
+                <div class="card mt-4 bg-secondary">
+                    <h1 class="card-header bg-dark bg-gradient text-white font-weight-bold">Hoover (Advanced Trash
+                        Cleanup)</h1>
+                    <div class="card-body" style="background: #1f1f1f">
+                        <h5 class="card-title text-white">Tired of manual cleanup? The hoover is here to help!</h5>
+                        <h6 class="card-subtitle text-white mb-2">The hoover will automatically delete grids on your
+                            server that match certain criteria.
+                            All criteria is completely configurable, and you will find a variety of settings that will
+                            help your server performance! Better than SE trash cleanup, guaranteed!
+                            </h5>
+                            <div class="row">
+                                <div class="container mt-4"></div>
+                            </div>
+                            <div class="container">
+                                <h4 class="card-title text-white">Available Settings:</h4>
+                                <div class="card mt-0 bg-secondary">
+                                    <div class="card-body bg-dark">
+                                        <h5 class="card-title text-white">Enabled</h5>
+                                        <div class="card-subtitle text-white mb-2">Is the hoover turned on?</div>
+                                    </div>
+                                </div>
+                                <div class="card mt-0 bg-secondary">
+                                    <div class="card-body bg-dark">
+                                        <h5 class="card-title text-white">Scan Interval</h5>
+                                        <div class="card-subtitle text-white mb-2">How often should grids be checked?
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card mt-0 bg-secondary">
+                                    <div class="card-body bg-dark">
+                                        <h5 class="card-title text-white">Sweep Delay</h5>
+                                        <div class="card-subtitle text-white mb-2">How much time should hoover wait
+                                            before deleting a grid?</div>
+                                    </div>
+                                </div>
+                                <div class="card mt-0 bg-secondary">
+                                    <div class="card-body bg-dark">
+                                        <h5 class="card-title text-white">Unpowered Grid Removal</h5>
+                                        <div class="card-subtitle text-white mb-2">Delete unpowered grids?</div>
+                                    </div>
+                                </div>
+                                <div class="card mt-0 bg-secondary">
+                                    <div class="card-body bg-dark">
+                                        <h5 class="card-title text-white">Block Threshold</h5>
+                                        <div class="card-subtitle text-white mb-2">Set this to delete anything less than
+                                            X blocks.</div>
+                                    </div>
+                                </div>
+                                <div class="card mt-0 bg-secondary">
+                                    <div class="card-body bg-dark">
+                                        <h5 class="card-title text-white">Max Ship Speed</h5>
+                                        <div class="card-subtitle text-white mb-2">Set this to delete anything
+                                            exploiting speed limits.</div>
+                                    </div>
+                                </div>
+                                <div class="card mt-0 bg-secondary">
+                                    <div class="card-body bg-dark">
+                                        <h5 class="card-title text-white">World Border</h5>
+                                        <div class="card-subtitle text-white mb-2">Delete anything further than Xkm from
+                                            0x, 0y, 0z.</div>
+                                    </div>
+                                </div>
+                                <div class="card mt-0 bg-secondary">
+                                    <div class="card-body bg-dark">
+                                        <h5 class="card-title text-white">Unverified Grid Removal</h5>
+                                        <div class="card-subtitle text-white mb-2">Delete grids from players that have
+                                            not verified with Cosmofficial. This helps deter alt accounts by allowing
+                                            only one username per discord account. This also deletes grids of players
+                                            that leave your discord server.</div>
+                                    </div>
+                                </div>
+                                <div class="card mt-0 bg-secondary">
+                                    <div class="card-body bg-dark">
+                                        <h5 class="card-title text-white">Large Grid Removal</h5>
+                                        <div class="card-subtitle text-white mb-2">Delete ALL large grids? Useful for small grid only servers.</div>
+                                    </div>
+                                </div>
+                                <div class="card mt-0 bg-secondary">
+                                    <div class="card-body bg-dark">
+                                        <h5 class="card-title text-white">Large Grid Removal</h5>
+                                        <div class="card-subtitle text-white mb-2">Delete ALL small grids? Useful for large grid only servers.</div>
+                                    </div>
+                                </div>
+                            </div>
                     </div>
                 </div>
             </div>
+            <div class="col"></div>
         </div>
-        <% }) %>
+    </div>
+    <div class="container bg-dark">
+        <div class="row">
+            <div class="col"></div>
+            <div class="col"></div>
     </div>
 </body>
 <%- include("./partials/_footer") %>
