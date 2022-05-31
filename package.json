@@ -9,7 +9,6 @@
   "author": "POPINxxCAPS",
   "license": "ISC",
   "dependencies": {
-    "async": "^3.2.3",
     "axios": "^0.21.1",
     "bootstrap": "^5.1.3",
     "chart.js": "^3.6.2",
