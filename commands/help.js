@@ -1,34 +1,5 @@
 const chatModel = require('../models/chatSchema');
 const lockedEmbed = require('../functions/discord/lockedEmbed');
-// More crap that needs recoding
-
-/*let commands = [{
-    aliases: ['general'],
-    commands: helpData.general,
-}, {
-    aliases: ['economy'],
-    commands: helpData.economy,
-}, {
-    aliases: ['games', 'Games'],
-    commands: helpData.games
-}, {
-    aliases: ['admin', 'administration'],
-    commands: helpData.administration
-}, {
-    aliases: ['support'],
-    commands: helpData.support
-}, {
-    aliases: ['mapping'],
-    commands: helpData.mapping
-}, {
-    aliases: ['combat'],
-    commands: helpData.combat
-}, {
-    aliases: ['faq'],
-    commands: helpData.faq
-}, ]*/
-
-// Completely redoing this to auto-update as I make the commands :)
 
 module.exports = {
     name: 'help',

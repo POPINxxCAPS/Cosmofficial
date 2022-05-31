@@ -41,8 +41,8 @@ module.exports = {
     aliases: ['activate'],
     description: "Activate a spawner antenna on the server for a price.\nRequired additional admin setup to be used.\nInformation can be found in the Cosmofficial discord.",
     permissions: ["SEND_MESSAGES"],
-    category: 'Conversion',
-    categoryAliases: ['convert', 'conversion'],
+    category: 'Cosmic',
+    categoryAliases: [],
     patronReq: true,
     async execute(req) {
         const message = req.message;

@@ -8,6 +8,11 @@ const discord = require('discord.js');
 const client = new discord.Client()
 const token = process.env.token || require('./env/env').token
 client.login(token);
+client.commands = new discord.Collection();
+
+['command_handler'].forEach(handler => {
+  require(`./handlers/${handler}`)(client, discord);
+});
 
 mongoose
   .connect(mongoDBLogin, {

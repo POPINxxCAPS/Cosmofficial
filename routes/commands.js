@@ -10,11 +10,23 @@ router.get('/', verifyKey, async (req, res) => {
     if(reqObj.authURL === 'Logged-In') {
         reqObj.user = await getUser(req.cookies['doaKey'])
     }
-
-    return res.status(404).json({
-        message: 'This page is unavailable, coming soon.'
-    })
-    //res.render("singleServerGrids.ejs", data)
+    const disClient = req.app.get("disClient");
+    const commands = disClient.commands;
+    let commandPageInfo = [];
+    for(const command of commands) {
+        if(command[1].category === "Cosmic") continue;
+        commandPageInfo.push({
+            name: command[1].name,
+            aliases: command[1].aliases,
+            description: command[1].description,
+            permissions: command[1].permissions,
+            category: command[1].category,
+            categoryAliases: command[1].categoryAliases
+        })
+    }
+    reqObj.commands = commandPageInfo;
+    console.log(commandPageInfo)
+    res.render("commands.ejs", { reqObj: reqObj })
 })
 
 module.exports = router
