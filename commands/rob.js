@@ -26,6 +26,7 @@ module.exports = {
         })
         if (targetDoc === null) return errorEmbed(message.channel, 'That user does not exist in the database. Rob cancelled.');
         if (parseInt(targetDoc.currency) < 0) return errorEmbed(message.channel, 'User has a negative balance due to an admin c!take. Rob cancelled.');
+        if (isNaN(parseInt(targetDoc.currency)) === true) return errorEmbed(message.channel, 'User has a NaN balance due to an unknown error. Rob cancelled.');
 
         // Check for bonuses (future alliance + quest + leveling stuff)
         let bonusRobPercent = 0;
