@@ -14,7 +14,7 @@ router.get('/', verifyKey, async (req, res) => {
     return res.status(404).json({
         message: 'This page is unavailable, coming soon.'
     })
-    res.render("singleServerGrids.ejs", data)
+    //res.render("singleServerGrids.ejs", data)
 })
 
 module.exports = router
