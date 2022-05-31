@@ -1,20 +1,20 @@
 <div class="container">
     <div class="row">
-        <% for(let i = 0; i < users.length; i+=4) { %>
+        <% for(let i = 0; i < reqObj.users.length; i+=4) { %>
         <div class="col-sm-3">
-            <%- include("./_singleUser", { user: users[i] }) %>
+            <%- include("./_singleUser", { user: reqObj.users[i] }) %>
         </div>
-        <% i += 1; if (users[i] === undefined) break %>
+        <% i += 1; if (reqObj.users[i] === undefined) break %>
         <div class="col-sm-3">
-            <%- include("./_singleUser", { user: users[i] }) %>
+            <%- include("./_singleUser", { user: reqObj.users[i] }) %>
         </div>
-        <% i += 1; if (users[i] === undefined) break %>
+        <% i += 1; if (reqObj.users[i] === undefined) break %>
         <div class="col-sm-3">
-            <%- include("./_singleUser", { user: users[i] }) %>
+            <%- include("./_singleUser", { user: reqObj.users[i] }) %>
         </div>
-        <% i += 1; if (users[i] === undefined) break %>
+        <% i += 1; if (reqObj.users[i] === undefined) break %>
         <div class="col-sm-3">
-            <%- include("./_singleUser", { user: users[i] }) %>
+            <%- include("./_singleUser", { user: reqObj.users[i] }) %>
         </div>
         <div class="w-100"></div>
         <% i -= 3; } %>

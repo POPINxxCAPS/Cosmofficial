@@ -3,25 +3,10 @@
 
 <%- include("./partials/_header") %>
 
-<body>
+<body class="bg-dark">
+    <%- include("./partials/_mainNavBar", { reqObj: reqObj }) %>
     <div class="container">
-        <div class="row">
-            <div class="col offset-md-1">
-                <div class="btn-toolbar">
-                    <div class="btn-group">
-                        <a href="https://cosmofficial.herokuapp.com/" class="btn btn-success">Home Page</a>
-                        <a href="https://discord.gg/BfFc8cfp3n" class="btn btn-info">Cosmofficial Discord</a>
-                        <a href="https://discord.com/api/oauth2/authorize?client_id=845784381025157131&permissions=8&scope=bot"
-                            class="btn btn-primary">Bot Invite Link</a>
-                        <a href="https://cosmofficial.herokuapp.com/" class="btn btn-secondary">Patreon</a>
-                        <a href="./<%= user._username %>" class="btn btn-success">Your Servers</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="container">
-        <% guilds.forEach(guild => { %>
+        <% reqObj.guilds.forEach(guild => { %>
         <div class="card mt-4">
             <div class="card-body">
                 <h4 class="card-title"><%= guild.userGuild._name %></h4>

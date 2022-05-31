@@ -33,12 +33,11 @@ router.get('/single/:guildID', getGuildID, verifyKey, async (req, res) => {
     if(reqObj.authURL === 'Logged-In') {
         reqObj.user = await getUser(req.cookies['doaKey'])
     }
-    res.render("singleServer.ejs", {
-        server: res.server,
-        stations: count.stations,
-        ships: count.ships,
-        NPCs: count.NPCs
-    })
+    reqObj.server = res.server;
+    reqObj.stations = count.stations;
+    reqObj.ships = count.ships;
+    reqObj.NPCs = count.NPCs;
+    res.render("singleServer.ejs", { reqObj: reqObj });
 })
 
 module.exports = router

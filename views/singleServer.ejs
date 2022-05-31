@@ -4,66 +4,48 @@
 <%- include("./partials/_header") %>
 
 
-<body>
+<body class="bg-dark">
+    <%- include("./partials/_mainNavBar", { reqObj: reqObj }) %>
     <div class="container">
         <div class="row">
-            <div class="col offset-md-1">
-                <div class="btn-toolbar">
-                    <div class="btn-group">
-                        <a href="https://cosmofficial.herokuapp.com/" class="btn btn-success">Home Page</a>
-                        <a href="https://discord.gg/BfFc8cfp3n" class="btn btn-info">Cosmofficial Discord</a>
-                        <a href="https://discord.com/api/oauth2/authorize?client_id=845784381025157131&permissions=8&scope=bot"
-                            class="btn btn-primary">Bot Invite Link</a>
-                        <a href="https://cosmofficial.herokuapp.com/" class="btn btn-secondary">Patreon</a>
-                    </div>
+            <h1 class="card-header bg-dark bg-gradient text-white font-weight-bold"><%= reqObj.server.serverName %></h1>
+            <div class="card-body" style="background: #1f1f1f">
+                <h4 class="card-title text-white"><%= `${reqObj.server.players} Player(s) Online` %></h4>
+                <div class="card-subtitle text-white mb-2">
+                    <%= `${reqObj.stations + reqObj.ships} Total Grids` %>
                 </div>
-            </div>
-        </div>
-    </div>
-    <div class="container">
-        <div class="card-body">
-            <h4 class="card-title"><%= server.serverName %></h4>
-            <div class="card-subtitle text-muted mb-2">
-                <%= `World Name: ${server.worldName}` %>
-            </div>
-            <div class="card-subtitle text-muted mb-2">
-                <%= `${server.players} Players Online` %>
-            </div>
-            <div class="card-subtitle text-muted mb-2">
-                <%= `${stations + ships} Total Grids` %>
-            </div>
-            <div class="card-subtitle text-muted mb-2">
-                <%= `${stations} Stations` %>
-            </div>
-            <div class="card-subtitle text-muted mb-2">
-                <%= `${ships} Ships` %>
-            </div>
-            <div class="card-subtitle text-muted mb-2">
-                <%= `${NPCs} NPCs Active` %>
-            </div>
-            <div class="card-subtitle text-muted mb-2">
-                <%= `${server.usedPCU} Used PCU` %>
-            </div>
-            <div class="card-subtitle text-muted mb-2">
-                <%= `${server.simSpeed} Sim Speed` %>
-            </div>
-            <div class="card-subtitle text-muted mb-2">
-                <%= `${server.simCPULoad}% Sim CPU Load` %>
-            </div>
-            <div class="card-subtitle text-muted mb-2">
-                <%= `Game Version: ${server.version}` %>
-            </div>
-            <div class="card-subtitle text-muted mb-2">
-                <%= `${new Date(parseInt(server.lastUpdated)).toString()}` %>
+                <div class="card-subtitle text-white mb-2">
+                    <%= `${reqObj.stations} Stations` %>
+                </div>
+                <div class="card-subtitle text-white mb-2">
+                    <%= `${reqObj.ships} Ships` %>
+                </div>
+                <div class="card-subtitle text-white mb-2">
+                    <%= `${reqObj.NPCs} NPCs Active` %>
+                </div>
+                <div class="card-subtitle text-white mb-2">
+                    <%= `${reqObj.server.usedPCU} Used PCU` %>
+                </div>
+                <div class="card-subtitle text-white mb-2">
+                    <%= `${reqObj.server.simSpeed} Sim Speed` %>
+                </div>
+                <div class="card-subtitle text-white mb-2">
+                    <%= `${reqObj.server.simCPULoad}% Sim CPU Load` %>
+                </div>
+                <div class="card-subtitle text-white mb-2">
+                    <%= `Game Version: ${reqObj.server.version}` %>
+                </div>
+                <div class="card-subtitle text-white mb-2">
+                    Last Updated: <%= `${new Date(parseInt(reqObj.server.lastUpdated)).toString()}` %>
+                </div>
             </div>
         </div>
         <div class="row">
             <div class="btn-toolbar">
                 <div class="btn-group">
-                    <a href="../grids/<%= server.guildID %>" class="btn btn-primary">Grids</a>
-                    <a href="../users/<%= server.guildID %>" class="btn btn-primary">Players</a>
-                    <a href="../factions/<%= server.guildID %>" class="btn btn-primary">Factions</a>
-                    <!-- <a href="factions/<%= server.serverName %>" class="btn btn-danger">Admin Area</a> -->
+                    <a href="../grids/<%= reqObj.server.guildID %>" class="btn btn-primary">Grids</a>
+                    <a href="../users/<%= reqObj.server.guildID %>" class="btn btn-primary">Players</a>
+                    <a href="../factions/<%= reqObj.server.guildID %>" class="btn btn-primary">Factions</a>
                 </div>
             </div>
         </div>
