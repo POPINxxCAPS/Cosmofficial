@@ -3,6 +3,24 @@ const router = express.Router();
 const statusModel = require('../models/statusSchema');
 const gridCount = require('../functions/misc/gridCount');
 const verifyKey = require('../functions_oAuth/verifyKey');
+const getUser = require('../functions_oAuth/getUser');
+const getGuildID = require('../functions/middleware/getGuildID');
+
+// Get full server list
+
+router.get('/', verifyKey, async (req, res) => {
+    const reqObj = {}; // Object for sending information to the page in one var
+    reqObj.authURL = res.authURL;
+    if(reqObj.authURL === 'Logged-In') {
+        reqObj.user = await getUser(req.cookies['doaKey'])
+    }
+    reqObj.servers = await statusModel.find({
+        serverName: { $ne: "Connection Error" },
+        serverOnline: true
+    }); // Get all status documents (to get server names)
+
+    res.render('serverList.ejs', { reqObj: reqObj });
+})
 
 // Get one server
 router.get('/:guildID', getGuildID, verifyKey, async (req, res) => {
@@ -19,21 +37,5 @@ router.get('/:guildID', getGuildID, verifyKey, async (req, res) => {
         NPCs: count.NPCs
     })
 })
-
-async function getGuildID(req, res, next) {
-    let server;
- try {
-    server = await statusModel.findOne({
-        guildID: req.params.guildID
-    })
-    if(server === null) {
-        return res.status(404).json({ message: 'GuildID was not found'})
-    }
- } catch (err) {
-     return res.status(500).json({ message: err.message })
- }
- res.server = server
- next()
-}
 
 module.exports = router

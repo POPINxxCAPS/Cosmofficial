@@ -67,5 +67,9 @@ app.use('/profile', profileRouter)
 // Admin Page Router / Render
 const adminRouter = require('./routes/admin');
 app.use('/admin', adminRouter)
+
+// Command Page Router / Render
+const commandRouter = require('./routes/commands');
+app.use('/commands', commandRouter)
 })
 

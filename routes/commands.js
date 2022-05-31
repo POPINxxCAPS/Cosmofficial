@@ -5,7 +5,7 @@ const gridCount = require('../functions/misc/gridCount');
 const getGrids = require('../functions/database/getGrids');
 
 // Get one server
-router.get('/:guildID', getGuildID, async (req, res) => {
+router.get('/', async (req, res) => {
     let count;
     await gridCount(req.params.guildID).then(result => { count = result });
     const grids = await getGrids(req.params.guildID)
@@ -17,21 +17,5 @@ router.get('/:guildID', getGuildID, async (req, res) => {
 
     res.render("singleServerGrids.ejs", data)
 })
-
-async function getGuildID(req, res, next) {
-    let server;
- try {
-    server = await statusModel.findOne({
-        guildID: req.params.guildID
-    })
-    if(server === null) {
-        return res.status(404).json({ message: 'GuildID was not found'})
-    }
- } catch (err) {
-     return res.status(500).json({ message: err.message })
- }
- res.server = server
- next()
-}
 
 module.exports = router
