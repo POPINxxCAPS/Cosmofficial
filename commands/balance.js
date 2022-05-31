@@ -12,6 +12,7 @@ module.exports = {
         const args = req.args;
         const discord = req.discord;
         const mainGuild = req.mainGuild;
+        const guild = req.guild;
         let playerEco = req.playerEco;
 
         const ecoSettings = req.ecoSettings;
@@ -21,7 +22,8 @@ module.exports = {
             const target = message.mentions.users.first();
             if (!target) return errorEmbed(message.channel, 'Invalid argument. Valid: @username')
             const targetData = await playerEcoModel.findOne({
-                userID: target.id
+                userID: target.id,
+                guildID: guild.id
             });
             if (!targetData) return errorEmbed(message.channel, 'User not found in the database.')
             const balEmbed = new discord.MessageEmbed()
