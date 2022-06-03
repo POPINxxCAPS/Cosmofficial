@@ -6,6 +6,7 @@ const errorEmbed = require('../functions/discord/errorEmbed');
 const verificationModel = require('../models/verificationSchema');
 const ms = require('ms');
 const gridPowerOff = require('../functions/execution/gridPowerOff');
+const botStatModel = require('../models/botStatisticSchema');
 
 const parameters = [{
         name: 'ownedBy',

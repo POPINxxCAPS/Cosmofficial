@@ -25,7 +25,6 @@ router.get('/', verifyKey, async (req, res) => {
         })
     }
     reqObj.commands = commandPageInfo;
-    console.log(commandPageInfo)
     res.render("commands.ejs", { reqObj: reqObj })
 })
 
