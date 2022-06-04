@@ -35,6 +35,7 @@ module.exports = async (req) => {
                 guildID: guildID,
                 name: obj.DisplayName,
                 mass: obj.Mass,
+                entityID: obj.EntityId,
                 distanceToPlayer: obj.DistanceToPlayer,
                 expirationTime: expiration_time,
                 x: obj.Position.X,
