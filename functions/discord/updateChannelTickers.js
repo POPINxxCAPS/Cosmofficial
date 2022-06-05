@@ -1,7 +1,7 @@
 // Moving all of these to one function so that there is less intervals running all over the place
 const playerModel = require('../../models/playerSchema');
 const botStatModel = require('../../models/botStatisticSchema');
-
+const verificationModel = require('../../models/verificationSchema');
 const statusModel = require('../../models/statusSchema');
 module.exports = async (client) => {
     const current_time = Date.now();
@@ -32,13 +32,50 @@ module.exports = async (client) => {
             playerTime += parseInt(playerDocs[i].loginHistory[a].logout) - parseInt(playerDocs[i].loginHistory[a].login)
         }
         time += playerTime
+
+        const guild = client.guilds.cache.get("799685703910686720");
+        const verDoc = await verificationModel.findOne({
+            username: playerDocs[i].displayName
+        })
+        let user;
+        let member;
+        if(verDoc !== null) {
+            user = client.users.cache.get(verDoc.userID);
+            member = guild.member(user);
+        }
+
+
+
+        activeRole = await guild.roles.cache.find(r => r.name === "Active");
+        if (activeRole === undefined || activeRole === null) {
+            await guild.roles.create({
+                data: {
+                    name: 'Active'
+                }
+            });
+            activeRole = await guild.roles.cache.find(r => r.name === "Active");
+        }
+
+
+
         if (current_time - playerDocs[i].lastLogout < 604800000) {
             activeCount += 1;
+            if(member !== undefined && member !== null) {
+                if(member.roles.cache.has(activeRole.id) === false) {
+                    member.roles.add(activeRole);
+                }
+            }
+        } else {
+            if(member !== undefined && member !== null) {
+                if(member.roles.cache.has(activeRole.id) === true) {
+                    member.roles.remove(activeRole);
+                }
+            }
         }
     }
 
     let daysPlayed = Math.round(((time / (3600000 * 24)) * 100)) / 100;
-    if(channel === undefined) return;
+    if (channel === undefined) return;
     channel.setName(`Time Played: ${daysPlayed} days`)
     channel = guild.channels.cache.get('895742387631050803');
     channel.setName(`Active Players: ${activeCount}`)
