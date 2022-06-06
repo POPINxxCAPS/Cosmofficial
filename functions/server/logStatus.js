@@ -9,6 +9,7 @@ module.exports = async (req) => {
     const config = req.config;
     const client = req.client;
     const guild = await client.guilds.cache.get(guildID);
+    const current_time = Date.now();
     let statusDoc = req.statusDoc;
     if (statusDoc === null) {
         statusDoc = await statusModel.create({
@@ -37,7 +38,6 @@ module.exports = async (req) => {
     const timerCheck = await timerFunction(req)
     if (timerCheck === true) return null; // If there is a timer, cancel.
 
-    const current_time = Date.now();
     if(statusDoc.nextConnectAttempt > current_time) return null; // Offline server delay for performance reasons
     let servInfo = await queryStatus(config);
 
