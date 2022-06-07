@@ -56,7 +56,16 @@ module.exports = {
             createTickets.push(create);
         }
         await lotteryTicketModel.insertMany(createTickets); // Much better for performance :p
-        message.reply(`Successfully purchased ${buyAmount} tickets. Use c!tickets to view your current tickets and lucky numbers!`)
+        const embed = new discord.MessageEmbed()
+            .setColor('#E02A6B')
+            .setTitle('Lottery Manager')
+            .setURL('https://cosmofficial.herokuapp.com/')
+            .setFooter('Cosmobot by POPINxxCAPS')
+            .setDescription(`Successfully purchased ${buyAmount} tickets. Use c!tickets to view your win chances!`)
+        try{
+            message.channel.send(embed);
+        } catch(err) {}
+        
         return
     }
 };

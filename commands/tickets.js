@@ -33,7 +33,6 @@ module.exports = {
             }
             ticketString = `Unique Tickets: ${uniqueTickets.length}\nDuplicate Tickets: ${duplicateTickets}\nWin Chance: ${uniqueTickets.length * 0.1}%`
         }
-        if (ticketString.length > 1023) return errorEmbed(message.channel, 'Too many tickets to display!\nMust be doing something right.')
         const embed = new discord.MessageEmbed()
             .setColor('#E02A6B')
             .setTitle('Lottery Manager')
