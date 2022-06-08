@@ -69,7 +69,7 @@ module.exports = async (req) => {
         })
         if (statDocs.length !== 0) {
             statDocs = statDocs.sort((a, b) => ((a) > (b)) ? -1 : 1);
-            rewardFaction(guildID, statDocs[0].factionTag, bonus)
+            await rewardFaction(guildID, statDocs[0].factionTag, bonus)
         } // Doing it this way will prevent multiple rewards from being sent while the zone is down
 
 
@@ -157,7 +157,6 @@ module.exports = async (req) => {
             } else timeStatCache[cacheIndex] = factionTimeStatDoc;
         }
 
-
         const verDoc = verificationCache.find(doc => doc.username === character.name);
         if (verDoc !== undefined) { // If they are verified, reward them
             let playerEcoDoc = await playerEcoModel.findOne({
@@ -181,8 +180,6 @@ module.exports = async (req) => {
             playerEcoDoc.currency = parseInt(playerEcoDoc.currency) + Math.round(rewardAmount / nearbyChars.length) ; // Multiply reward * query delay / characters to reward
             playerEcoDoc.save();
         }
-
-
         if (factionsInZone.includes(playerDoc.factionTag) === true) continue;
         factionsInZone.push(playerDoc.factionTag);
     }

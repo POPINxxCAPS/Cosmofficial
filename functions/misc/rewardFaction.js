@@ -3,7 +3,7 @@ const playerModel = require('../../models/playerSchema');
 const playerEcoModel = require('../../models/playerEcoSchema');
 
 module.exports = async (guildID, factionTag, rewardAmount) => {
-    if(factionTag === undefined) return;
+    if(factionTag === undefined) return false;
     const playerDocs = await playerModel.find({
         guildID: guildID,
         factionTag: factionTag
@@ -23,9 +23,9 @@ module.exports = async (guildID, factionTag, rewardAmount) => {
             guildID: guildID,
             userID: userID
         })
-        playerEcoDoc.currency = parseInt(playerEcoDoc.currency) + Math.round((rewardAmount / playersToReward));
+        playerEcoDoc.currency = parseInt(playerEcoDoc.currency) + Math.round((rewardAmount / playersToReward.length));
         playerEcoDoc.save();
     }
 
-    return;
+    return true;
 }
