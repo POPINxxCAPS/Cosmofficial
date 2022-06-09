@@ -4,29 +4,34 @@ const mongoose = require("mongoose");
 const npcSchema = new mongoose.Schema({
     displayName: { type: String },
     ownerDisplayName: { type: String }, 
-    entityID: { type: String }, 
+    entityID: { type: String },
+    distance: { type: String }
 })
 const friendlyGridSchema = new mongoose.Schema({
     displayName: { type: String },
     ownerDisplayName: { type: String }, 
     entityID: { type: String },
-    factionTag: { type: String } 
+    factionTag: { type: String },
+    distance: { type: String }
 })
 const enemyGridSchema = new mongoose.Schema({
     displayName: { type: String },
     ownerDisplayName: { type: String }, 
     entityID: { type: String },
-    factionTag: { type: String } 
+    factionTag: { type: String },
+    distance: { type: String }
 })
 const friendlyCharacterSchema = new mongoose.Schema({
     displayName: { type: String },
     entityID: { type: String },
-    factionTag: { type: String } 
+    factionTag: { type: String },
+    distance: { type: String }
 })
 const enemyCharacterSchema = new mongoose.Schema({
     displayName: { type: String },
     entityID: { type: String },
-    factionTag: { type: String } 
+    factionTag: { type: String },
+    distance: { type: String }
 })
 
 const nearbySchema = new mongoose.Schema({

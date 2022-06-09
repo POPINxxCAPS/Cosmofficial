@@ -1,4 +1,7 @@
 const gridModel = require('../../models/gridSchema');
+const npcGridModel = require('../../models/npcGridSchema');
+const playerEcoModel = require('../../models/playerEcoSchema');
+const gridValueCalculator = require('../../functions/misc/gridValueCalculator');
 const checkGridForFaction = require('../database/checkGridForFaction');
 const serverLogModel = require('../../models/serverLogSchema');
 const ms = require('ms')
@@ -9,16 +12,17 @@ const getNearbyCharacters = require('../database/nearbyCharacters');
 const timerFunction = require('../database/timerFunction');
 const spawnerGridHandler = require('../../handlers/spawnerGridHandler');
 
-const NPCNames = ['The Tribunal', 'Contractors', 'Gork and Mork', 'Space Pirates', 'Space Spiders', 'The Chairman', 'Miranda Survivors', 'VOID', 'The Great Tarantula', 'Cosmofficial', 'Clang Technologies CEO', 'Merciless Shipping CEO', 'Mystic Settlers CEO', 'Royal Drilling Consortium CEO', 'Secret Makers CEO', 'Secret Prospectors CEO', 'Specialized Merchants CEO', 'Star Inventors CEO', 'Star Minerals CEO', 'The First Heavy Industry CEO', 'The First Manufacturers CEO', 'United Industry CEO', 'Universal Excavators CEO', 'Universal Miners Guild CEO', 'Unyielding Excavators CEO'];
-const NPCGridNames = ['Mining vessel Debris', 'Mining ship Debris', 'Daniel A. Collins', 'Transporter debree']
-const respawnShipNames = ['Respawn Station', 'Respawn Planet Pod', 'Respawn Space Pod']
 
 let insertData = [];
+let npcInsertData = [];
 module.exports = async (req) => {
     const guildID = req.guildID;
     const config = req.config;
     const settings = req.settings;
     const client = req.client;
+    const NPCNames = client.commonVars.get("NPCNames");
+    const NPCGridNames = client.commonVars.get("NPCGridNames");
+    const respawnShipNames = client.commonVars.get("respawnShipNames");
 
     const verificationCache = req.verDocs;
     let gridDocsCache = req.gridDocsCache;
@@ -46,7 +50,7 @@ module.exports = async (req) => {
     console.log('Running Grid Query')
 
     // Grids Init
-    const expirationInSeconds = 3600;
+    const expirationInSeconds = 150;
     const expiration_time = current_time + (expirationInSeconds * 1000);
     let gridData = await queryGrids(config)
 
@@ -70,9 +74,10 @@ module.exports = async (req) => {
         } else {
             factionTag = factionTag.factionTag
         }
-        let nearbyChars = await getNearbyCharacters(guildID, singleGrid.Position.X, singleGrid.Position.Y, singleGrid.Position.Z, factionTag, 15000, req.allianceCache, req.characterDocsCache);
-        let nearbyGrids = await getNearbyGrids(guildID, singleGrid.Position.X, singleGrid.Position.Y, singleGrid.Position.Z, factionTag, 15000, gridDocsCache, req.allianceCache);
+        let nearbyChars = await getNearbyCharacters(guildID, singleGrid.Position.X, singleGrid.Position.Y, singleGrid.Position.Z, factionTag, 10000, req.allianceCache, req.characterDocsCache);
+        let nearbyGrids = await getNearbyGrids(client, guildID, singleGrid.Position.X, singleGrid.Position.Y, singleGrid.Position.Z, factionTag, 10000, gridDocsCache, req.allianceCache);
         let gridDoc;
+        let npcGridDoc;
         try {
             gridDoc = gridDocsCache.find(doc => doc.entityID === singleGrid.EntityId)
         } catch (err) {}
@@ -87,7 +92,6 @@ module.exports = async (req) => {
             }
         }
         if (gridDoc === null || gridDoc === undefined) { // If no file found, create one.
-            console.log('Creating file')
             gridDoc = await gridModel.create({
                 guildID: guildID,
                 displayName: singleGrid.DisplayName,
@@ -114,9 +118,55 @@ module.exports = async (req) => {
                     friendlyCharacters: nearbyChars.friendlyCharacters,
                     enemyCharacters: nearbyChars.enemyCharacters,
                 }]
-            }); // Leaving this one here because of the "caching" system
+            }); // Leaving these individual create statements here because of the "caching" system
+            if (NPCNames.includes(singleGrid.OwnerDisplayName) === true || singleGrid.OwnerDisplayName.includes(' CEO') === true) { // Create a template of the NPC's first appearance to compare with future queries
+                if (singleGrid.DisplayName.includes('Lane Buoy') === false) {
+                    npcGridDoc = await npcGridModel.create({
+                        guildID: guildID,
+                        displayName: singleGrid.DisplayName,
+                        entityID: singleGrid.EntityId,
+                        gridSize: singleGrid.GridSize,
+                        blocksCount: singleGrid.BlocksCount,
+                        mass: Math.round(singleGrid.Mass),
+                        positionX: singleGrid.Position.X,
+                        positionY: singleGrid.Position.Y,
+                        positionZ: singleGrid.Position.Z,
+                        linearSpeed: singleGrid.LinearSpeed,
+                        distanceToPlayer: singleGrid.DistanceToPlayer,
+                        ownerSteamID: singleGrid.OwnerSteamId,
+                        ownerDisplayName: singleGrid.OwnerDisplayName,
+                        isPowered: singleGrid.IsPowered,
+                        PCU: singleGrid.PCU,
+                        expirationTime: expiration_time,
+                    });
+                }
+            }
             gridDocsCache.push(gridDoc)
         } else { // If grid is found in db, just update information
+            if(gridDoc.ownerDisplayName !== singleGrid.OwnerDisplayName) { // If the ownership has changed
+                if (NPCNames.includes(gridDoc.ownerDisplayName) === true || gridDoc.ownerDisplayName.includes(' CEO')) { // If an NPC is detected as taken over
+                    if (gridDoc.displayName.includes("Lane Buoy") === false) {
+                        let npcGridDoc = await npcGridModel.findOne({
+                            guildID: doc.guildID,
+                            entityID: doc.entityID
+                        })
+                        let price = await gridValueCalculator(doc);
+                        if (npcGridDoc !== null) {
+                            console.log(`${npcGridDoc.displayName} was taken over. Grid Value: ${price}`);
+                            const verDoc = verificationCache.find(doc => doc.username === singleGrid.OwnerDisplayName);
+                            if(verDoc !== undefined) {
+                                playerEcoDoc = await playerEcoModel.findOne({
+                                    guildID: guildID,
+                                    userID: verDoc.userID
+                                })
+                                playerEcoDoc.currency = parseInt(playerEcoDoc.currency) + price;
+                                playerEcoDoc.save();
+                            }
+                            npcGridDoc.remove();
+                        }
+                    }
+                }
+            }
             const cacheIndex = gridDocsCache.indexOf(gridDoc);
             gridDoc.displayName = singleGrid.DisplayName
             gridDoc.blocksCount = singleGrid.BlocksCount
@@ -139,12 +189,81 @@ module.exports = async (req) => {
                 enemyCharacters: nearbyChars.enemyCharacters,
             }]
             gridDocsCache[cacheIndex] = gridDoc; // Saving changes at the END of the query to prevent double save document errors
+            if (NPCNames.includes(singleGrid.OwnerDisplayName) === true || singleGrid.OwnerDisplayName.includes(' CEO') === true) {
+                if (singleGrid.DisplayName.includes('Lane Buoy') === false) {
+                    // Create a template of the NPC's first appearance to compare with future queries
+                    npcGridDoc = await npcGridModel.findOne({
+                        guildID: guildID,
+                        entityID: singleGrid.EntityId
+                    })
+                    if (npcGridDoc === null) { // Extra check to ensure the comparison document exists
+                        console.log('npc doc created')
+                        npcGridDoc = await npcGridModel.create({
+                            guildID: guildID,
+                            displayName: singleGrid.DisplayName,
+                            entityID: singleGrid.EntityId,
+                            gridSize: singleGrid.GridSize,
+                            blocksCount: singleGrid.BlocksCount,
+                            mass: Math.round(singleGrid.Mass),
+                            positionX: singleGrid.Position.X,
+                            positionY: singleGrid.Position.Y,
+                            positionZ: singleGrid.Position.Z,
+                            linearSpeed: singleGrid.LinearSpeed,
+                            distanceToPlayer: singleGrid.DistanceToPlayer,
+                            ownerSteamID: singleGrid.OwnerSteamId,
+                            ownerDisplayName: singleGrid.OwnerDisplayName,
+                            isPowered: singleGrid.IsPowered,
+                            PCU: singleGrid.PCU,
+                            expirationTime: expiration_time,
+                        });
+                    } else {
+                        npcGridDoc.displayName = singleGrid.DisplayName
+                        npcGridDoc.blocksCount = singleGrid.BlocksCount
+                        npcGridDoc.mass = Math.round(singleGrid.Mass)
+                        npcGridDoc.positionX = singleGrid.Position.X
+                        npcGridDoc.positionY = singleGrid.Position.Y
+                        npcGridDoc.positionZ = singleGrid.Position.Z
+                        npcGridDoc.linearSpeed = singleGrid.LinearSpeed
+                        npcGridDoc.distanceToPlayer = singleGrid.DistanceToPlayer
+                        npcGridDoc.ownerDisplayName = singleGrid.OwnerDisplayName
+                        npcGridDoc.isPowered = singleGrid.IsPowered
+                        npcGridDoc.PCU = singleGrid.PCU
+                        npcGridDoc.expirationTime = expiration_time
+                        npcGridDoc.save();
+                    }
+                }
+            }
         }
     }
 
     gridDocsCache.forEach(async doc => { // Attempt to find clues to log
         let index = gridDocsCache.indexOf(doc);
         if (doc.expirationTime < current_time && entityIDs.includes(doc.entityID) === false) {
+            if (NPCNames.includes(doc.ownerDisplayName) === true || doc.ownerDisplayName.includes(' CEO')) { // If an NPC is detected as destroyed (or despawned)
+                if (doc.displayName.includes("Lane Buoy") === false) {
+                    let npcGridDoc = await npcGridModel.findOne({
+                        guildID: doc.guildID,
+                        entityID: doc.entityID
+                    })
+                    let price = await gridValueCalculator(doc);
+                    if (npcGridDoc !== null) {
+                        console.log(`${npcGridDoc.displayName} no longer exists. Grid Value: ${price}`);
+                        let sortedNearby = doc.nearby[0].enemyGrids.sort((a, b) => ((Number(a.distance)) > (Number(b.distance))) ? 1 : -1);
+                        const verDoc = verificationCache.find(doc => doc.username === sortedNearby[0].ownerDisplayName);
+                        if(verDoc !== undefined) {
+                            playerEcoDoc = await playerEcoModel.findOne({
+                                guildID: guildID,
+                                userID: verDoc.userID
+                            })
+                            playerEcoDoc.currency = parseInt(playerEcoDoc.currency) + price;
+                            playerEcoDoc.save();
+                        }
+                        npcGridDoc.remove(); // Waiting to see if this portion works
+                    }
+                }
+            }
+
+
             doc.remove().catch(err => {});
             gridDocsCache.splice(index, 1);
             return console.log(`${doc.displayName} Grid expired`)
@@ -152,6 +271,5 @@ module.exports = async (req) => {
         return; // Extra return to ensure forEach ends, doesn't hurt lol
     })
     console.log(`Grid query took ${ms((Date.now() - current_time))}`);
-    const runTime = (Date.now() - current_time);
     return gridDocsCache;
 }

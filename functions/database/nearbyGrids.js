@@ -1,9 +1,9 @@
 const gridModel = require('../../models/gridSchema');
 const allianceModel = require('../../models/allianceSchema')
 
-const NPCNames = ['The Tribunal', 'Contractors', 'Gork and Mork', 'Space Pirates', 'Space Spiders', 'The Chairman', 'Miranda Survivors', 'VOID', 'The Great Tarantula', 'Cosmofficial', 'Clang Technologies CEO', 'Merciless Shipping CEO', 'Mystic Settlers CEO', 'Royal Drilling Consortium CEO', 'Secret Makers CEO', 'Secret Prospectors CEO', 'Specialized Merchants CEO', 'Star Inventors CEO', 'Star Minerals CEO', 'The First Heavy Industry CEO', 'The First Manufacturers CEO', 'United Industry CEO', 'Universal Excavators CEO', 'Universal Miners Guild CEO', 'Unyielding Excavators CEO'];
 
-module.exports = async (guildID, x, y, z, factionTag, distance, gridCache, allianceCache) => {
+module.exports = async (client, guildID, x, y, z, factionTag, distance, gridCache, allianceCache) => {
+    const NPCNames = client.commonVars.get("NPCNames");
     if (distance === undefined) distance === 15000; // If no distance specified, use this default.
     let data = {
         npcs: [],
@@ -49,11 +49,12 @@ module.exports = async (guildID, x, y, z, factionTag, distance, gridCache, allia
         if (mathDistance > distance) continue;
 
         // If the grid is nearby, check for their faction to know whether to label them an enemy or friend.
-        if(NPCNames.includes(grid.ownerDisplayName === true)) {
+        if(NPCNames.includes(grid.ownerDisplayName) === true || grid.ownerDisplayName.includes(" CEO")) {
             data.npcs.push({
                 displayName: grid.displayName,
                 entityID: grid.entityID,
-                ownerDisplayName: grid.ownerDisplayName
+                ownerDisplayName: grid.ownerDisplayName,
+                distance: mathDistance
             })
             continue; // If it's an NPC, skip the rest of the checks
         }
@@ -63,7 +64,8 @@ module.exports = async (guildID, x, y, z, factionTag, distance, gridCache, allia
                 displayName: grid.displayName,
                 entityID: grid.entityID,
                 ownerDisplayName: grid.ownerDisplayName,
-                factionTag: grid.factionTag
+                factionTag: grid.factionTag,
+                distance: mathDistance
             }) // Just count it as an enemy. No way to tell.
             continue; // Skip the rest of the checks if no faction.
         }
@@ -74,14 +76,16 @@ module.exports = async (guildID, x, y, z, factionTag, distance, gridCache, allia
                 displayName: grid.displayName,
                 entityID: grid.entityID,
                 ownerDisplayName: grid.ownerDisplayName,
-                factionTag: grid.factionTag
+                factionTag: grid.factionTag,
+                distance: mathDistance
             });
         } else {
             data.enemyGrids.push({
                 displayName: grid.displayName,
                 entityID: grid.entityID,
                 ownerDisplayName: grid.ownerDisplayName,
-                factionTag: grid.factionTag
+                factionTag: grid.factionTag,
+                distance: mathDistance
             });
         }
     }
