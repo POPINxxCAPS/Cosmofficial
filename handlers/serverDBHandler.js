@@ -37,7 +37,7 @@ module.exports = async (client, discord) => {
     setInterval(async () => {
         guildIDs = await client.guilds.cache.map(guild => guild.id);
         verDocs = await verificationModel.find({});
-    }, 120000)
+    }, 180000)
 
     // Query Interval
     let queryIsRunning = false;
