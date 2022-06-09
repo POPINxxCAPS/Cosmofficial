@@ -249,7 +249,10 @@ module.exports = async (req) => {
                     if (npcGridDoc !== null) {
                         console.log(`${npcGridDoc.displayName} no longer exists. Grid Value: ${price}`);
                         let sortedNearby = doc.nearby[0].enemyGrids.sort((a, b) => ((Number(a.distance)) > (Number(b.distance))) ? 1 : -1);
-                        const verDoc = verificationCache.find(doc => doc.username === sortedNearby[0].ownerDisplayName);
+                        let verDoc;
+                        try {
+                            verDoc = verificationCache.find(doc => doc.username === sortedNearby[0].ownerDisplayName);
+                        } catch(err) {}
                         if(verDoc !== undefined) {
                             playerEcoDoc = await playerEcoModel.findOne({
                                 guildID: guildID,
