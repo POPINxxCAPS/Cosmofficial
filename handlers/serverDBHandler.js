@@ -51,6 +51,20 @@ module.exports = async (client, discord) => {
                 continue;
             }; // Ignore Cosmofficial Discord
             const execution_time = Date.now();
+
+
+            // Get server status document
+            const statusDoc = await statusModel.findOne({
+                guildID: guildID
+            })
+            if(statusDoc !== null) {
+                if(statusDoc.nextConnectAttempt > execution_time) {
+                    queryIsRunning = false;
+                    continue;   
+                }
+            }
+
+
             const gridDocsCache = client.gridDocCache.get(guildID) || await gridModel.find({
                 guildID: guildID
             })
@@ -58,10 +72,7 @@ module.exports = async (client, discord) => {
             const lastGridDocsCache = client.lastGridDocCache.get(guildID);
             const queryDelay = client.queryDelays.get(guildID) || 30;
 
-            // Get server status document
-            const statusDoc = await statusModel.findOne({
-                guildID: guildID
-            })
+            
 
             // Pull all settings
             const settings = await getAllSettings(guildID);
