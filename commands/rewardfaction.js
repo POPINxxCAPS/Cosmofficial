@@ -7,8 +7,8 @@ module.exports = {
     aliases: ['rf'],
     permissions: ["ADMINISTRATOR"],
     description: "Send a currency reward split between a player's faction.\nc!rf {factionTag} {amount}",
-    category: "Cosmic",
-    categoryAliases: [],
+    category: "Administration",
+    categoryAliases: ['admin', 'administration'],
     async execute(req) {
         const args = req.args;
         const config = req.config;
