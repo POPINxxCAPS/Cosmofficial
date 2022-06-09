@@ -5,6 +5,8 @@ const cooldownFunction = require('../../functions/database/cooldownFunction');
 const cooldownEmbed = require('../../functions/discord/cooldownEmbed');
 const discord = require('discord.js')
 
+// Recoded for use on website
+
 module.exports = async (username, userID, channel) => {
     let cancel = false;
     let messageString = '';

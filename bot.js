@@ -55,10 +55,6 @@ const cooldownHandler = require('./handlers/cooldownHandler');
 const serverLogHandler = require('./handlers/serverLogHandler');
 const dominationHandler = require('./handlers/dominationHandler');
 
-const TDMServerHandler = require('./handlers/TDMServerHandler');
-const TDMMatchHandler = require('./handlers/TDMMatchHandler');
-const TDMDeathCounter = require('./counters/TDMDeathCounter');
-
 const autoRoleCosmic = require('./cosmicOnly/autoRoleFunction');
 const gridDeletionQueue = require('./cosmicOnly/hooverDeletionQueue');
 const liveMapHandler = require('./cosmicOnly/liveMapHandler');
