@@ -74,8 +74,8 @@ module.exports = async (req) => {
         } else {
             factionTag = factionTag.factionTag
         }
-        let nearbyChars = await getNearbyCharacters(guildID, singleGrid.Position.X, singleGrid.Position.Y, singleGrid.Position.Z, factionTag, 10000, req.allianceCache, req.characterDocsCache);
-        let nearbyGrids = await getNearbyGrids(client, guildID, singleGrid.Position.X, singleGrid.Position.Y, singleGrid.Position.Z, factionTag, 10000, gridDocsCache, req.allianceCache);
+        let nearbyChars = await getNearbyCharacters(guildID, singleGrid.Position.X, singleGrid.Position.Y, singleGrid.Position.Z, factionTag, 5000, req.allianceCache, req.characterDocsCache);
+        let nearbyGrids = await getNearbyGrids(client, guildID, singleGrid.Position.X, singleGrid.Position.Y, singleGrid.Position.Z, factionTag, 5000, gridDocsCache, req.allianceCache);
         let gridDoc;
         let npcGridDoc;
         try {
@@ -147,10 +147,10 @@ module.exports = async (req) => {
                 if (NPCNames.includes(gridDoc.ownerDisplayName) === true || gridDoc.ownerDisplayName.includes(' CEO')) { // If an NPC is detected as taken over
                     if (gridDoc.displayName.includes("Lane Buoy") === false) {
                         let npcGridDoc = await npcGridModel.findOne({
-                            guildID: doc.guildID,
-                            entityID: doc.entityID
+                            guildID: gridDoc.guildID,
+                            entityID: gridDoc.entityID
                         })
-                        let price = await gridValueCalculator(doc);
+                        let price = await gridValueCalculator(gridDoc);
                         if (npcGridDoc !== null) {
                             console.log(`${npcGridDoc.displayName} was taken over. Grid Value: ${price}`);
                             const verDoc = verificationCache.find(doc => doc.username === singleGrid.OwnerDisplayName);

@@ -18,7 +18,7 @@ module.exports = async (client, guildID, x, y, z, factionTag, distance, gridCach
             guildID: guildID
         })
     }
-    if(allianceCache === undefined) {
+    /*if(allianceCache === undefined) {
         allianceCache = await allianceModel.find({
             guildID: guildID
         })
@@ -36,7 +36,7 @@ module.exports = async (client, guildID, x, y, z, factionTag, distance, gridCach
             let tag = alliance.factionTags[b].factionTag;
             allys.push(tag)
         }
-    }
+    }*/
 
     for (let i = 0; i < gridCache.length; i++) { // Sift through the cache, find grids that are close.
         let grid = gridCache[i];
@@ -71,7 +71,7 @@ module.exports = async (client, guildID, x, y, z, factionTag, distance, gridCach
         }
 
         // If there is a faction, decide whether it's an enemy or not.
-        if(allys.includes(grid.factionTag) === true) {
+        if(grid.factionTag === factionTag) {
             data.friendlyGrids.push({
                 displayName: grid.displayName,
                 entityID: grid.entityID,
