@@ -61,7 +61,7 @@ module.exports = async (req) => {
             name: 'Deleted Grids',
             value: string
         });
-        if(hooverLogChannel !== undefined && hooverLogChannel !== null) {
+        if(hooverLogChannel !== undefined && hooverLogChannel !== null && string !== '') {
             try {
                 hooverLogChannel.send(embed);
             } catch(err) {}
