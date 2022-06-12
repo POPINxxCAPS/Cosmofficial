@@ -52,6 +52,7 @@ module.exports = async (req) => {
     }
 
     for (const string of deletedGridStrings) {
+        if(string === '') continue;
         const embed = new discord.MessageEmbed()
         .setColor('#E02A6B')
         .setTitle(`Hoover Log`)
@@ -61,7 +62,7 @@ module.exports = async (req) => {
             name: 'Deleted Grids',
             value: string
         });
-        if(hooverLogChannel !== undefined && hooverLogChannel !== null && string !== '') {
+        if(hooverLogChannel !== undefined && hooverLogChannel !== null) {
             try {
                 hooverLogChannel.send(embed);
             } catch(err) {}
