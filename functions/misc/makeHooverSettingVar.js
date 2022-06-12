@@ -4,7 +4,8 @@ module.exports = async (guildID, settings) => {
     if(settings === undefined) {
         settings = await getAllSettings(guildID);
     }
-    const hoover = settings.find(set => set.name === 'hoover')
+    const hoover = settings.find(set => set.name === 'hoover');
+    const channelSettings = settings.find(set => set.name === 'channels');
     let hooverSettings = {};
     try { // .find() Causes crashes, so I need to do it this way.
         hooverSettings.enabled = hoover.settings.find(set => set.setting === 'enabled').value;
@@ -17,6 +18,7 @@ module.exports = async (guildID, settings) => {
         hooverSettings.maxSpeed = hoover.settings.find(set => set.setting === 'maxspeed').value;
         hooverSettings.worldBorder = hoover.settings.find(set => set.setting === 'worldborder').value;
         hooverSettings.unverifiedRemoval = hoover.settings.find(set => set.setting === 'unverifiedremoval').value;
+        hooverSettings.hooverLog = channelSettings.settings.find(set => set.setting === 'hooverlog').value;
     } catch (err) {
         console.log(`There was an error making the hooverSettings var for guildID ${guildID}.`)
         return null;

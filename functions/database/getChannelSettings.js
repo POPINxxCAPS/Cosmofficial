@@ -93,5 +93,23 @@ module.exports = async (guildID) => {
     }
     settings.push(lotteryChannel);
 
+    let hooverLogChannel = await settingsModel.findOne({
+        guildID: guildID,
+        category: 'channels',
+        setting: 'hooverlog'
+    })
+    if (hooverLogChannel === null) {
+        hooverLogChannel = await settingsModel.create({
+            guildID: guildID,
+            displayName: 'Hoover Log Channel',
+            category: 'channels',
+            description: 'Channel to be used for the Hoover log.\nAccepts a channel ID.',
+            setting: 'hooverlog',
+            value: 'Not Set',
+            valueType: 'channel'
+        })
+    }
+    settings.push(hooverLogChannel);
+
     return settings
 }
