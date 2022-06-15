@@ -132,7 +132,7 @@ module.exports = async (req) => {
             }
             winners.push(search)
         } else {
-            const index = winners.findIndex(search);
+            const index = winners.indexOf(search);
             search.weight += 1;
             winners[index] = search;
         }
