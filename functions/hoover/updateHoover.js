@@ -59,7 +59,7 @@ module.exports = async (req) => {
     const deletionTime = current_time + (sweepDelay * 1000);
     for (let gridDoc of gridDocsCache) {
         const cacheIndex = gridDocsCache.indexOf(gridDoc);
-        if(gridDoc === undefined) { // Fixing weird occurance
+        if (gridDoc === undefined) { // Fixing weird occurance
             gridDocsCache.splice(cacheIndex, 1);
             continue;
         }
@@ -74,7 +74,7 @@ module.exports = async (req) => {
             if (gridDoc.deletionReason === 'large grids not allowed' && largeGrids === true) queued = false;
             if (gridDoc.deletionReason === 'less than block threshold' && parseInt(gridDoc.blocksCount) > blockThreshold) queued = false;
             if (gridDoc.deletionReason === 'player left the discord' && verDoc !== null && verDoc !== undefined) {
-                const memberTarget = guild.members.cache.get(verDoc.userID);
+                const memberTarget = await guild.members.cache.get(verDoc.userID);
                 if (memberTarget !== null && memberTarget !== undefined) queued = false;
             }
             if (gridDoc.deletionReason === 'bypassing speed limits' && parseInt(gridDoc.linearSpeed) < maxSpeed) queued = false;
@@ -122,28 +122,33 @@ module.exports = async (req) => {
         }
         // Verification Check
         if (gridDoc.queuedForDeletion === false && unverifiedRemoval === 'true') { // If unverified cleanup is enabled
-            if ((verDoc === null || verDoc === undefined) === true && gridDoc.queuedForDeletion === false && NPCNames.includes(gridDoc.OwnerDisplayName) === false) { // If verdoc is not found, and grid is not already queued for deletion
-                // If no verification
-                if (gridDoc.ownerDisplayName === '') {
-                    // No owner? (no terminal blocks)
-                    gridDoc.deletionReason = 'no clear owner'
-                    gridDoc.queuedForDeletion = true;
-                    gridDoc.deletionTime = deletionTime
-                } else {
-                    // Has an owner, player just isn't verified.
-                    gridDoc.deletionReason = 'unverified player grid'
-                    gridDoc.queuedForDeletion = true;
-                    gridDoc.deletionTime = deletionTime
+            if (verDoc === null || verDoc === undefined) { // If verdoc is not found, and grid is not already queued for deletion
+                if (gridDoc.queuedForDeletion === false && NPCNames.includes(gridDoc.OwnerDisplayName) === false) {
+                    // If no verification
+                    if (gridDoc.ownerDisplayName === '') {
+                        // No owner? (no terminal blocks)
+                        gridDoc.deletionReason = 'no clear owner'
+                        gridDoc.queuedForDeletion = true;
+                        gridDoc.deletionTime = deletionTime
+                    } else {
+                        // Has an owner, player just isn't verified.
+                        gridDoc.deletionReason = 'unverified player grid'
+                        gridDoc.queuedForDeletion = true;
+                        gridDoc.deletionTime = deletionTime
+                    }
                 }
+
             } else {
-                // If there is a verification doc, confirm they are still in the discord.
-                let memberTarget = guild.members.cache.find(member => member.id === verDoc.userID)
-                if (memberTarget === null || memberTarget === undefined) {
-                    // No longer in the discord
-                    gridDoc.deletionReason = 'player left the discord'
-                    gridDoc.queuedForDeletion = true;
-                    gridDoc.deletionTime = deletionTime
-                } // Discord check end
+                if (gridDoc.queuedForDeletion === false && NPCNames.includes(gridDoc.OwnerDisplayName) === false) {
+                    // If there is a verification doc, confirm they are still in the discord.
+                    let memberTarget = await guild.members.cache.find(member => member.id === verDoc.userID)
+                    if (memberTarget === null || memberTarget === undefined) {
+                        // No longer in the discord
+                        gridDoc.deletionReason = 'player left the discord'
+                        gridDoc.queuedForDeletion = true;
+                        gridDoc.deletionTime = deletionTime
+                    } // Discord check end
+                }
             }
         }
         // Speed Check
@@ -169,7 +174,7 @@ module.exports = async (req) => {
             gridDoc.queuedForDeletion = false;
             gridDoc.deletionReason = '';
         }
-        
+
         gridDocsCache[cacheIndex] = gridDoc;
     }
     return gridDocsCache;
