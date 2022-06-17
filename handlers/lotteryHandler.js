@@ -182,42 +182,38 @@ module.exports = async (req) => {
             await channel.bulkDelete(2);
             return channel.send(embed);
         } catch (err) {}
-        for(const ticket of tickets) { // Delete all processed tickets
-            ticket.remove();
-        }
-        return;
+    } else {
+        // If there are no winning tickets
+        embed.addFields({
+            name: `No Winning Tickets!`,
+            value: `Better luck next time.`
+        }, {
+            name: `Last Winning Numbers`,
+            value: `${potDoc.winningNum1}, ${potDoc.winningNum2}, ${potDoc.winningNum3}`
+        }, {
+            name: 'Interest added this round',
+            value: `${potInterest.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`
+        }, {
+            name: `${currencyName} in Pot`,
+            value: `${Math.round(parseFloat(potDoc.potAmount)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`
+        })
+
+        potDoc.potAmount = potInterest + parseInt(potDoc.potAmount);
+        potDoc.drawTime = drawTime;
+        let ran1 = Math.floor(Math.random() * 9);
+        let ran2 = Math.floor(Math.random() * 9);
+        let ran3 = Math.floor(Math.random() * 9);
+        potDoc.winningNum1 = ran1;
+        potDoc.winningNum2 = ran2;
+        potDoc.winningNum3 = ran3;
+        potDoc.save();
+        try {
+            channel.bulkDelete(2);
+            channel.send(embed);
+        } catch (err) {}
     }
 
-    // If there are no winning tickets
-    embed.addFields({
-        name: `No Winning Tickets!`,
-        value: `Better luck next time.`
-    }, {
-        name: `Last Winning Numbers`,
-        value: `${potDoc.winningNum1}, ${potDoc.winningNum2}, ${potDoc.winningNum3}`
-    }, {
-        name: 'Interest added this round',
-        value: `${potInterest.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`
-    }, {
-        name: `${currencyName} in Pot`,
-        value: `${Math.round(parseFloat(potDoc.potAmount)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`
-    })
-
-    potDoc.potAmount = potInterest + parseInt(potDoc.potAmount);
-    potDoc.drawTime = drawTime;
-    let ran1 = Math.floor(Math.random() * 9);
-    let ran2 = Math.floor(Math.random() * 9);
-    let ran3 = Math.floor(Math.random() * 9);
-    potDoc.winningNum1 = ran1;
-    potDoc.winningNum2 = ran2;
-    potDoc.winningNum3 = ran3;
-    potDoc.save();
-    for(const ticket of tickets) { // Delete all processed tickets
-        ticket.remove();
+    for (let i = 0; i < tickets.length; i++) { // Delete all processed tickets
+        tickets[i].remove();
     }
-    try {
-        channel.bulkDelete(2);
-        channel.send(embed);
-    } catch(err) {}
-    return;
 }
