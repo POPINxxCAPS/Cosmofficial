@@ -12,8 +12,8 @@ module.exports = {
     aliases: [],
     description: "Convert in-game currency to bot currency. Drop your in-game currency as a floating object, stand within 100m of the dropped currency, and type this command.",
     permissions: ["SEND_MESSAGES"],
-    category: "Cosmic",
-    categoryAliases: [],
+    category: "Economy",
+    categoryAliases: ['economy', 'eco'],
     async execute(req) {
         const message = req.message;
         const config = req.config;
