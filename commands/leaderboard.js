@@ -24,7 +24,7 @@ module.exports = {
         let expectedCount = 9;
         for(let i = 0; count <= expectedCount || i >= lbArraySorted.length; i++) {
             if(lbArraySorted[i] === undefined) continue;
-            let discUser = await client.users.cache.find(user => user.id === `${lbArraySorted[i].userID}`);
+            let discUser = await client.users.cache.find(user => user.id === lbArraySorted[i].userID);
             if (discUser === undefined) {} else { // If member is no longer in discord, skip.
                 count += 1;
                 // If member is in the discord, add their balance and username to the string.'
