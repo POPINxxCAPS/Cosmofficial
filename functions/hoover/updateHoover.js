@@ -31,7 +31,7 @@ const planetLocations = [{
 }] // Only needed for space tickets (cosmic only)
 module.exports = async (req) => {
     const guildID = req.guildID;
-    const guild = req.client.guilds.cache.get(guildID);
+    const guild = await req.client.guilds.cache.get(guildID);
     const settings = req.settings;
     let gridDocsCache = req.gridDocsCache;
     const verificationCache = req.verDocs;
@@ -63,7 +63,7 @@ module.exports = async (req) => {
             gridDocsCache.splice(cacheIndex, 1);
             continue;
         }
-        const verDoc = verificationCache.find(verification => verification.username === gridDoc.ownerDisplayName)
+        const verDoc = await verificationCache.find(verification => verification.username === gridDoc.ownerDisplayName);
         // First, if it's already queued for deletion, see if the error has been resolved
         if (gridDoc.queuedForDeletion === true) {
             let queued = true;
