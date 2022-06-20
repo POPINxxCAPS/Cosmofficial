@@ -13,7 +13,7 @@ module.exports = async (client) => {
 
         for(const member of memberList) {
             const user = await client.users.cache.get(member);
-            const guildMember = guild.member(user);
+            const guildMember = await guild.member(user);
             const verDoc = await verificationModel.findOne({
                 userID: member
             })
@@ -23,7 +23,7 @@ module.exports = async (client) => {
                 displayName: verDoc.username
             })
             let factionTag = playerDoc === null ? '' : playerDoc.factionTag;
-            if(factionTag === '') {
+            if(factionTag === '' && guildMember !== null) {
                 for(const roleID of guildMember.roles.cache) {
                     const role = roleID[1];
                     if(role.name.length === 3) {
