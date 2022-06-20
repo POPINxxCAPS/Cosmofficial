@@ -33,6 +33,7 @@ module.exports = async (req) => {
     const guildID = req.guildID;
     const guild = await req.client.guilds.cache.get(guildID);
     const settings = req.settings;
+    const client = req.client;
     let gridDocsCache = req.gridDocsCache;
     const verificationCache = req.verDocs;
     const hooverSettings = await makeHooverSettingVar(guildID, settings);
@@ -63,7 +64,11 @@ module.exports = async (req) => {
             gridDocsCache.splice(cacheIndex, 1);
             continue;
         }
+        
         const verDoc = await verificationCache.find(verification => verification.username === gridDoc.ownerDisplayName);
+        if(gridDoc.ownerDisplayName === "MrStoicFrog") {
+            
+        }
         // First, if it's already queued for deletion, see if the error has been resolved
         if (gridDoc.queuedForDeletion === true) {
             let queued = true;
@@ -74,7 +79,12 @@ module.exports = async (req) => {
             if (gridDoc.deletionReason === 'large grids not allowed' && largeGrids === true) queued = false;
             if (gridDoc.deletionReason === 'less than block threshold' && parseInt(gridDoc.blocksCount) > blockThreshold) queued = false;
             if (gridDoc.deletionReason === 'player left the discord' && verDoc !== null && verDoc !== undefined) { // Working out the cause of this issue with someone
-                const memberTarget = await guild.members.cache.get(verDoc.userID);
+                let memberTarget = await guild.members.cache.get(verDoc.userID);
+                if(memberTarget === undefined) {
+                    try {
+                        memberTarget = await guild.members.fetch(verDoc.userID);
+                    } catch(err) {};
+                }
                 if (memberTarget !== null && memberTarget !== undefined) queued = false;
             }
             if (gridDoc.deletionReason === 'bypassing speed limits' && parseInt(gridDoc.linearSpeed) < maxSpeed) queued = false;
@@ -142,6 +152,11 @@ module.exports = async (req) => {
                 if (gridDoc.queuedForDeletion === false && NPCNames.includes(gridDoc.OwnerDisplayName) === false) {
                     // If there is a verification doc, confirm they are still in the discord.
                     let memberTarget = await guild.members.cache.find(member => member.id === verDoc.userID)
+                    if(memberTarget === undefined) {
+                        try {
+                            memberTarget = await guild.members.fetch(verDoc.userID);
+                        } catch(err) {};
+                    }
                     if (memberTarget === null || memberTarget === undefined) {
                         // No longer in the discord
                         gridDoc.deletionReason = 'player left the discord'
