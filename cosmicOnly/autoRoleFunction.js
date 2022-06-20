@@ -13,7 +13,10 @@ module.exports = async (client) => {
 
         for(const member of memberList) {
             const user = await client.users.cache.get(member);
-            const guildMember = await guild.member(user);
+            let guildMember = await guild.member(user);
+            if(guildMember === null || guildMember === null) {
+                guildMember = await guild.members.fetch(member);
+            }
             const verDoc = await verificationModel.findOne({
                 userID: member
             })
