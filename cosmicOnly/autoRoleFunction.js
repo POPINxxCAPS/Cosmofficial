@@ -26,7 +26,7 @@ module.exports = async (client) => {
                 displayName: verDoc.username
             })
             let factionTag = playerDoc === null ? '' : playerDoc.factionTag;
-            if(factionTag === '' && guildMember !== null) {
+            if(factionTag === '' && guildMember !== null && guildMember !== undefined) {
                 for(const roleID of guildMember.roles.cache) {
                     const role = roleID[1];
                     if(role.name.length === 3) {
