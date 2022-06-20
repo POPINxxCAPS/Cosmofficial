@@ -1,6 +1,9 @@
 const gridDelete = require('../execution/gridDelete');
 const makeHooverSettingVar = require('../misc/makeHooverSettingVar');
 const botStatModel = require('../../models/botStatisticSchema');
+const {
+    MessageEmbed
+} = require('discord.js');
 module.exports = async (req) => {
     const gridDocsCache = req.gridDocsCache;
     const guildID = req.guildID;
@@ -27,6 +30,7 @@ module.exports = async (req) => {
     }
 
     let deletedGridStrings = [''];
+    let deletedObjs = [];
     let stringCount = 0;
     for (const gridDoc of gridDocsCache) {
         const index = gridDocsCache.indexOf(gridDoc);
@@ -39,11 +43,23 @@ module.exports = async (req) => {
             await gridDelete(guildID, gridDoc.entityID);
             botStatDoc.value = parseInt(botStatDoc.value) + 1;
             console.log(`Hoover swept ${gridDoc.displayName}`)
-            if (deletedGridStrings[stringCount].length > 900) {
+            let userObj = await deletedObjs.find(obj => obj.username === gridDoc.ownerDisplayName)
+            if (userObj === undefined) {
+                userObj = {
+                    username: gridDoc.ownerDisplayName,
+                    grids: [gridDoc]
+                }
+                deletedObjs.push(userObj);
+            } else {
+                const index = deletedObjs.indexOf(userObj);
+                userObj.grids.push(gridDoc);
+                deletedObjs[index] = userObj;
+            }
+            /*if (deletedGridStrings[stringCount].length > 900) {
                 stringCount += 1;
                 deletedGridStrings[stringCount] = '';
             }
-            deletedGridStrings[stringCount] += `${gridDoc.displayName} ${gridDoc.deletionReason}\n`;
+            deletedGridStrings[stringCount] += `${gridDoc.displayName} ${gridDoc.deletionReason}\n`;*/
             gridDocsCache.splice(index, 1);
             try {
                 gridDoc.remove();
@@ -51,23 +67,45 @@ module.exports = async (req) => {
         }
     }
 
-    for (const string of deletedGridStrings) {
-        if(string === '') continue;
-        const embed = new discord.MessageEmbed()
+    const embed = new discord.MessageEmbed()
         .setColor('#E02A6B')
         .setTitle(`Hoover Log`)
         .setURL('https://cosmofficial.herokuapp.com/')
         .setFooter('Cosmofficial by POPINxxCAPS')
-        .addFields({
-            name: 'Deleted Grids',
+    for (const userObj of deletedObjs) {
+        const username = userObj.username === '' ? "No Owner" : userObj.username;
+        let string = '';
+        for (const gridDoc of userObj.grids) {
+            string += `${gridDoc.displayName} ${gridDoc.deletionReason}\n`
+        }
+        if (string === '') continue;
+        embed.addFields({
+            name: `${username}`,
             value: string
-        });
-        if(hooverLogChannel !== undefined && hooverLogChannel !== null) {
+        })
+    }
+    if (hooverLogChannel !== undefined && hooverLogChannel !== null && deletedObjs.length !== 0) {
+        try {
+            hooverLogChannel.send(embed);
+        } catch (err) {}
+    }
+    /*for (const string of deletedGridStrings) {
+        if (string === '') continue;
+        const embed = new discord.MessageEmbed()
+            .setColor('#E02A6B')
+            .setTitle(`Hoover Log`)
+            .setURL('https://cosmofficial.herokuapp.com/')
+            .setFooter('Cosmofficial by POPINxxCAPS')
+            .addFields({
+                name: 'Deleted Grids',
+                value: string
+            });
+        if (hooverLogChannel !== undefined && hooverLogChannel !== null) {
             try {
                 hooverLogChannel.send(embed);
-            } catch(err) {}
+            } catch (err) {}
         }
-    }
+    }*/
     try {
         botStatDoc.save().then().catch(err => {});
     } catch (err) {}
