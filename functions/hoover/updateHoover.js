@@ -73,7 +73,7 @@ module.exports = async (req) => {
             if (gridDoc.deletionReason === 'small grids not allowed' && smallGrids === true) queued = false;
             if (gridDoc.deletionReason === 'large grids not allowed' && largeGrids === true) queued = false;
             if (gridDoc.deletionReason === 'less than block threshold' && parseInt(gridDoc.blocksCount) > blockThreshold) queued = false;
-            if (gridDoc.deletionReason === 'player left the discord' && verDoc !== null && verDoc !== undefined) {
+            if (gridDoc.deletionReason === 'player left the discord' && verDoc !== null && verDoc !== undefined) { // Working out the cause of this issue with someone
                 const memberTarget = await guild.members.cache.get(verDoc.userID);
                 if (memberTarget !== null && memberTarget !== undefined) queued = false;
             }

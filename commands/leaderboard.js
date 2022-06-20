@@ -44,7 +44,7 @@ module.exports = {
                 } else {
                     embedString = embedString + `${discUser.username}: ${lbArraySorted[i].balance.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}\n`
                 }
-                count += 1; // Trying to figure out why it's skipping people.
+                count += 1;
             }
         }
         console.log(embedString)
