@@ -33,10 +33,10 @@ module.exports = {
                 .setDescription(`**Balance of User:** <@${target.id}>`)
                 .addFields({
                     name: `${currencyName}`,
-                    value: `${targetData.currency}`
+                    value: `${parseInt(targetData.currency).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`
                 }, {
                     name: 'Vault',
-                    value: `${targetData.vault}`
+                    value: `${parseInt(targetData.vault).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`
                 }, )
                 .setFooter('Cosmofficial by POPINxxCAPS');
             message.delete().catch(err => {})
