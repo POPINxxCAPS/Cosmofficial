@@ -58,10 +58,10 @@ module.exports = {
             .setDescription(`**Balance of User:** <@${message.author.id}>`)
             .addFields({
                 name: `${currencyName}`,
-                value: `${playerEco.currency}`
+                value: `${playerEco.currency.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`
             }, {
                 name: 'Vault',
-                value: `${playerEco.vault}`
+                value: `${playerEco.vault.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`
             }, )
             .setFooter('Cosmofficial by POPINxxCAPS');
 
