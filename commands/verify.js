@@ -22,6 +22,6 @@ module.exports = {
             search = search + ' ' + args[v];
         }
 
-        await verify(search, message.author.id, message.channel);
+        await verify(search, message.author.id, message.channel, message);
     }
 }

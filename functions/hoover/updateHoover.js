@@ -66,9 +66,6 @@ module.exports = async (req) => {
         }
         
         const verDoc = await verificationCache.find(verification => verification.username === gridDoc.ownerDisplayName);
-        if(gridDoc.ownerDisplayName === "MrStoicFrog") {
-            
-        }
         // First, if it's already queued for deletion, see if the error has been resolved
         if (gridDoc.queuedForDeletion === true) {
             let queued = true;

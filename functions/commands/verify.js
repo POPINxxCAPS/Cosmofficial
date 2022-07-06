@@ -7,7 +7,7 @@ const discord = require('discord.js')
 
 // Recoded for use on website
 
-module.exports = async (username, userID, channel) => {
+module.exports = async (username, userID, channel, message) => {
     let cancel = false;
     let messageString = '';
 
