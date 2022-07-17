@@ -44,7 +44,7 @@ module.exports = async (req) => {
     if (servInfo.err !== undefined) { // If the query failed
         statusDoc.serverOnline = false;
         statusDoc.failedConnects = statusDoc.failedConnects === undefined ? 0 : parseInt(statusDoc.failedConnects) + 1;
-        if (statusDoc.failedConnects > 6) {
+        if (statusDoc.failedConnects >= 6) {
             statusDoc.failedConnects = 6;
             statusDoc.nextConnectAttempt = current_time + (60000 * 15);
         } else { // DM the discord owner for attempt 3-5. Ignore 1-2 for restart lenience
