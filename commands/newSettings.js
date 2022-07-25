@@ -1,6 +1,7 @@
 const checkPatron = require('../functions/misc/checkPatron');
 const errorEmbed = require('../functions/discord/errorEmbed');
 const lockedEmbed = require('../functions/discord/lockedEmbed');
+const statusModel = require('../models/statusSchema');
 const ms = require('ms');
 module.exports = {
     name: 'settings',
@@ -16,6 +17,9 @@ module.exports = {
         const args = req.args;
         const guild = req.guild;
         const discord = req.discord;
+        const statusDoc = await statusModel.findOne({
+            guildID: message.guild.id
+        })
         let settings = req.settings
 
         const embed = new discord.MessageEmbed()
@@ -116,6 +120,10 @@ module.exports = {
         if (errorString !== undefined) return errorEmbed(message.channel, errorString);
         if (testVar === undefined) return errorEmbed(message.channel, 'An unknown error occurred. Contact the bot owner.');
 
+        if(category === 'remote') {
+            statusDoc.failedConnects = 0;
+            statusDoc.save();
+        }
         settingSearch.value = testVar;
         settingSearch.save();
         return message.channel.send(embed);

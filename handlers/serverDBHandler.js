@@ -64,7 +64,7 @@ module.exports = async (client, discord) => {
                     queryIsRunning = false;
                     continue;   
                 }
-                if(statusDoc.nextConnectAttempt >= 100) {
+                if(statusDoc.failedConnects >= 100) {
                     queryIsRunning = false;
                     continue;   
                 }
