@@ -45,11 +45,11 @@ module.exports = async (req) => {
         statusDoc.serverOnline = false;
         statusDoc.failedConnects = statusDoc.failedConnects === undefined ? 0 : parseInt(statusDoc.failedConnects) + 1;
         if (statusDoc.failedConnects >= 6) {
-            statusDoc.nextConnectAttempt = current_time + (60000 * 15);
+            statusDoc.nextConnectAttempt = current_time + (60000 * 30);
         } else { // DM the discord owner for attempt 3-5. Ignore 1-2 for restart lenience
             statusDoc.nextConnectAttempt = current_time + (60000 * parseInt(statusDoc.failedConnects));
             if (statusDoc.failedConnects >= 3 && statusDoc.failedConnects <= 5) {
-                guild.owner.user.send(`**__Server Connection Error__**\n> Connection to ${config.ip} failed.\n> Error: ${servInfo.err}\n> Connection Attempt: **${statusDoc.failedConnects}** of **5**\n> Next Attempt: ${ms(parseInt(statusDoc.nextConnectAttempt) - current_time)}\n> \n> After 5 tries, an attempt will be made every 15 minutes.\n> Changing a remote setting will reset the counter.\n> First two notifs are skipped for restart lenience.`)
+                guild.owner.user.send(`**__Server Connection Error__**\n> Connection to ${config.ip} failed.\n> Error: ${servInfo.err}\n> Connection Attempt: **${statusDoc.failedConnects}** of **5**\n> Next Attempt: ${ms(parseInt(statusDoc.nextConnectAttempt) - current_time)}\n> \n> After 5 tries, an attempt will be made every 30 minutes.\n> Changing a remote setting will reset the counter.\n> First two notifs are skipped for restart lenience.`)
             }
         }
         await statusDoc.save().then(doc => { savedDoc = doc });
