@@ -45,7 +45,6 @@ module.exports = async (req) => {
         statusDoc.serverOnline = false;
         statusDoc.failedConnects = statusDoc.failedConnects === undefined ? 0 : parseInt(statusDoc.failedConnects) + 1;
         if (statusDoc.failedConnects >= 6) {
-            statusDoc.failedConnects = 6;
             statusDoc.nextConnectAttempt = current_time + (60000 * 15);
         } else { // DM the discord owner for attempt 3-5. Ignore 1-2 for restart lenience
             statusDoc.nextConnectAttempt = current_time + (60000 * parseInt(statusDoc.failedConnects));
@@ -67,6 +66,7 @@ module.exports = async (req) => {
     if (statusDoc.nextPopLog < current_time) {
         let invLink = "https://cosmofficial.herokuapp.com/"
         await createInvite(client, guildID).then(res => invLink = res)
+        if(invLink === null) await createInvite(client, "799685703910686720").then(res => invLink = res)
         let popLogTimer = current_time + 600000;
         statusDoc.populationLog.push({
             playerCount: servInfo.res.Players,

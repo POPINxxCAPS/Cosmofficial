@@ -4,22 +4,24 @@
             <div class="card mt-4">
                 <div class="card-body">
                     <h4 class="card-title">Economy Settings</h4>
-                    <form class="form-inline">
-                        <% ecoSettings.forEach(setting => { %>
+                    <form method="post"action="../editSettings">
+                        <% for(const setting in reqObj.ecoSettings) { %>
                         <div class="form-group">
-                            <label for="staticEmail2" class="sr-only">Email</label>
+                            <label for="<%= setting %>" class="sr-only"><%= setting %></label>
                             <input type="text" readonly class="form-control-plaintext" id="staticEmail2"
-                                value="<%= setting.name %>">
+                                value="<%= setting %>">
                         </div>
                         <div class="form-group sm-3">
-                            <label for="inputPassword2" class="sr-only">setting.value</label>
-                            <input type="password" class="form-control" id="inputPassword2" placeholder="Password">
+                            <label for="exampleFormControlInput1" class="sr-only"></label>
+                            <input type="text" class="form-control" id="exampleFormControlInput1"
+                                placeholder="<%= reqObj.ecoSettings[setting] %>">
                         </div>
-                        <% }) %>
-                        <button type="submit" class="btn btn-primary mb-2">Save Changes</button>
+                        <% } %>
+                        <button type="submit" class="btn btn-primary" value="Add">Submit</button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
+</div>
 </div>

@@ -30,7 +30,7 @@ mongoose
 const app = Express();
 const port = process.env.PORT || 3000;
 
-app.use(Express.urlencoded({ extended: false }))
+app.use(Express.urlencoded({ extended: true }))
 app.set('view engine', 'ejs')
 app.set('disClient', client)
 

@@ -41,12 +41,6 @@ module.exports = async (req) => {
     const timer = await timerFunction(req);
     if (timer === true) return gridDocsCache; // If there is a timer, cancel.
 
-    const guild = client.guilds.cache.get(guildID);
-    const mainGuild = client.guilds.cache.get("853247020567101440");
-
-    if (guild.owner === null) return null;
-    let guildOwner = mainGuild.members.cache.get(guild.owner.user.id);
-    if (!guildOwner) return null; // If guild owner is no longer in Cosmofficial discord
     console.log('Running Grid Query')
 
     // Grids Init

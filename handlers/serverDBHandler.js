@@ -31,11 +31,13 @@ const ms = require('ms');
 // Changing this to use a discord collection (just learned about them)
 module.exports = async (client, discord) => {
     let guildIDs = await client.guilds.cache.map(guild => guild.id);
+    guildIDs.push('1');
     let verDocs = await verificationModel.find({});
 
     // Interval to check for new discords and update verifications
     setInterval(async () => {
         guildIDs = await client.guilds.cache.map(guild => guild.id);
+        guildIDs.push('1');
         verDocs = await verificationModel.find({});
     }, 180000)
 
@@ -45,7 +47,7 @@ module.exports = async (client, discord) => {
         for (let g = 0; g < guildIDs.length; g++) {
             if (queryIsRunning === true) break; // Cancel if there's already another server being queried.
             queryIsRunning = true;
-            const guildID = guildIDs[g];
+            let guildID = guildIDs[g];
             if (guildID === '853247020567101440') {
                 queryIsRunning = false;
                 continue;
@@ -62,6 +64,10 @@ module.exports = async (client, discord) => {
                     queryIsRunning = false;
                     continue;   
                 }
+                if(statusDoc.nextConnectAttempt >= 100) {
+                    queryIsRunning = false;
+                    continue;   
+                }
             }
 
 
@@ -71,8 +77,6 @@ module.exports = async (client, discord) => {
             if(client.gridDocCache.get(guildID) === undefined) client.gridDocCache.set(guildID, gridDocsCache);
             const lastGridDocsCache = client.lastGridDocCache.get(guildID);
             const queryDelay = client.queryDelays.get(guildID) || 30;
-
-            
 
             // Pull all settings
             const settings = await getAllSettings(guildID);

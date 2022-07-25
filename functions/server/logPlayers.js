@@ -14,7 +14,8 @@ module.exports = async (req) => {
     const verificationCache = req.verDocs
     const ecoSettings = req.ecoSettings;
     const currencyName = ecoSettings.currencyName;
-    const onlinePlayerReward = ecoSettings.onlineReward;
+    let onlinePlayerReward = ecoSettings.onlineReward;
+    if(onlinePlayerReward === "Not Set") onlinePlayerReward = 0;
     let insertData = [];
     let SLinsertData = [];
     const statusDoc = req.statusDoc; // Confirm server is being reported as online before attempting query
@@ -24,18 +25,9 @@ module.exports = async (req) => {
     req.name = 'logPlayers'
     const timerCheck = await timerFunction(req)
     if (timerCheck === true) return; // If there is a timer, cancel.
-    const guild = await client.guilds.cache.get(guildID);
+    const guild = await client.guilds.cache.get(guildID) || await client.guilds.cache.get("799685703910686720");
     const mainGuild = await client.guilds.cache.get("853247020567101440");
     if (guild === null || mainGuild === null || guild.owner === null) return; // Redundancy Crash Check
-
-    // Economy Settings
-    let patron;
-    let guildOwner = mainGuild.members.cache.get(guild.owner.user.id);
-    if (!guildOwner) return; // If guild owner is no longer in Cosmofficial discord
-
-    if (guildOwner.roles.cache.has('883535930630213653') || guildOwner.roles.cache.has('883534965650882570')) {
-        patron = true;
-    }
 
     const playerData = await queryPlayers(config)
 
@@ -182,7 +174,7 @@ module.exports = async (req) => {
         let verificationDoc = verificationCache.find(cache => cache.username === player.DisplayName)
         if (verificationDoc !== null && verificationDoc !== undefined) {
             let playerEcoDoc = await playerEcoModel.findOne({
-                guildID: guildID,
+                guildID: guild.id,
                 userID: verificationDoc.userID
             })
             if (playerEcoDoc === null) continue;
@@ -216,7 +208,7 @@ module.exports = async (req) => {
 
     // Update offline players
     let playerDocs = await playerModel.find({
-        guildID: guildID,
+        guildID: guild.id,
         online: true
     });
     playerDocs.forEach(async doc => {

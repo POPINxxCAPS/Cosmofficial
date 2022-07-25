@@ -3,64 +3,13 @@
 
 <%- include("./partials/_header") %>
 
-<body>
-    <div class="container">
-        <div class="row">
-            <div class="col offset-md-1">
-                <div class="btn-toolbar">
-                    <div class="btn-group">
-                        <a href="https://cosmofficial.herokuapp.com/" class="btn btn-success">Home Page</a>
-                        <a href="https://discord.gg/BfFc8cfp3n" class="btn btn-info">Edit Settings</a>
-                        <a href="https://discord.com/api/oauth2/authorize?client_id=845784381025157131&permissions=8&scope=bot"
-                            class="btn btn-primary">Bot Invite Link</a>
-                        <a href="https://cosmofficial.herokuapp.com/" class="btn btn-secondary">Patreon</a>
-                        <a href="/profile/<%= user._username %>" class="btn btn-success">Your Servers</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+<body class="bg-dark">
+    <%- include("./partials/_mainNavBar", { reqObj: reqObj }) %>
     <div class="container">
         <div class="row">
             <div class="col-sm-3">
-                <%- include("./partials/adminConfig/_economySettings") %>
+                <%- include("./partials/adminConfig/_economySettings", { reqObj: reqObj }) %>
             </div>
-            <div class="col-sm-3">
-                <%- include("./partials/adminConfig/_economySettings") %>
-            </div>
-            <div class="col-sm-3">
-                <%- include("./partials/adminConfig/_economySettings") %>
-            </div>
-            <div class="col-sm-3">
-                <%- include("./partials/adminConfig/_economySettings") %>
-            </div>
-            <div class="w-100"></div>
-            <div class="col-sm-3">
-                <%- include("./partials/adminConfig/_economySettings") %>
-            </div>
-            <div class="col-sm-3">
-                <%- include("./partials/adminConfig/_economySettings") %>
-            </div>
-                        <div class="col-sm-3">
-                <%- include("./partials/adminConfig/_economySettings") %>
-            </div>
-            <div class="col-sm-3">
-                <%- include("./partials/adminConfig/_economySettings") %>
-            </div>
-            <div class="w-100"></div>
-            <div class="col-sm-3">
-                <%- include("./partials/adminConfig/_economySettings") %>
-            </div>
-            <div class="col-sm-3">
-                <%- include("./partials/adminConfig/_economySettings") %>
-            </div>
-                        <div class="col-sm-3">
-                <%- include("./partials/adminConfig/_economySettings") %>
-            </div>
-            <div class="col-sm-3">
-                <%- include("./partials/adminConfig/_economySettings") %>
-            </div>
-        </div>
     </div>
 </body>
 <%- include("./partials/_footer") %>

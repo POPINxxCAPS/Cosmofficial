@@ -109,4 +109,12 @@ router.get('/signOut', async (req, res) => {
     }
 });
 
+
+// Setting modifiaction req handlings
+router.get('/editSettings/:guildID'), function(req, res) {
+    console.log('test')
+    console.log(req.body)
+    return res.redirect('/')
+}
+
 module.exports = router

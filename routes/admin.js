@@ -14,17 +14,28 @@ router.get('/:guildID', getGuildID, verifyKey, async (req, res) => {
     const disClient = req.app.get('disClient')
 
     //let guild = await disClient.guilds.cache.get(res.server.guildID);
-    const economySettings = await makeEcoSettingVar(req.server.guildID);
+    const economySettings = await makeEcoSettingVar(res.server.guildID);
     const user = await getUser(req.cookies['doaKey'])
     const patron = await checkPatron(disClient, user._id, res.server.guildID)
 
-    res.render("adminConfig.ejs", {
+    const reqObj = {
         patron: patron,
         user: user,
         server: res.server,
         ecoSettings: economySettings,
+    }
+    res.render("adminConfig.ejs", {
+        reqObj: reqObj
     })
 })
+
+// Setting modifiaction req handlings
+router.get('/editSettings/:guildID'), function(req, res) {
+    console.log('test')
+    console.log(req.body)
+    return res.redirect('../')
+}
+
 
 // Middlewares
 async function getGuildID(req, res, next) {

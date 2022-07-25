@@ -9,7 +9,7 @@ module.exports = async (req) => {
     const guildID = req.guildID;
     const client = req.client;
     const discord = req.discord;
-    const guild = client.guilds.cache.get(guildID);
+    const guild = guildID <= 10 ? client.guilds.cache.get('799685703910686720') : client.guilds.cache.get(guildID);
 
     if (gridDocsCache === undefined) throw 'gridDocsCache is not defined.';
     if (guildID === undefined) throw 'guildID is not defined.';

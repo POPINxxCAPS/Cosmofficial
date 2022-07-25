@@ -1,5 +1,6 @@
 async function createInvite(client, guildID) {
  const guild = client.guilds.cache.get(guildID);
+ if(guild === null || guild === undefined) return null;
  let invite;
  const channel = guild.channels.cache
    .filter((ch) =>{ return ch.manageable && ch.type === 'text' })
