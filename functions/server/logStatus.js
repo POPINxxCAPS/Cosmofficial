@@ -8,7 +8,7 @@ module.exports = async (req) => {
     const guildID = req.guildID;
     const config = req.config;
     const client = req.client;
-    const guild = await client.guilds.cache.get(guildID) || await client.guilds.cache.get(799685703910686720);
+    const guild = await client.guilds.cache.get(guildID) || await client.guilds.cache.get("799685703910686720");
     const current_time = Date.now();
     let statusDoc = req.statusDoc;
     if (statusDoc === null) {
