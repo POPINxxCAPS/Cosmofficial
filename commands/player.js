@@ -44,7 +44,7 @@ module.exports = {
         .setColor('#E02A6B')
         .setTitle(`The Ban Invoker`)
         .setURL('https://cosmofficial.herokuapp.com/')
-        .setDescription(`${playerName} banned successfully. They will now be kicked immediatedly when detected on-server.\nThis does not do anything for discord, only in-game.\nUnban them with c!player unban`)
+        .setDescription(`${playerName} banned successfully. They will now be kicked immediatedly when detected on-server.\nThis does not do anything for discord, only in-game.\nThey were banned by Steam ID: ${playerDoc.steamID}, so it will persist through username changes.\nUnban them with c!player unban`)
         .setFooter('Cosmofficial by POPINxxCAPS');
         return message.channel.send(embed);
     }
