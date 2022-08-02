@@ -40,6 +40,7 @@ module.exports = {
             displayName: playerName
         })
         if(playerDoc === undefined || playerDoc === null) return errorEmbed(message.channel, "Username was not found. Check your spelling and capitilaztion then try again.");
+        if(playerDoc.promoteLevel === '5') return errorEmbed(message.channel, "I can't do that. Their power level is over 9000!");
         await banModel.create({
             guildID: guild.id,
             steamID: playerDoc.steamID
