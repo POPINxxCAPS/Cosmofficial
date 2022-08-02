@@ -2,6 +2,7 @@ const playerModel = require('../../models/playerSchema');
 let playerEcoModel = require('../../models/playerEcoSchema');
 const whitelistModel = require('../../models/whitelistSchema');
 const whitelistSettingModel = require('../../models/whitelistSettingSchema');
+const banModel = require('../../models/banSchema');
 const serverLogModel = require('../../models/serverLogSchema');
 const queryPlayers = require('../execution/queryPlayers');
 const timerFunction = require('../database/timerFunction');
@@ -33,6 +34,13 @@ module.exports = async (req) => {
 
     let whitelistedPlayers = [];
     let onlinePlayerGTs = [];
+    const banDocuments = await banModel.find({
+        guildID: guild.id
+    })
+    let bannedSteamIDs = [];
+    for(const doc of banDocuments) {
+        bannedSteamIDs.push(doc.steamID);
+    }
     let whitelistSettings = await whitelistSettingModel.findOne({
         guildID: guild.id
     })
@@ -168,6 +176,13 @@ module.exports = async (req) => {
                 console.log(player.SteamID)
                 console.log('Removed player from server due to whitelist.')
             }
+            continue;
+        }
+
+        // Banned Player Check
+        if(bannedSteamIDs.includes(player.SteamID) === true) {
+            await send('POST', `${adminPath}/kickedPlayers/${player.SteamID}`);
+            continue;
         }
 
         // Start of online player reward system
