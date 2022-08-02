@@ -4,8 +4,8 @@ const banModel = require('../models/banSchema');
 
 const validArgs = ['ban',  'unban'];
 module.exports = {
-  name: 'players',
-  aliases: ['players'],
+  name: 'player',
+  aliases: ['player'],
   description: "List online players and information about them.",
   permissions: ["SEND_MESSAGES"],
   category: "General",
