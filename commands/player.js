@@ -28,7 +28,11 @@ module.exports = {
     for(const arg of args) {
         const index = args.indexOf(arg);
         if(index === 0) continue;
-        playerName += `${arg} `;
+        if(playerName === '') { 
+            playerName += `${arg}`;
+            continue;
+        }
+        playerName = playerName + ' ' + `${arg}`;
     }
     if(args[0] === 'ban') {
         const playerDoc = await playerModel.findOne({
